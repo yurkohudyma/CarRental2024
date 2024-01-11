@@ -5,6 +5,7 @@ import com.hudyma.CarJPA.model.CarProfile;
 import com.hudyma.CarJPA.repository.CarProfileRepository;
 import com.hudyma.CarJPA.service.CarProfilesService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/car-profiles")
 @RequiredArgsConstructor
+@Log4j2
 public class CarProfileController {
 
     private final CarProfileRepository carProfileRepository;
@@ -37,8 +39,8 @@ public class CarProfileController {
 
     @PatchMapping("/{id}")
     public void upsertProfile(@PathVariable("id") Long id, @RequestBody CarProfile newCarProfile) {
-        System.out.println("...........UPSERTING PROFILE ID = " + id);
-        System.out.println("............with NEW PROFILE: " + newCarProfile);
+        log.info("...UPSERTING PROFILE ID = " + id);
+        log.info("..with NEW PROFILE: " + newCarProfile);
         CarProfile carProfile = carProfileRepository.findById(id).orElseGet(CarProfile::new);
         carProfile.setColor(newCarProfile.getColor());
         carProfile.setSeatsQuantity(newCarProfile.getSeatsQuantity());

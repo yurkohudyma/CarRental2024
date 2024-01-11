@@ -3,6 +3,7 @@ package com.hudyma.CarJPA.controller;
 import com.hudyma.CarJPA.model.User;
 import com.hudyma.CarJPA.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@Log4j2
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
@@ -46,7 +48,7 @@ public class UserController {
         if (userRepository.findById(id).isPresent()){
             userRepository.deleteById(id);
         }
-        else System.out.println(
+        else log.info(
                 "..... User "+ id +" does not EXIST");
     }
 

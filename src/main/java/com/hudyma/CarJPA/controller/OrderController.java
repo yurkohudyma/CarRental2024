@@ -7,6 +7,7 @@ import com.hudyma.CarJPA.repository.CarRepository;
 import com.hudyma.CarJPA.repository.OrderRepository;
 import com.hudyma.CarJPA.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
+@Log4j2
 @RequestMapping("/orders")
 @RequiredArgsConstructor
 public class OrderController {
@@ -88,7 +90,7 @@ public class OrderController {
         if (order.isPresent()) {
             orderRepository.deleteById(id);
         }
-        else System.out.println("..... Order "+ id +" does not EXIST");
+        else log.info("..... Order "+ id +" does not EXIST");
     }
 
     @DeleteMapping

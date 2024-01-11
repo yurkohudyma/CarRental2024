@@ -5,6 +5,7 @@ import com.hudyma.CarJPA.model.Car;
 import com.hudyma.CarJPA.repository.CarRepository;
 import com.hudyma.CarJPA.service.CarService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@Log4j2
 @RequestMapping("/cars")
 @RequiredArgsConstructor
 public class CarController {
@@ -28,8 +30,8 @@ public class CarController {
     @GetMapping("/{id}")
     public Optional<Car> getCarById(@PathVariable("id") Long id) {
         var car = carRepository.findById(id);
-        System.out.println("............Getting car by ID = " + id);
-        System.out.println(car);
+        log.info("...Getting car by ID = " + id);
+        log.info(car);
         return car;
     }
 
@@ -54,7 +56,7 @@ public class CarController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void deleteCar(@PathVariable("id") Long id) {
-        System.out.println("............Deleting car " + id);
+        log.info("...Deleting car " + id);
         Car car = carRepository.findById(id).orElseThrow();
         carRepository.delete(car);
     }
@@ -62,7 +64,7 @@ public class CarController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping
     public void deleteAll() {
-        System.out.println("............Deleting All cars");
+        log.info("............Deleting All cars");
         carRepository.findAll()
         .forEach(carRepository::delete);
     }
@@ -70,7 +72,7 @@ public class CarController {
     @ResponseStatus(HttpStatus.I_AM_A_TEAPOT)
     @PatchMapping("/{id}")
     public void patchCar(@PathVariable("id") Long id, @RequestBody Car updateCar){
-        System.out.println("............Trying to update car " + carRepository.findById(id));
+        log.info("............Trying to update car " + carRepository.findById(id));
         carRepository.save(updateCar);
     }
 }
