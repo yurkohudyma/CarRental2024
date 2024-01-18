@@ -19,7 +19,7 @@ public class CarService {
         return carRepository.findAll().stream()
                 .map(s -> new CarDto(
                         s.getCarClass(),
-                        s.getCarProfile().getPropulsion(),
+                        s.getPropulsion(),
                         s.getPrice()))
                 .toList();
 

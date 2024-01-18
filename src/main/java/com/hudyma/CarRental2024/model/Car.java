@@ -1,7 +1,9 @@
 package com.hudyma.CarRental2024.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.hudyma.CarRental2024.constants.CarClass;
+import com.hudyma.CarRental2024.constants.CarColor;
+import com.hudyma.CarRental2024.constants.CarPropulsion;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,14 +32,25 @@ public class Car {
     @Column(name = "price", nullable = false)
     Double price;
 
-    @JsonManagedReference(value = "cars_carProfiles")
+    @Column(name = "seats_quantity", nullable = false)
+    Integer seatsQuantity;
+
+    @Enumerated(EnumType.STRING)
+    @Column (name = "color", nullable = false)
+    CarColor color;
+
+    @Enumerated(EnumType.STRING)
+    @Column (name = "propulsion", nullable = false)
+    CarPropulsion propulsion;
+
+    /*@JsonManagedReference(value = "cars_carProfiles")
     @OneToOne(mappedBy = "car", cascade = CascadeType.ALL)
     private CarProfile carProfile;
 
     public void setProfile (CarProfile carProfile){
         carProfile.setCar(this);
         this.carProfile = carProfile;
-    }
+    }*/
     @JsonBackReference(value = "cars_orders")
     @OneToOne
     private Order order;

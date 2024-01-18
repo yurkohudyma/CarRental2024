@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" content="application/json">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" th:href="@{css/style.css}" href="../static/css/style.css">
+
+    <title>Car Rental ::: Orders</title>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <h1 class="title">Панель адміна</h1>
+    </header>
+
+    <!--MAIN MENU -->
+    <div class="buttons_block">
+        <form action="#" th:action="@{/cars}" th:method="get">
+            <input type="submit" value="Авто" class="button">
+        </form>
+        <form action="#" th:action="@{/users}" th:method="get">
+            <input type="submit" value="Користувачі" class="button">
+        </form>
+    </div>
+
+    <!--USERS READOUT SECTION-->
+    <table class="order_table">
+        <thead>
+        <tr>
+            <th class="order_table_header" colspan="10">Чинні замовлення</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="order_table_legend">№</td>
+            <td class="order_table_legend">Користувач</td>
+            <td class="order_table_legend">Марка</td>
+            <td class="order_table_legend">Початок</td>
+            <td class="order_table_legend">Кінець</td>
+            <td class="order_table_legend">Тривалість</td>
+            <td class="order_table_legend">Сума</td>
+            <td class="order_table_legend">Водій</td>
+            <td class="order_table_legend">Статус</td>
+            <td class="order_table_legend">Дія</td>
+        </tr>
+
+        <tr class="order" th:each="order : ${orderList}">
+            <td class="order_unit" th:text="${order.id}"></td>
+            <td class="order_unit">
+                <form action="#" th:action="@{'/users/'+${order.user.id}}" th:method="get">
+                    <input type = "hidden" class="button" />
+                    <button type="submit" th:text="${order.user.name}"></button>
+                </form>
+            </td>
+            <td class="order_unit" th:text="${order.car.model}"></td>
+            <td class="order_unit" th:text="${order.dateBegin}"></td>
+            <td class="order_unit" th:text="${order.dateEnd}"></td>
+            <td class="order_unit" th:text="${order.durability}"></td>
+            <td class="order_unit" th:text="'€ '+${order.amount}"></td>
+            <td class="order_unit" th:text="${order.auxNeeded}"></td>
+            <td class="order_unit" th:text="${order.status}"></td>
+            <td>
+                <form action="#" th:action="@{'/orders/'+${order.id}}" th:method="delete">
+                    <input type="submit" value="Видалити" class="caution_button_orderlist">
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!--CONTEXT ACTIONS BUTTONS-->
+    <div class="buttons_block" th:if="${!orderList.isEmpty()}">
+        <form action="#" th:action="@{/orders}" th:method="delete">
+            <input type="submit" value="Видалити все" class="caution_button">
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,236 @@
+/*old color #67a300
+new color #67a300
+*/
+
+body {
+	/* background: url(../img/bg.jpg) no-repeat; */
+	-moz-background-size: 100%; /* Firefox 3.6+ */
+	-webkit-background-size: 100%; /* Safari 3.1+ и Chrome 4.0+ */
+	-o-background-size: 100%; /* Opera 9.6+ */
+	background-size: 100%; /* Modern browsers */	
+}
+
+.wrapper {
+    width: 80%;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-top: 30px;
+    padding-bottom: 15px;
+    border-bottom: solid 1px gray;
+}
+
+header h1 {
+    display: block;
+    font-size: 2em;
+    margin-right: 80px;
+}
+
+/* Form styles */
+.form_block {
+    flex: 2;
+    display: block;
+    background-color: white;
+    border-radius: 4px;
+    z-index: 98;
+}
+
+form {
+    /* display: flex; */
+    /* background-color: white; */
+    justify-content: space-between;
+    align-items: baseline;
+    z-index: 99;
+}
+
+#model_input 
+{
+    flex: 1;
+    margin: 0 10px;
+    padding-left: 8px;
+    border: 1px solid #67a300;
+    border-radius: 6px;
+    outline-color: #67a300;	
+}
+
+#description_input, #seatsQuantity_input, #price_input
+{
+    flex: 1;
+    margin: 0 10px;
+    padding-left: 8px;
+    border: 1px solid #67a300;
+    border-radius: 6px;
+    outline-color: #67a300;
+	margin-top: 5px;
+}
+
+#carclass_input, #color_input, #propulsion_input
+{
+    flex: 1;
+    margin: 0 10px;    
+    border: 1px solid #67a300;
+    border-radius: 6px;
+    outline-color: #67a300;
+	background-color:white;
+	margin-top: 5px;
+}
+
+textarea {
+    flex: 2;
+    margin: 0 10px;
+    padding-left: 8px;
+    resize: none;
+    border-color: #67a300;
+    border-radius: 6px;
+    outline-color: #67a300;
+}
+
+.input_submit {
+    border-style: none;
+    outline-color: transparent;
+    border-radius: 6px;
+    background-color: #67a300;
+    color: #fff;
+    width: 100px;
+    height: 40px;
+    cursor: pointer;
+	margin-right: 10px;
+	margin-top: 10px;	
+}
+
+.select_button{	
+	/* border-style: none;
+    outline-color: transparent;
+    border-radius: 6px;   
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 10px;
+	text-align: center */
+	flex: 1;
+    margin: 0 10px;    
+    border: 1px solid #67a300;
+    border-radius: 6px;
+    outline-color: #67a300;
+	background-color:white
+}
+
+.select_button:hover, .button:hover, .caution_button:hover, .orange_button:hover {
+	background-color: white;
+	color: #b90000;
+	border: /* 1px solid */ #b90000;
+}
+
+.buttons_block {
+	flex:1;	
+	display: flex;
+    /* display: block; */
+    background-color: white;
+    border-radius: 4px;
+    z-index: 98;	
+}
+
+.button {
+	border-style: none;
+    outline-color: transparent;
+    border-radius: 6px;
+    background-color: #67a300;
+    color: #fff;
+    /* width: 100px;
+    height: 40px; */
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 10px;
+	text-align: center
+}
+
+.caution_button {
+	border-style: none;
+    outline-color: transparent;
+    border-radius: 6px;
+    background-color: brown;
+    color: #fff;
+    /* width: 100px;
+    height: 40px; */
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 10px;
+	text-align: center
+}
+
+.caution_button_orderlist {
+	border-style: none;
+    outline-color: transparent;
+    border-radius: 6px;
+    background-color: brown;
+    color: #fff;    
+    cursor: pointer;
+    margin-right: 5px;    
+	text-align: center;
+	vertical-align: middle;
+	font: 
+}
+
+.orange_button {
+	border-style: none;
+    outline-color: transparent;
+    border-radius: 6px;
+    background-color: orange;
+    color: #fff;    
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 10px;
+	text-align: center
+}
+
+/* Cars styles */
+
+.car {
+    margin-top: 30px;
+    padding: 15px;
+    border: 1px solid /* #f3f3f3 */;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+	display: inline-table;
+	text-align: center;
+	border-color: lightskyblue;
+}
+
+.car_model, .user_name {
+    font-size: 1.3em;
+    font-weight: 500;
+}
+
+.cars_header, .users_header, .order_table_header  {
+	margin-top: 30px;
+	font-size: 1.3em;
+    font-weight: 500;
+	text-align: center
+}
+
+ 
+
+.car_unit, .user_unit  {    
+}
+
+.order_unit {
+	text-align: center;
+	padding: 5px;
+}
+
+.order_table_legend {
+	font-weight: bold
+}
+
+.order_table {
+	box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+	text-align: center;	
+	border-radius: 10px;
+	margin-top: 30px;
+	border: 1px solid /* #f3f3f3 */;
+	border-color: lightskyblue;
+	vertical-align: center
+}

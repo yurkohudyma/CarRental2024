@@ -8,6 +8,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
 @Log4j2
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -20,6 +24,15 @@ public class UserController {
     @GetMapping
     public String getAll (Model model){
         model.addAttribute("userList", userRepository.findAll());
+        return "users";
+    }
+
+    @GetMapping("{id}")
+    public String getById (@PathVariable Long id, Model model){
+        model.addAttribute("userList",
+                List.of(userRepository
+                        .findById(id)
+                        .orElseThrow()));
         return "users";
     }
 
@@ -90,8 +103,5 @@ public class UserController {
         Arrays.stream(users)
                 .forEach(this::addUser);
     }*/
-    /* @GetMapping("{id}")
-     public Optional<User> getById (@PathVariable Long id){
-         return userRepository.findById(id);
-     }*/
+
 }

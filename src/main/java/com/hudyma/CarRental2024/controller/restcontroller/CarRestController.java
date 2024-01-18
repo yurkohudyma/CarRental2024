@@ -1,4 +1,4 @@
-package com.hudyma.CarRental2024.restcontroller;
+package com.hudyma.CarRental2024.controller.restcontroller;
 
 import com.hudyma.CarRental2024.dto.CarDto;
 import com.hudyma.CarRental2024.model.Car;

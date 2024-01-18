@@ -1,7 +1,9 @@
 package com.hudyma.CarRental2024.controller;
 
+import com.hudyma.CarRental2024.constants.CarColor;
+import com.hudyma.CarRental2024.constants.CarPropulsion;
 import com.hudyma.CarRental2024.model.Car;
-import com.hudyma.CarRental2024.model.CarClass;
+import com.hudyma.CarRental2024.constants.CarClass;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,6 +23,8 @@ public class CarController {
     public String getAll(Model model) {
         model.addAttribute("carList", carRepository.findAll());
         model.addAttribute("carClassArr", CarClass.values());
+        model.addAttribute("carColorArr", CarColor.values());
+        model.addAttribute("carPropulsionArr", CarPropulsion.values());
         log.info("...Retrieving all available cars");
         return "cars";
     }

@@ -1,4 +1,4 @@
-package com.hudyma.CarRental2024.restcontroller;
+package com.hudyma.CarRental2024.controller.restcontroller;
 
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
@@ -25,10 +25,8 @@ import java.util.Optional;
 public class OrderRestController {
 
     private final OrderRepository orderRepository;
-
     @Autowired
     private final CarRepository carRepository;
-
     @Autowired
     private final UserRepository userRepository;
 
@@ -45,11 +43,13 @@ public class OrderRestController {
     @ResponseStatus(HttpStatus.CREATED)
     public void addOrder (@RequestBody Order order){
         order.setAmount(calculateOrderAmount(order));
+        log.info("...getting user by order.user id");
         User user = userRepository.findById(order.getUser()
                 .getId())
                 .orElseThrow(
                         () -> new NoSuchElementException
                                 (".............User ID is not available in REQ BODY"));
+        log.info("...getting car by order.car id");
         Car car = carRepository.findById(order
                 .getCar()
                 .getId())

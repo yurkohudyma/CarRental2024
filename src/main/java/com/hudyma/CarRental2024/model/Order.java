@@ -32,10 +32,10 @@ public class Order {
     @Column(name = "durability")
     Long durability;
 
-    @Column(name = "order_status",
+    @Column(name = "status",
             columnDefinition = "ENUM ('REQUESTED', 'PENDING', " +
                     "'APPROVED', 'PAID', 'DECLINED')")
-    String orderStatus;
+    String status;
 
     @Column(name = "aux_needed")
     Boolean auxNeeded;

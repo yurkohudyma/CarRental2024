@@ -37,6 +37,7 @@ public class User {
     @JsonManagedReference(value = "users_orders")
     @OneToMany (mappedBy = "user",
             cascade = CascadeType.ALL,
+            //todo restFUL fetches no data on user's retrieval
             fetch = FetchType.EAGER)
     @Setter(AccessLevel.PRIVATE)
     private List<Order> orderList = new ArrayList<>();

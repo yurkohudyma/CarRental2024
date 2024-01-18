@@ -25,18 +25,19 @@
         <form action="#" th:action="@{/cars}" th:method="get">
             <input type="submit" value="Авто" class="button">
         </form>
-        <form action="#" th:action="@{/orders}" th:method="post">
+        <form action="#" th:action="@{/orders}" th:method="get">
             <input type="submit" value="Замовлення" class="button">
         </form>
     </div>
 
     <!--USERS READOUT SECTION-->
+    <div class = "users_header">Користувачі</div>
     <div class="car" th:each="user : ${userList}">
-        <div class="id_car" th:text="'№ ' + ${user.id}"></div>
-        <div class="model_car" th:text="${user.name}"></div>
-        <div class="description_car" th:text="${user.email}"></div>
-        <div class="carclass_car" th:text="'Паспорт: ' + ${user.passportData}"></div>
-        <div class="carclass_car" th:text="'Доступ: ' + ${user.accessLevel}"></div>
+        <div class="user_unit" th:text="'№ ' + ${user.id}"></div>
+        <div class="user_name" th:text="${user.name}"></div>
+        <div class="user_unit" th:text="${user.email}"></div>
+        <div class="user_unit" th:text="'Паспорт: ' + ${user.passportData}"></div>
+        <div class="user_unit" th:text="'Доступ: ' + ${user.accessLevel}"></div>
         </br>
         <a href="edit.html" th:href="@{'/edit/'+${user.id}}">Редагувати</a>
         <div class="user_block_btn" th:unless="${user.accessLevel == 'BLOCKED'
@@ -66,33 +67,10 @@
 
     <!--CONTEXT ACTIONS BUTTONS-->
     <div class="buttons_block" th:if="${!userList.isEmpty()}">
-        <form action="#" th:action="@{/edit/deleteAll}" th:method="delete">
-            <input type="submit" value="Видалити все" alt="Ви впевнені???" class="caution_button">
+        <form action="#" th:action="@{/users}" th:method="delete">
+            <input type="submit" value="Видалити все" class="caution_button">
         </form>
     </div>
-    <!--<br>
-    <div class="form_block">
-        &lt;!&ndash;CAR ENTRY FORM SECTION&ndash;&gt;
-        <form action="#" th:action="@{/cars}" th:method="post">
-            <label for="model_input">Марка</label>
-            <input id="model_input" name="model" type="text" placeholder="Suzuki Across" required>
-            <br><br>
-            <label for="description_input" id="text_label">Опис</label>
-            <input id="description_input" name="description" placeholder="Зручна і якісна" required></input>
-            <br><br>
-            <label for="carclass_input">Клас</label>
-            <select class="select_button" id="carclass_input" name="carClass">
-                <option th:each="car_class : ${carClassArr}" th:value="${car_class}" th:text="${car_class}"></option>
-            </select>
-            <br><br>
-            <label for="price_input">Ціна</label>
-            <input id="price_input" name="price" type="text" placeholder="10.00" title="[xx.yy]" required
-                   pattern="\d+[.]?\d*">
-            <br><br>
-            <input type="submit" value="Додати" class="input_submit">
-        </form>
-    </div>-->
-
 </div>
 </body>
 </html>
