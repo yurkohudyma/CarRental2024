@@ -1,15 +1,16 @@
-package com.hudyma.CarJPA.controller;
+package com.hudyma.CarRental2024.controller;
 
-import com.hudyma.CarJPA.model.Car;
-import com.hudyma.CarJPA.model.Order;
-import com.hudyma.CarJPA.model.User;
-import com.hudyma.CarJPA.repository.CarRepository;
-import com.hudyma.CarJPA.repository.OrderRepository;
-import com.hudyma.CarJPA.repository.UserRepository;
+import com.hudyma.CarRental2024.model.Car;
+import com.hudyma.CarRental2024.model.Order;
+import com.hudyma.CarRental2024.model.User;
+import com.hudyma.CarRental2024.repository.CarRepository;
+import com.hudyma.CarRental2024.repository.OrderRepository;
+import com.hudyma.CarRental2024.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.temporal.ChronoUnit;
@@ -18,10 +19,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-@RestController
 @Log4j2
 @RequestMapping("/orders")
 @RequiredArgsConstructor
+@Controller
 public class OrderController {
 
     private final OrderRepository orderRepository;

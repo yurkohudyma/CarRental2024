@@ -1,7 +1,7 @@
-package com.hudyma.CarJPA.service;
+package com.hudyma.CarRental2024.service;
 
-import com.hudyma.CarJPA.dto.CarDto;
-import com.hudyma.CarJPA.repository.CarRepository;
+import com.hudyma.CarRental2024.dto.CarDto;
+import com.hudyma.CarRental2024.repository.CarRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

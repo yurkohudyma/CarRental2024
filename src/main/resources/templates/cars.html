@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" content="application/json">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{css/style.css}" href="../static/css/style.css">
+
+    <title>Car Rental ::: Cars</title>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <h1 class="title">Панель адміна</h1>
+    </header>
+
+    <!--MAIN MENU -->
+    <div class="buttons_block">
+        <form action="#" th:action="@{/users}" th:method="get">
+            <input type="submit" value="Користувачі" class="button">
+        </form>
+        <form action="#" th:action="@{/orders}" th:method="post">
+            <input type="submit" value="Замовлення" class="button">
+        </form>
+    </div>
+
+
+
+
+
+
+    <!--CARS READOUT SECTION-->
+    <div class="car" th:each="car : ${carList}">
+        <div class="id_car" th:text="'№ '+${car.id}"></div>
+        <div class="model_car" th:text="${car.model}"></div>
+        <div class="description_car" th:text="${car.description}"></div>
+        <div class="carclass_car" th:text="${car.carClass}"></div>
+        <div class="price_car"  th:text="'€ '+${car.price}"></div>
+        </br>
+        <a href="edit.html" th:href="@{'/edit/'+${car.id}}">Редагувати</a>
+        <form action="#" th:action="@{'/cars/'+${car.id}}" th:method="delete">
+            <input type="submit" value="Видалити" class="input_submit">
+        </form>
+        </br>
+    </div>
+
+    <!--CONTEXT ACTIONS BUTTONS-->
+    <div class="buttons_block" th:if="${!carList.isEmpty()}">
+        <form action="#" th:action="@{/edit/deleteAll}" th:method="delete">
+            <input type="submit" value="Видалити все" alt="Ви впевнені???" class="caution_button">
+        </form>
+    </div>
+    <br>
+    <div class="form_block">
+        <!--CAR ENTRY FORM SECTION-->
+        <form action="#" th:action="@{/cars}" th:method="post">
+            <label for="model_input">Марка</label>
+            <input id="model_input" name="model" type="text" placeholder="Suzuki Across" required>
+            <br><br>
+            <label for="description_input" id="text_label">Опис</label>
+            <input id="description_input" name="description" placeholder="Зручна і якісна" required></input>
+            <br><br>
+            <label for="carclass_input">Клас</label>
+            <select class="select_button" id="carclass_input" name="carClass">
+                <option th:each="car_class : ${carClassArr}" th:value="${car_class}" th:text="${car_class}"></option>
+            </select>
+            <br><br>
+            <label for="price_input">Ціна</label>
+            <input id="price_input" name="price" type="text" placeholder="10.00" title="[xx.yy]" required
+                   pattern="\d+[.]?\d*">
+            <br><br>
+            <input type="submit" value="Додати" class="input_submit">
+        </form>
+    </div>
+
+
+
+
+
+</div>
+
+</body>
+</html>

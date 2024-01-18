@@ -1,4 +1,4 @@
-package com.hudyma.CarJPA.model;
+package com.hudyma.CarRental2024.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;

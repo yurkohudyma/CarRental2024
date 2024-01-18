@@ -1,4 +1,4 @@
-package com.hudyma.CarJPA.model;
+package com.hudyma.CarRental2024.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -35,19 +35,4 @@ public class CarProfile {
     @MapsId
     @JoinColumn(name = "car_id")
     private Car car;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

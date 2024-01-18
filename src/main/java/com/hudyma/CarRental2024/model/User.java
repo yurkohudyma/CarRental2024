@@ -1,4 +1,4 @@
-package com.hudyma.CarJPA.model;
+package com.hudyma.CarRental2024.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -30,12 +30,13 @@ public class User {
     String passportData;
 
     @Column (name = "access_level", nullable = false,
-            columnDefinition = "ENUM ('ADMIN', 'USER', 'MANAGER')")
+            columnDefinition = "ENUM ('ADMIN', 'USER', 'MANAGER', 'BLOCKED')")
     String accessLevel;
 
+    //todo Cannot delete or update a parent row: a foreign key constraint fails
     @JsonManagedReference(value = "users_orders")
     @OneToMany (mappedBy = "user",
-            /*cascade = CascadeType.ALL,*/
+            cascade = CascadeType.ALL,
             fetch = FetchType.EAGER)
     @Setter(AccessLevel.PRIVATE)
     private List<Order> orderList = new ArrayList<>();

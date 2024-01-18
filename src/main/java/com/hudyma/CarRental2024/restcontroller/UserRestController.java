@@ -1,7 +1,7 @@
-package com.hudyma.CarJPA.controller;
+package com.hudyma.CarRental2024.restcontroller;
 
-import com.hudyma.CarJPA.model.User;
-import com.hudyma.CarJPA.repository.UserRepository;
+import com.hudyma.CarRental2024.model.User;
+import com.hudyma.CarRental2024.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -13,9 +13,9 @@ import java.util.Optional;
 
 @RestController
 @Log4j2
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
-public class UserController {
+public class UserRestController {
 
     private final UserRepository userRepository;
 

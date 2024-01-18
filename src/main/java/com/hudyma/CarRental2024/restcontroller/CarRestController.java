@@ -1,9 +1,9 @@
-package com.hudyma.CarJPA.controller;
+package com.hudyma.CarRental2024.restcontroller;
 
-import com.hudyma.CarJPA.dto.CarDto;
-import com.hudyma.CarJPA.model.Car;
-import com.hudyma.CarJPA.repository.CarRepository;
-import com.hudyma.CarJPA.service.CarService;
+import com.hudyma.CarRental2024.dto.CarDto;
+import com.hudyma.CarRental2024.model.Car;
+import com.hudyma.CarRental2024.repository.CarRepository;
+import com.hudyma.CarRental2024.service.CarService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -15,9 +15,9 @@ import java.util.Optional;
 
 @RestController
 @Log4j2
-@RequestMapping("/cars")
+@RequestMapping("/api/cars")
 @RequiredArgsConstructor
-public class CarController {
+public class CarRestController {
     private final CarRepository carRepository;
     private final CarService carService;
 
@@ -35,7 +35,7 @@ public class CarController {
         return car;
     }
 
-    @GetMapping("/Dto")
+    @GetMapping("/dto")
     public List<CarDto> getAllDto() {
         return carService.getAll();
     }

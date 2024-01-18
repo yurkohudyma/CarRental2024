@@ -1,6 +1,6 @@
-package com.hudyma.CarJPA.repository;
+package com.hudyma.CarRental2024.repository;
 
-import com.hudyma.CarJPA.model.Car;
+import com.hudyma.CarRental2024.model.Car;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

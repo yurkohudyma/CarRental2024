@@ -1,21 +1,22 @@
-package com.hudyma.CarJPA.controller;
+package com.hudyma.CarRental2024.controller;
 
-import com.hudyma.CarJPA.dto.CarProfilesDto;
-import com.hudyma.CarJPA.model.CarProfile;
-import com.hudyma.CarJPA.repository.CarProfileRepository;
-import com.hudyma.CarJPA.service.CarProfilesService;
+import com.hudyma.CarRental2024.dto.CarProfilesDto;
+import com.hudyma.CarRental2024.model.CarProfile;
+import com.hudyma.CarRental2024.repository.CarProfileRepository;
+import com.hudyma.CarRental2024.service.CarProfilesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@RestController
 @RequestMapping("/car-profiles")
 @RequiredArgsConstructor
 @Log4j2
+@Controller
 public class CarProfileController {
 
     private final CarProfileRepository carProfileRepository;
