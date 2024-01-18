@@ -1,1 +1,1 @@
-Spring Data JPA Car Rental Core project
+Spring MVC Car Rental service
