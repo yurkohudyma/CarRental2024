@@ -97,7 +97,7 @@ public class OrderController {
         return REDIRECT_ORDERS;
     }*/
 
-    /*@GetMapping("{id}")
+    /*@GetMapping("/{id}")
     public Optional<Order> getById(@PathVariable("id") Long id) {
         return orderRepository.findById(id);
     }*/

@@ -31,44 +31,45 @@
     </div>
 
     <!--USERS READOUT SECTION-->
+
+    <div class="order_header">Замовлення</div>
     <table class="order_table">
         <thead>
-        <tr>
-            <th class="order_table_header" colspan="10">Чинні замовлення</th>
+        <tr class="order_table_legend">
+            <th>№</th>
+            <th>Користувач</th>
+            <th>Марка</th>
+            <th>Початок</th>
+            <th>Кінець</th>
+            <th>Тривалість</th>
+            <th>Сума</th>
+            <th>Водій</th>
+            <th>Статус</th>
+            <th>Дія</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td class="order_table_legend">№</td>
-            <td class="order_table_legend">Користувач</td>
-            <td class="order_table_legend">Марка</td>
-            <td class="order_table_legend">Початок</td>
-            <td class="order_table_legend">Кінець</td>
-            <td class="order_table_legend">Тривалість</td>
-            <td class="order_table_legend">Сума</td>
-            <td class="order_table_legend">Водій</td>
-            <td class="order_table_legend">Статус</td>
-            <td class="order_table_legend">Дія</td>
-        </tr>
-
         <tr class="order" th:each="order : ${orderList}">
             <td class="order_unit" th:text="${order.id}"></td>
             <td class="order_unit">
                 <form action="#" th:action="@{'/users/'+${order.user.id}}" th:method="get">
-                    <input type = "hidden" class="button" />
-                    <button type="submit" th:text="${order.user.name}"></button>
+                    <input type="hidden"/>
+                    <button type="submit" th:text="${order.user.name}" class="users_button_in_orderlist"></button>
                 </form>
             </td>
             <td class="order_unit" th:text="${order.car.model}"></td>
             <td class="order_unit" th:text="${order.dateBegin}"></td>
             <td class="order_unit" th:text="${order.dateEnd}"></td>
-            <td class="order_unit" th:text="${order.durability}"></td>
-            <td class="order_unit" th:text="'€ '+${order.amount}"></td>
+            <td class="order_unit" th:text="${order.durability}+' діб'"></td>
+            <td class="order_unit" th:text="'€'+${order.amount}"></td>
             <td class="order_unit" th:text="${order.auxNeeded}"></td>
             <td class="order_unit" th:text="${order.status}"></td>
             <td>
                 <form action="#" th:action="@{'/orders/'+${order.id}}" th:method="delete">
-                    <input type="submit" value="Видалити" class="caution_button_orderlist">
+                    <input type="hidden"/>
+                    <button type="submit" class="delete_ico_orderlist">
+                        <img th:src="@{/img/delete-button.png}" th:title = "Видалити" />
+                    </button>
                 </form>
             </td>
         </tr>

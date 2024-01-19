@@ -1,9 +1,6 @@
-/* @import "index.css"; */
 @import "reset.css";
 @import "main.css";
 
 * {
-    font-family: "Arsenal", sans-serif;
-	font-weight: 300;
-	font-style: normal;
+    font-family: "Arsenal", sans-serif;	
 }

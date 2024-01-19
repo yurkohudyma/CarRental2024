@@ -8,9 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @Log4j2
 @RequestMapping("/users")
@@ -22,77 +20,74 @@ public class UserController {
     private static final String REDIRECT_USERS = "redirect:/users";
 
     @GetMapping
-    public String getAll (Model model){
+    public String getAll(Model model) {
         model.addAttribute("userList", userRepository.findAll());
         return "users";
     }
 
-    @GetMapping("{id}")
-    public String getById (@PathVariable Long id, Model model){
+    @GetMapping("/{id}")
+    public String getById(@PathVariable Long id, Model model) {
         model.addAttribute("userList",
                 List.of(userRepository
-                        .findById(id)
-                        .orElseThrow()));
-        return "users";
+                .findById(id)
+                .orElseThrow()));
+        System.out.println(model.asMap());
+        return REDIRECT_USERS;
     }
 
     @PostMapping
-    public String addUser (User user){
+    public String addUser(User user) {
         userRepository.save(user);
         return REDIRECT_USERS;
     }
 
     @DeleteMapping("/{id}")
-    public String delete (@PathVariable Long id){
-        if (userRepository.findById(id).isPresent()){
+    public String delete(@PathVariable Long id) {
+        if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
-        }
-        else log.info(
-                "...User "+ id +" does not EXIST");
+        } else log.info(
+                "...User " + id + " does not EXIST");
         return REDIRECT_USERS;
     }
 
     @DeleteMapping
-    public String deleteAll (){
+    public String deleteAll() {
         userRepository
                 .findAll()
                 .forEach(userRepository::delete);
         return REDIRECT_USERS;
     }
 
-    @PostMapping ("/block/{id}")
-    public String blockUser (@PathVariable Long id){
-        if (userRepository.findById(id).isPresent()){
-            log.info("...Blocking user = "+id);
+    @PostMapping("/block/{id}")
+    public String blockUser(@PathVariable Long id) {
+        if (userRepository.findById(id).isPresent()) {
+            log.info("...Blocking user = " + id);
             User user = userRepository.findById(id).orElseThrow();
             user.setAccessLevel("BLOCKED");
             userRepository.save(user);
-        }
-        else log.info("User "+ id + " not found");
+        } else log.info("User " + id + " not found");
         return REDIRECT_USERS;
     }
 
-    @PostMapping ("/unblock/{id}")
-    public String unblockUser (@PathVariable Long id){
-        if (userRepository.findById(id).isPresent()){
-            log.info("...Blocking user = "+id);
+    @PostMapping("/unblock/{id}")
+    public String unblockUser(@PathVariable Long id) {
+        if (userRepository.findById(id).isPresent()) {
+            log.info("...Blocking user = " + id);
             User user = userRepository.findById(id).orElseThrow();
             user.setAccessLevel("USER");
             userRepository.save(user);
-        }
-        else log.info("User "+ id + " not found");
+        } else log.info("User " + id + " not found");
         return REDIRECT_USERS;
     }
 
-    @PostMapping ("/setMgr/{id}")
-    public String setManager (@PathVariable Long id){
-        if (userRepository.findById(id).isPresent()){
-            log.info("...Blocking user = "+id);
+    @PostMapping("/setMgr/{id}")
+    public String setManager(@PathVariable Long id) {
+        if (userRepository.findById(id).isPresent()) {
+            log.info("...Blocking user = " + id);
             User user = userRepository.findById(id).orElseThrow();
             user.setAccessLevel("MANAGER");
             userRepository.save(user);
-        }
-        else log.info("User "+ id + " not found");
+        } else log.info("User " + id + " not found");
         return REDIRECT_USERS;
     }
 

@@ -118,7 +118,13 @@ textarea {
 	background-color:white
 }
 
-.select_button:hover, .button:hover, .caution_button:hover, .orange_button:hover {
+.select_button:hover, 
+.button:hover, 
+.caution_button:hover, 
+.orange_button:hover, 
+.users_button_in_orderlist:hover,
+.caution_button_orderlist:hover,
+.delete_ico_orderlist:hover {
 	background-color: white;
 	color: #b90000;
 	border: /* 1px solid */ #b90000;
@@ -138,9 +144,7 @@ textarea {
     outline-color: transparent;
     border-radius: 6px;
     background-color: #67a300;
-    color: #fff;
-    /* width: 100px;
-    height: 40px; */
+    color: #fff;    
     cursor: pointer;
     margin-right: 10px;
     margin-top: 10px;
@@ -188,8 +192,7 @@ textarea {
 
 /* Cars styles */
 
-.car {
-    margin-top: 30px;
+.car, .user {    
     padding: 15px;
     border: 1px solid /* #f3f3f3 */;
     border-radius: 10px;
@@ -204,14 +207,11 @@ textarea {
     font-weight: 500;
 }
 
-.cars_header, .users_header, .order_table_header  {
+.cars_header, .users_header, .order_header  {		
+	font-size: 1.3em;    
+	margin: 10px;	
 	margin-top: 30px;
-	font-size: 1.3em;
-    font-weight: 500;
-	text-align: center
-}
-
- 
+} 
 
 .car_unit, .user_unit  {    
 }
@@ -225,12 +225,31 @@ textarea {
 	font-weight: bold
 }
 
+.users_button_in_orderlist {
+	border-style: none;
+    outline-color: transparent;
+    border-radius: 6px;
+    background-color: white;
+    color: black;    
+    cursor: pointer;    
+	text-align: center;
+	text-decoration: underline;
+
+}
+
 .order_table {
 	box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 	text-align: center;	
-	border-radius: 10px;
-	margin-top: 30px;
+	border-radius: 10px;	
 	border: 1px solid /* #f3f3f3 */;
 	border-color: lightskyblue;
-	vertical-align: center
+	vertical-align: center;
+	font-style: inherit
+}
+
+.delete_ico_orderlist {
+	background-color: white;
+	border-style: none;
+    outline-color: transparent;
+	cursor: pointer;    
 }
