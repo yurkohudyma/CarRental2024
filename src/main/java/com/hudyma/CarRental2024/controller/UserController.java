@@ -22,6 +22,7 @@ public class UserController {
     @GetMapping
     public String getAll(Model model) {
         model.addAttribute("userList", userRepository.findAll());
+        log.info("...Retrieving All users...");
         return "users";
     }
 
@@ -31,8 +32,8 @@ public class UserController {
                 List.of(userRepository
                 .findById(id)
                 .orElseThrow()));
-        System.out.println(model.asMap());
-        return REDIRECT_USERS;
+        log.info("...Retrieving user "+id);
+        return "users";
     }
 
     @PostMapping
@@ -90,13 +91,4 @@ public class UserController {
         } else log.info("User " + id + " not found");
         return REDIRECT_USERS;
     }
-
-
-    /*@PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void addUsers (@RequestBody User[] users){
-        Arrays.stream(users)
-                .forEach(this::addUser);
-    }*/
-
 }

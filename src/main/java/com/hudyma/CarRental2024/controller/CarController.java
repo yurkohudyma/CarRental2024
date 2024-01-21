@@ -11,6 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @Log4j2
 @RequestMapping("/cars")
 @RequiredArgsConstructor
@@ -25,11 +28,21 @@ public class CarController {
         model.addAttribute("carClassArr", CarClass.values());
         model.addAttribute("carColorArr", CarColor.values());
         model.addAttribute("carPropulsionArr", CarPropulsion.values());
+        model.addAttribute("showAddCarForm", true);
         log.info("...Retrieving all available cars");
         return "cars";
     }
 
-    /*@ResponseStatus(HttpStatus.NO_CONTENT) - setting CUSTOM HTTP statuses will deter REDIRECTING */
+    @GetMapping("/{id}")
+    public String getCar (@PathVariable Long id, Model model){
+        model.addAttribute("carList", List.of(carRepository
+                .findById(id)
+                .orElseThrow()));
+        model.addAttribute("showAddCarForm", false);
+        log.info("...Retrieving car "+id);
+        return "cars";
+    }
+
     @PostMapping
     public String addCar(Car car) {
         log.info("...adding a car = " + car);
@@ -39,10 +52,10 @@ public class CarController {
 
     @DeleteMapping("/{id}")
     public String deleteCar(@PathVariable("id") Long id) {
-        if (carRepository.findById(id).isPresent()) {
+        Optional<Car> car = carRepository.findById(id);
+        if (car.isPresent()) {
             log.info("...Deleting car " + id);
-            Car car = carRepository.findById(id).orElseThrow();
-            carRepository.delete(car);
+            carRepository.deleteById(id);
         } else log.info("...Car id = " + id + " does not EXIST");
         return REDIRECT_CARS;
     }
@@ -57,24 +70,10 @@ public class CarController {
 
     @PatchMapping("/{id}")
     public String patchCar(@PathVariable("id") Long id, Car updateCar) {
-        if (carRepository.findById(id).isPresent()){
+        if (carRepository.findById(id).isPresent()) {
             log.info("............Trying to update car " + id);
             carRepository.save(updateCar);
         } else log.info("...Car id = " + id + " does not EXIST");
         return REDIRECT_CARS;
     }
-
-    /*@GetMapping("/{id}")
-    public Optional<Car> getCarById(@PathVariable("id") Long id) {
-        var car = carRepository.findById(id);
-        log.info("...Getting car by ID = " + id);
-        log.info(car);
-        return car;
-    }*/
-
-    /*@GetMapping("/dto")
-    public List<CarDto> getAllDto() {
-        return carService.getAll();
-    }*/
-
 }

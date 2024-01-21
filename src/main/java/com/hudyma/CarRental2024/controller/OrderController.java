@@ -89,18 +89,6 @@ public class OrderController {
                 .forEach(orderRepository::delete);
         return REDIRECT_ORDERS;
     }
-
-    /*@PostMapping
-    public String addOrders (@RequestBody Order[] orders){
-        Arrays.stream(orders)
-                .forEach(this::addOrder);
-        return REDIRECT_ORDERS;
-    }*/
-
-    /*@GetMapping("/{id}")
-    public Optional<Order> getById(@PathVariable("id") Long id) {
-        return orderRepository.findById(id);
-    }*/
 }
 
 

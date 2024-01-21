@@ -43,6 +43,10 @@ a:not([class]) {
     text-decoration-skip-ink: auto;
 }
 
+a:hover {
+	color: red;
+}
+
 img {
     max-width: 100%;
     display: block;

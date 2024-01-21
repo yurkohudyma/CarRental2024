@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&display=swap"
           rel="stylesheet">
-    <link rel="stylesheet" th:href="@{css/style.css}" href="../static/css/style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 
     <title>Car Rental ::: Orders</title>
 </head>
@@ -33,7 +33,7 @@
     <!--USERS READOUT SECTION-->
 
     <div class="order_header">Замовлення</div>
-    <table class="order_table">
+    <table class="order_table" th:unless="${orderList.isEmpty}">
         <thead>
         <tr class="order_table_legend">
             <th>№</th>
@@ -52,12 +52,18 @@
         <tr class="order" th:each="order : ${orderList}">
             <td class="order_unit" th:text="${order.id}"></td>
             <td class="order_unit">
-                <form action="#" th:action="@{'/users/'+${order.user.id}}" th:method="get">
+                <!--<form action="#" th:action="@{'/users?id='+${order.user.id}}" th:method="get">
                     <input type="hidden"/>
-                    <button type="submit" th:text="${order.user.name}" class="users_button_in_orderlist"></button>
-                </form>
+                    <button type="submit" th:text="${order.user.name}" class="users_button_in_orderlist">
+                    </button>
+                </form>-->
+                <a href="users.html" th:href="@{'/users/'+${order.user.id}}" th:text="${order.user.name}"></a>
             </td>
-            <td class="order_unit" th:text="${order.car.model}"></td>
+            <!--<td class="order_unit" th:text="${order.car.model}"></td>-->
+
+            <td class="order_unit">
+                <a href="cars.html" th:href="@{'/cars/'+${order.car.id}}" th:text="${order.car.model}"></a>
+            </td>
             <td class="order_unit" th:text="${order.dateBegin}"></td>
             <td class="order_unit" th:text="${order.dateEnd}"></td>
             <td class="order_unit" th:text="${order.durability}+' діб'"></td>

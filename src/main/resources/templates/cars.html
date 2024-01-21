@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&display=swap"
           rel="stylesheet">
-    <link rel="stylesheet" th:href="@{css/style.css}" href="../static/css/style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 
     <title>Car Rental ::: Cars</title>
 </head>
@@ -30,8 +30,48 @@
         </form>
     </div>
 
+    <div class="car_entry_form_block" th:if="${showAddCarForm}">
+        <!--CAR ENTRY FORM SECTION-->
+        <form action="#" th:action="@{/cars}" th:method="post">
+            <div class="car_entry_form_level">
+                <label for="model_input">Марка</label>
+                <input id="model_input" name="model" type="text" placeholder="Suzuki Across" required>
+                <label for="description_input" id="description">Опис</label>
+                <input id="description_input" name="description" placeholder="Зручна і якісна" required>
+                <label for="price_input">€</label>
+                <input id="price_input" name="price" type="text" placeholder="10.00" title="[xx.yy]" required
+                       pattern="\d+[.]?\d*">
+
+            </div>
+
+            <div class="car_entry_form_level">
+                <label for="carclass_input">Клас</label>
+                <select class="select_button" id="carclass_input" name="carClass">
+                    <option th:each="car_class : ${carClassArr}" th:value="${car_class}"
+                            th:text="${car_class}"></option>
+                </select>
+
+                <label for="seatsQuantity_input" id="seatsQuantity">Місць</label>
+                <input id="seatsQuantity_input" name="seatsQuantity" type="text" placeholder="5" required pattern="\d+">
+
+                <label for="color_input">Колір</label>
+                <select class="select_button" id="color_input" name="color">
+                    <option th:each="car_color : ${carColorArr}" th:value="${car_color}"
+                            th:text="${car_color}"></option>
+                </select>
+
+                <label for="propulsion_input">Рушій</label>
+                <select class="select_button" id="propulsion_input" name="propulsion">
+                    <option th:each="propulsion : ${carPropulsionArr}" th:value="${propulsion}"
+                            th:text="${propulsion}"></option>
+                </select>
+                <input type="submit" value="Додати" class="button">
+            </div>
+        </form>
+    </div>
+
     <!--CARS READOUT SECTION-->
-    <div class = "cars_header">Автомобілі</div>
+    <div class="cars_header">Автомобілі</div>
     <div class="car" th:each="car : ${carList}">
         <div class="car_unit" th:text="'№ '+${car.id}"></div>
         <div class="car_model" th:text="${car.model}"></div>
@@ -56,41 +96,6 @@
         </form>
     </div>
     <br>
-    <div class="form_block">
-        <!--CAR ENTRY FORM SECTION-->
-        <form action="#" th:action="@{/cars}" th:method="post">
-            <label for="model_input">Марка</label>
-            <input id="model_input" name="model" type="text" placeholder="Suzuki Across" required>
-            <br>
-            <label for="description_input" id="description">Опис</label>
-            <input id="description_input" name="description" placeholder="Зручна і якісна" required></input>
-            <br>
-            <label for="carclass_input">Клас</label>
-            <select class="select_button" id="carclass_input" name="carClass">
-                <option th:each="car_class : ${carClassArr}" th:value="${car_class}" th:text="${car_class}"></option>
-            </select>
-            <br>
-            <label for="price_input">Ціна</label>
-            <input id="price_input" name="price" type="text" placeholder="10.00" title="[xx.yy]" required
-                   pattern="\d+[.]?\d*">
-            <br>
-            <label for="seatsQuantity_input" id="seatsQuantity">Місць</label>
-            <input id="seatsQuantity_input" name="seatsQuantity" type="text" placeholder="5" required pattern="\d+">
-            <br>
-            <label for="color_input">Колір</label>
-            <select class="select_button" id="color_input" name="color">
-                <option th:each="car_color : ${carColorArr}" th:value="${car_color}" th:text="${car_color}"></option>
-            </select>
-            <br>
-            <label for="propulsion_input">Рушій</label>
-            <select class="select_button" id="propulsion_input" name="propulsion">
-                <option th:each="propulsion : ${carPropulsionArr}" th:value="${propulsion}"
-                        th:text="${propulsion}"></option>
-            </select>
-            <br>
-            <input type="submit" value="Додати" class="button">
-        </form>
-    </div>
 
 
 </div>

@@ -31,13 +31,7 @@ header h1 {
 }
 
 /* Form styles */
-.form_block {
-    flex: 2;
-    display: block;
-    background-color: white;
-    border-radius: 4px;
-    z-index: 98;
-}
+
 
 form {
     /* display: flex; */
@@ -137,6 +131,8 @@ textarea {
     background-color: white;
     border-radius: 4px;
     z-index: 98;	
+	margin: 10px;
+
 }
 
 .button {
@@ -214,6 +210,21 @@ textarea {
 } 
 
 .car_unit, .user_unit  {    
+}
+
+.car_entry_form_level {
+	width: 860px;
+}
+
+.car_entry_form_block {
+    flex: 2;
+    display: block;
+    background-color: white;
+    border-radius: 4px;
+    z-index: 98;	
+	margin: 15px;
+
+
 }
 
 .order_unit {
