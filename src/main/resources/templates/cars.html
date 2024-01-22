@@ -41,7 +41,6 @@
                 <label for="price_input">€</label>
                 <input id="price_input" name="price" type="text" placeholder="10.00" title="[xx.yy]" required
                        pattern="\d+[.]?\d*">
-
             </div>
 
             <div class="car_entry_form_level">
@@ -50,16 +49,13 @@
                     <option th:each="car_class : ${carClassArr}" th:value="${car_class}"
                             th:text="${car_class}"></option>
                 </select>
-
                 <label for="seatsQuantity_input" id="seatsQuantity">Місць</label>
                 <input id="seatsQuantity_input" name="seatsQuantity" type="text" placeholder="5" required pattern="\d+">
-
                 <label for="color_input">Колір</label>
                 <select class="select_button" id="color_input" name="color">
                     <option th:each="car_color : ${carColorArr}" th:value="${car_color}"
                             th:text="${car_color}"></option>
                 </select>
-
                 <label for="propulsion_input">Рушій</label>
                 <select class="select_button" id="propulsion_input" name="propulsion">
                     <option th:each="propulsion : ${carPropulsionArr}" th:value="${propulsion}"
@@ -82,7 +78,7 @@
         <div class="car_unit" th:text="${car.color}"></div>
         <div class="car_unit" th:text="${car.propulsion}"></div>
         </br>
-        <a href="edit.html" th:href="@{'/edit/'+${car.id}}">Редагувати</a>
+        <a href="cars.html" th:href="@{'/cars/'+${car.id}}">Редагувати</a>
         <form action="#" th:action="@{'/cars/'+${car.id}}" th:method="delete">
             <input type="submit" value="Видалити" class="orange_button">
         </form>
@@ -90,7 +86,7 @@
     </div>
 
     <!--CONTEXT ACTIONS BUTTONS-->
-    <div class="buttons_block" th:if="${!carList.isEmpty()}">
+    <div class="buttons_block" th:if="${!carList.isEmpty()} and ${showAddCarForm}">
         <form action="#" th:action="@{/cars}" th:method="delete">
             <input type="submit" value="Видалити все" class="caution_button">
         </form>

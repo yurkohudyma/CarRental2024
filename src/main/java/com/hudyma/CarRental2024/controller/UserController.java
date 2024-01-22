@@ -1,6 +1,7 @@
 package com.hudyma.CarRental2024.controller;
 
 import com.hudyma.CarRental2024.model.User;
+import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,6 +23,7 @@ public class UserController {
     @GetMapping
     public String getAll(Model model) {
         model.addAttribute("userList", userRepository.findAll());
+        model.addAttribute("soleUserCard", false);
         log.info("...Retrieving All users...");
         return "users";
     }
@@ -32,6 +34,7 @@ public class UserController {
                 List.of(userRepository
                 .findById(id)
                 .orElseThrow()));
+        model.addAttribute("soleUserCard", true);
         log.info("...Retrieving user "+id);
         return "users";
     }
@@ -90,5 +93,16 @@ public class UserController {
             userRepository.save(user);
         } else log.info("User " + id + " not found");
         return REDIRECT_USERS;
+    }
+
+    @PatchMapping ("/{id}")
+    public String editUser (@PathVariable Long id, User user){
+        if (user.getId().equals(id)) {
+            log.info("updating user "+id);
+            user.setAccessLevel("USER");
+            userRepository.save(user);
+        }
+        else throw new IllegalArgumentException("Id does not correspond to Editable User");
+        return REDIRECT_USERS+"/"+id;
     }
 }

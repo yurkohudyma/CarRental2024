@@ -41,7 +41,7 @@ form {
     z-index: 99;
 }
 
-#model_input 
+#model_input, #name_input, #email_input , #passportData_input
 {
     flex: 1;
     margin: 0 10px;
@@ -196,6 +196,7 @@ textarea {
 	display: inline-table;
 	text-align: center;
 	border-color: lightskyblue;
+	margin: 5px;
 }
 
 .car_model, .user_name {
@@ -212,11 +213,11 @@ textarea {
 .car_unit, .user_unit  {    
 }
 
-.car_entry_form_level {
+.car_entry_form_level, .order_entry_form_level {
 	width: 860px;
 }
 
-.car_entry_form_block {
+.car_entry_form_block, .order_entry_form_block {
     flex: 2;
     display: block;
     background-color: white;

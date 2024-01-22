@@ -30,6 +30,42 @@
         </form>
     </div>
 
+    <!--ORDER ENTRY FORM SECTION-->
+    <div class="order_entry_form_block">
+        <form action="#" th:action="@{/orders}" th:method="post">
+            <div class="order_entry_form_level">
+                <label for="order_user">Користувач</label>
+                <select class="select_button" id="order_user" name="user_id">
+                    <!-- many efforts to retrieve field userId from User,
+                    therefore it relayed via ModelAttrib as String -->
+                    <option th:each="user : ${userList}" th:value="${user.id}"
+                            th:text="${user.name}"></option>
+                </select>
+                <label for="order_model">Марка</label>
+                <select class="select_button" id="order_model" name="car_id">
+                    <option th:each="car : ${carList}" th:value="${car.id}"
+                            th:text="${car.model}"></option>
+                </select>
+            </div>
+
+            <div class="order_entry_form_level">
+                <label for="pickup_date">Початок</label>
+                <input id="pickup_date" name="dateBegin" type="date" placeholder="ДД-ММ-РРРР" required>
+
+                <label for="drop-off_date">Кінець</label>
+                <input id="drop-off_date" name="dateEnd" type="date" placeholder="ДД-ММ-РРРР" required>
+
+                <label for="driver_checkbox">Водій</label>
+                <input id="driver_checkbox" type="checkbox" checked value = "true"
+                       th:checked="${auxNeeded}" name="auxNeeded"/>
+
+
+
+                <input type="submit" value="Додати" class="button">
+            </div>
+        </form>
+    </div>
+
     <!--USERS READOUT SECTION-->
 
     <div class="order_header">Замовлення</div>

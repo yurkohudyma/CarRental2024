@@ -6,6 +6,8 @@ import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
+import com.hudyma.CarRental2024.service.CarService;
+import com.hudyma.CarRental2024.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,47 +31,30 @@ public class OrderController {
     private final CarRepository carRepository;
     @Autowired
     private final UserRepository userRepository;
+    @Autowired
+    private final OrderService orderService;
 
     @GetMapping
     public String getAll(Model model) {
-        model.addAttribute("orderList",orderRepository.findAll());
+        model.addAttribute("orderList", orderRepository.findAll());
+        model.addAttribute("userList", userRepository.findAll());
+        model.addAttribute("carList", carRepository.findAll());
         return "orders";
     }
 
     @PostMapping
-    public String addOrder(Order order) {
-        order.setAmount(calculateOrderAmount(order));
-        log.info("...getting user by order.user id");
-        User user = userRepository.findById(order.getUser()
-                        .getId())
-                .orElseThrow(
-                        () -> new NoSuchElementException
-                                (".............User ID is not available in REQ BODY"));
-        log.info("...getting car by order.car id");
-        Car car = carRepository.findById(order
-                        .getCar()
-                        .getId())
-                .orElseThrow(
-                        () -> new NoSuchElementException
-                                (".............Car ID is not available in REQ BODY"));
-        order.setCar(car);
-        user.addOrder(order);
+    public String addOrder(Order order,
+                           @ModelAttribute("user_id") String userIdStr,
+                           @ModelAttribute("car_id")  String carIdStr) {
+        Long userId = Long.parseLong(userIdStr), carId = Long.parseLong(carIdStr);
+        log.info("...Submitting order data = " + order);
+        log.info("...with userId = " + userId + ", carId = " + carId);
+        orderService.setOrder(order, carId, userId);
+        log.info("...persisting order");
+        if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
         orderRepository.save(order);
+        log.info("... = "+order);
         return REDIRECT_ORDERS;
-    }
-
-    private Double calculateOrderAmount(Order order) {
-        long days = ChronoUnit.DAYS.between(
-                order.getDateBegin(),
-                order.getDateEnd());
-        if (days <= 0) throw new IllegalArgumentException
-                (".........DATES OF RENTAL INCORRECT");
-        order.setDurability(days);
-        Double price = carRepository.findById(order.getCar()
-                        .getId())
-                .orElseThrow()
-                .getPrice();
-        return days * price;
     }
 
     @DeleteMapping("/{id}")

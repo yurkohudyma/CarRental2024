@@ -39,7 +39,8 @@
         <div class="user_unit" th:text="'Паспорт: ' + ${user.passportData}"></div>
         <div class="user_unit" th:text="'Доступ: ' + ${user.accessLevel}"></div>
         </br>
-        <a href="edit.html" th:href="@{'/edit/'+${user.id}}">Редагувати</a>
+        <a href="edit.html" th:unless="${user.accessLevel == 'ADMIN'}"
+           th:href="@{'/edit/'+${user.id}}">Редагувати</a>
         <div class="user_block_btn" th:unless="${user.accessLevel == 'BLOCKED'
         or user.accessLevel == 'ADMIN'
         or user.accessLevel == 'MANAGER' }">
@@ -66,7 +67,7 @@
     </div>
 
     <!--CONTEXT ACTIONS BUTTONS-->
-    <div class="buttons_block" th:if="${!userList.isEmpty()}">
+    <div class="buttons_block" th:if="${!userList.isEmpty()} and ${!soleUserCard}">
         <form action="#" th:action="@{/users}" th:method="delete">
             <input type="submit" value="Видалити все" class="caution_button">
         </form>

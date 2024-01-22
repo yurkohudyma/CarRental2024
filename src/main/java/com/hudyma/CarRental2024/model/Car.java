@@ -51,7 +51,7 @@ public class Car {
         carProfile.setCar(this);
         this.carProfile = carProfile;
     }*/
-    @JsonBackReference(value = "cars_orders")
+    /*@JsonBackReference(value = "cars_orders")
     @OneToOne
-    private Order order;
+    private Order order;*/
 }

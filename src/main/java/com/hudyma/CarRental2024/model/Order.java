@@ -45,10 +45,10 @@ public class Order {
     @JoinColumn(name = "car_id")
     private Car car;
 
-    public void setCar(Car car) {
-        car.setOrder(this);
+    /*public void setCar(Car car) {
         this.car = car;
-    }
+        this.(car);
+    }*/
 
     @JsonBackReference(value = "users_orders")
     @ManyToOne(optional = false)

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" content="application/json">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Car Rental ::: Edit</title>
+</head>
+<body>
+<div class="wrapper">
+    <header>
+        <h1 class="title">Панель адміна</h1>
+    </header>
+    <div class="buttons_block">
+        <form action="#" th:action="@{/cars}" th:method="get">
+            <input type="submit" value="Авто" class="button">
+        </form>
+        <form action="#" th:action="@{/orders}" th:method="get">
+            <input type="submit" value="Замовлення" class="button">
+        </form>
+        <form action="#" th:action="@{/users}" th:method="get">
+            <input type="submit" value="Користувачі" class="button">
+        </form>
+    </div>
+
+    <div class="users_header">Редагувати користувача</div>
+    <div class = "user_edit_form">
+        <form action="#" th:action="@{'/users/' + ${user.id}}" th:method="patch">
+            <label for="name_input"></label>
+            <input id="name_input" name="name" type="text" th:placeholder="${user.name}" autofocus required
+                   pattern="^[А-ЯҐЇІЄ]{1}[а-яґїіє]{2,}\s[А-ЯҐЇІЄ]{1}[а-яґїіє]{2,}|[A-Z]{1}[a-z]{2,}\s[A-Z]{1}[a-z]{2,}$"
+                   title="Степан Жменя / John Mitchell">
+            <label for="email_input"></label>
+            <input id="email_input" name="email" th:placeholder="${user.email}" title="user@domain.com"
+                   autofocus required pattern="\b[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\b">
+            <label for="passportData_input"></label>
+            <input id="passportData_input" name="passportData" th:placeholder="${user.passportData}"
+                   autofocus required pattern="^[A-Z]{2}[0-9]{6}" title = "XY123456">
+            <input type="submit" value="Оновити" class="button">
+        </form>
+    </div>
+</div>
+</body>
+</html>
