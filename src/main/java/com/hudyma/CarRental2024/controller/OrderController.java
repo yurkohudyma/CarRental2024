@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -39,21 +40,19 @@ public class OrderController {
         model.addAttribute("orderList", orderRepository.findAll());
         model.addAttribute("userList", userRepository.findAll());
         model.addAttribute("carList", carRepository.findAll());
+        model.addAttribute("currentDate", LocalDate.now());
+        model.addAttribute("currentNextDate", LocalDate.now().plusDays(1));
         return "orders";
     }
 
     @PostMapping
     public String addOrder(Order order,
                            @ModelAttribute("user_id") String userIdStr,
-                           @ModelAttribute("car_id")  String carIdStr) {
+                           @ModelAttribute("car_id") String carIdStr) {
         Long userId = Long.parseLong(userIdStr), carId = Long.parseLong(carIdStr);
-        log.info("...Submitting order data = " + order);
-        log.info("...with userId = " + userId + ", carId = " + carId);
         orderService.setOrder(order, carId, userId);
-        log.info("...persisting order");
         if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
         orderRepository.save(order);
-        log.info("... = "+order);
         return REDIRECT_ORDERS;
     }
 
@@ -72,6 +71,20 @@ public class OrderController {
         orderRepository
                 .findAll()
                 .forEach(orderRepository::delete);
+        return REDIRECT_ORDERS;
+    }
+
+    @PatchMapping("/{id}")
+    public String editOrder(@PathVariable Long id,
+                            Order updatedOrder,
+                            @ModelAttribute("car_id") String carIdStr) {
+        if (updatedOrder.getId().equals(id)) {
+            log.info("...updating order = " + updatedOrder);
+            long carId = Long.parseLong(carIdStr);
+            Order prevOrder = orderRepository.findById(id).orElseThrow();
+            orderService.setOrder(updatedOrder, carId, prevOrder.getUser().getId());
+            orderRepository.save(updatedOrder);
+        } else log.info("id does not correspond to order id");
         return REDIRECT_ORDERS;
     }
 }

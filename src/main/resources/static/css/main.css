@@ -118,7 +118,8 @@ textarea {
 .orange_button:hover, 
 .users_button_in_orderlist:hover,
 .caution_button_orderlist:hover,
-.delete_ico_orderlist:hover {
+.delete_ico_orderlist:hover,
+.edit_ico_orderlist:hover {
 	background-color: white;
 	color: #b90000;
 	border: /* 1px solid */ #b90000;
@@ -217,6 +218,12 @@ textarea {
 	width: 860px;
 }
 
+.car_edit_form_level{
+}
+
+.user_edit_form, .car_edit_form, .order_edit_form_level {
+}
+
 .car_entry_form_block, .order_entry_form_block {
     flex: 2;
     display: block;
@@ -259,9 +266,10 @@ textarea {
 	font-style: inherit
 }
 
-.delete_ico_orderlist {
+.delete_ico_orderlist, .edit_ico_orderlist {
 	background-color: white;
 	border-style: none;
     outline-color: transparent;
 	cursor: pointer;    
 }
+

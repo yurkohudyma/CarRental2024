@@ -70,10 +70,10 @@ public class CarController {
 
     @PatchMapping("/{id}")
     public String patchCar(@PathVariable("id") Long id, Car updateCar) {
-        if (carRepository.findById(id).isPresent()) {
+        if (updateCar.getId().equals(id)) {
             log.info("............Trying to update car " + id);
             carRepository.save(updateCar);
         } else log.info("...Car id = " + id + " does not EXIST");
-        return REDIRECT_CARS;
+        return REDIRECT_CARS+"/"+id;
     }
 }

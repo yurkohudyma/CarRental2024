@@ -4,7 +4,7 @@
     <meta charset="UTF-8" content="application/json">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&display=swap"
@@ -29,21 +29,101 @@
         </form>
     </div>
 
-    <div class="users_header">Редагувати користувача</div>
-    <div class = "user_edit_form">
-        <form action="#" th:action="@{'/users/' + ${user.id}}" th:method="patch">
-            <label for="name_input"></label>
-            <input id="name_input" name="name" type="text" th:placeholder="${user.name}" autofocus required
-                   pattern="^[А-ЯҐЇІЄ]{1}[а-яґїіє]{2,}\s[А-ЯҐЇІЄ]{1}[а-яґїіє]{2,}|[A-Z]{1}[a-z]{2,}\s[A-Z]{1}[a-z]{2,}$"
-                   title="Степан Жменя / John Mitchell">
-            <label for="email_input"></label>
-            <input id="email_input" name="email" th:placeholder="${user.email}" title="user@domain.com"
-                   autofocus required pattern="\b[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\b">
-            <label for="passportData_input"></label>
-            <input id="passportData_input" name="passportData" th:placeholder="${user.passportData}"
-                   autofocus required pattern="^[A-Z]{2}[0-9]{6}" title = "XY123456">
-            <input type="submit" value="Оновити" class="button">
-        </form>
+    <div th:switch="${action}">
+        <div th:case="user" class="user_edit_form">
+            <div class="cars_header" th:text="@{'Редагувати користувача ' +${user.name}}"></div>
+            <form action="#" th:action="@{'/users/' + ${user.id}}" th:method="patch">
+                <label for="name_input"></label>
+                <input id="name_input" name="name" type="text" th:placeholder="${user.name}" autofocus required
+                       pattern="^[А-ЯҐЇІЄ]{1}[а-яґїіє]{2,}\s[А-ЯҐЇІЄ]{1}[а-яґїіє]{2,}|[A-Z]{1}[a-z]{2,}\s[A-Z]{1}[a-z]{2,}$"
+                       title="Степан Жменя / John Mitchell">
+                <label for="email_input"></label>
+                <input id="email_input" name="email" th:placeholder="${user.email}" title="user@domain.com"
+                       autofocus required pattern="\b[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\b">
+                <label for="passportData_input"></label>
+                <input id="passportData_input" name="passportData" th:placeholder="${user.passportData}"
+                       autofocus required pattern="^[A-Z]{2}[0-9]{6}" title="XY123456">
+                <input type="submit" value="Оновити" class="button">
+            </form>
+        </div>
+
+        <div th:case="car" class="car_edit_form">
+            <div class="cars_header" th:text="@{'Редагувати авто '+${car.model}}"></div>
+            <form action="#" th:action="@{'/cars/' + ${car.id}}" th:method="patch">
+                <div class="car_edit_form_level">
+                    <label for="model_input">Марка</label>
+                    <input id="model_input" name="model" type="text" th:placeholder="${car.model}" required>
+                    <label for="description_input" id="description">Опис</label>
+                    <input id="description_input" name="description" th:placeholder="${car.description}" required>
+                    <label for="price_input">€</label>
+                    <input id="price_input" name="price" type="text" th:placeholder="${car.price}" title="[xx.yy]"
+                           required pattern="\d+[.]?\d*">
+                </div>
+                <div class="car_edit_form_level">
+                    <label for="carclass_input">Клас</label>
+                    <select class="select_button" id="carclass_input" name="carClass" th:field="${car.carClass}">
+                        <option th:each="car_class : ${carClassArr}" th:value="${car_class}"
+                                th:text="${car_class}"></option>
+                    </select>
+                    <label for="seatsQuantity_input" id="seatsQuantity">Місць</label>
+                    <input id="seatsQuantity_input" name="seatsQuantity" type="text"
+                           th:placeholder="${car.seatsQuantity}" required pattern="\d+">
+                    <label for="color_input">Колір</label>
+                    <select class="select_button" id="color_input" name="color" th:field="${car.color}">
+                        <option th:each="car_color : ${carColorArr}" th:value="${car_color}"
+                                th:text="${car_color}"></option>
+                    </select>
+                    <label for="propulsion_input">Рушій</label>
+                    <select class="select_button" id="propulsion_input" th:field="${car.propulsion}"
+                            name="propulsion">
+                        <option th:each="car_propulsion : ${carPropulsionArr}" th:value="${car_propulsion}"
+                                th:text="${car_propulsion}"></option>
+                    </select>
+                    <input type="submit" value="Оновити" class="button">
+                </div>
+            </form>
+        </div>
+
+        <div th:case="order" class="order_edit_form">
+            <div class="order_header"
+                 th:text="@{'Редагувати замовлення '+${order.user.name}+' на '+ ${order.car.model}}">
+            </div>
+            <form action="#" th:action="@{'/orders/' + ${order.id}}" th:method="patch">
+                <div class="order_edit_form_level">
+                    <label for="order_model"></label>
+                    <select class="select_button" id="order_model" name="car_id" >
+                        <option th:each="car : ${carList}" th:value="${car.id}"
+                                th:text="${car.model}"></option>
+                    </select>
+
+                    <!--th:field="${order.car.model}"-->
+
+                    <!--<label for="order_model">Марка</label>
+                    <select class="select_button" id="order_model" name="car_id">
+                        <option th:each="car : ${carList}" th:value="${car.id}"
+                                th:text="${car.model}"></option>
+                    </select>-->
+
+
+                    <!--<select class="select_button" id="color_input" name="color" th:field="${car.color}">
+                        <option th:each="car_color : ${carColorArr}" th:value="${car_color}"
+                                th:text="${car_color}"></option>
+                    </select>-->
+
+                    <label for="pickup_date">Початок</label>
+                    <input id="pickup_date" name="dateBegin" type="date"
+                           th:value="${order.dateBegin}" th:min="${currentDate}" autofocus required>
+                    <label for="drop-off_date">Кінець</label>
+                    <input id="drop-off_date" name="dateEnd" type="date" th:min="${currentNextDate}"
+                           th:value="${order.dateEnd}" autofocus required>
+                    <label for="driver_checkbox">Водій</label>
+                    <input id="driver_checkbox" type="checkbox"
+                           th:checked="${order.auxNeeded}" name="auxNeeded"/>
+                    <input type="submit" value="Оновити" class="button">
+
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 </body>

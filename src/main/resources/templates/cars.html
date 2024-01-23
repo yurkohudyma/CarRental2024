@@ -4,7 +4,7 @@
     <meta charset="UTF-8" content="application/json">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&display=swap"
@@ -78,7 +78,7 @@
         <div class="car_unit" th:text="${car.color}"></div>
         <div class="car_unit" th:text="${car.propulsion}"></div>
         </br>
-        <a href="cars.html" th:href="@{'/cars/'+${car.id}}">Редагувати</a>
+        <a href="edit.html" th:href="@{'/edit/'+${car.id}+'/car'}">Редагувати</a>
         <form action="#" th:action="@{'/cars/'+${car.id}}" th:method="delete">
             <input type="submit" value="Видалити" class="orange_button">
         </form>

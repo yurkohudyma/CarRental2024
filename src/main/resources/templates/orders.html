@@ -4,7 +4,7 @@
     <meta charset="UTF-8" content="application/json">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&display=swap"
@@ -37,7 +37,7 @@
                 <label for="order_user">Користувач</label>
                 <select class="select_button" id="order_user" name="user_id">
                     <!-- many efforts to retrieve field userId from User,
-                    therefore it relayed via ModelAttrib as String -->
+                    therefore it's relayed via ModelAttrib as String -->
                     <option th:each="user : ${userList}" th:value="${user.id}"
                             th:text="${user.name}"></option>
                 </select>
@@ -47,26 +47,22 @@
                             th:text="${car.model}"></option>
                 </select>
             </div>
-
             <div class="order_entry_form_level">
                 <label for="pickup_date">Початок</label>
-                <input id="pickup_date" name="dateBegin" type="date" placeholder="ДД-ММ-РРРР" required>
-
+                <input id="pickup_date" name="dateBegin" type="date" th:value = "${currentDate}"
+                       placeholder="ДД-ММ-РРРР" th:min = "${currentDate}" autofocus required>
                 <label for="drop-off_date">Кінець</label>
-                <input id="drop-off_date" name="dateEnd" type="date" placeholder="ДД-ММ-РРРР" required>
-
+                <input id="drop-off_date" name="dateEnd" type="date" th:min = "${currentNextDate}"
+                       placeholder="ДД-ММ-РРРР" autofocus required>
                 <label for="driver_checkbox">Водій</label>
                 <input id="driver_checkbox" type="checkbox" checked value = "true"
                        th:checked="${auxNeeded}" name="auxNeeded"/>
-
-
-
                 <input type="submit" value="Додати" class="button">
             </div>
         </form>
     </div>
 
-    <!--USERS READOUT SECTION-->
+    <!--ORDERS READOUT SECTION-->
 
     <div class="order_header">Замовлення</div>
     <table class="order_table" th:unless="${orderList.isEmpty}">
@@ -81,7 +77,7 @@
             <th>Сума</th>
             <th>Водій</th>
             <th>Статус</th>
-            <th>Дія</th>
+            <th colspan="2">Дія</th>
         </tr>
         </thead>
         <tbody>
@@ -113,6 +109,17 @@
                         <img th:src="@{/img/delete-button.png}" th:title = "Видалити" />
                     </button>
                 </form>
+            </td>
+            <td>
+                <!--<form action="#" th:action="@{'/edit/'+${order.id}+'/order}" th:method="get">
+                    <input type="hidden"/>
+                    <button type="submit" class="edit_ico_orderlist">
+                        <img th:src="@{/img/edit-button.png}" th:title = "Редагувати" />
+                    </button>
+                </form>-->
+                <a href="edit.html" th:href="@{'/edit/'+${order.id}+'/order'}">
+                    <img th:src="@{/img/edit-button.png}" th:title = "Редагувати"/>
+                </a>
             </td>
         </tr>
         </tbody>

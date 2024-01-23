@@ -4,7 +4,7 @@
     <meta charset="UTF-8" content="application/json">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+   <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&display=swap"
@@ -40,7 +40,7 @@
         <div class="user_unit" th:text="'Доступ: ' + ${user.accessLevel}"></div>
         </br>
         <a href="edit.html" th:unless="${user.accessLevel == 'ADMIN'}"
-           th:href="@{'/edit/'+${user.id}}">Редагувати</a>
+           th:href="@{'/edit/'+${user.id}+'/user'}">Редагувати</a>
         <div class="user_block_btn" th:unless="${user.accessLevel == 'BLOCKED'
         or user.accessLevel == 'ADMIN'
         or user.accessLevel == 'MANAGER' }">

@@ -1,7 +1,6 @@
 package com.hudyma.CarRental2024.controller;
 
 import com.hudyma.CarRental2024.model.User;
-import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -102,7 +101,8 @@ public class UserController {
             user.setAccessLevel("USER");
             userRepository.save(user);
         }
-        else throw new IllegalArgumentException("Id does not correspond to Editable User");
+        else log.info(
+                "Id does not correspond to Editable User");
         return REDIRECT_USERS+"/"+id;
     }
 }

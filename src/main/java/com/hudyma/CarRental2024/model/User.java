@@ -52,6 +52,12 @@ public class User {
         order.setUser(null);
     }
 
+    public void updateOrder (Order updatedOrder){
+        int idx = orderList.indexOf(updatedOrder);
+        orderList.remove(idx);
+        orderList.add(updatedOrder);
+    }
+
 
 
 

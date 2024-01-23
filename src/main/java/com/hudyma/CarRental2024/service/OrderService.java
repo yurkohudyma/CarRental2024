@@ -22,37 +22,29 @@ public class OrderService {
     private final CarRepository carRepository;
     private final UserRepository userRepository;
 
-    public void setOrder (Order order, Long carId, Long userId) {
-        log.info("...calculating order amount order");
+    public void setOrder(Order order, Long carId, Long userId) {
         order.setAmount(calculateOrderAmount(order, carId));
-        log.info("...setting Order status");
-        order.setStatus("REQUESTED");
-
+        if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
+        if (order.getStatus() == null) order.setStatus("REQUESTED");
         Car car = carRepository.findById(carId).orElseThrow();
-        log.info("...setting car "+carId +" to order");
+        log.info("...setting car " + carId + " to order " + order.getId());
         order.setCar(car);
-
-        log.info("...getting user by user id");
         User user = userRepository.findById(userId).orElseThrow();
-
-        /*log.info("...setting Order user = "+user);
-        order.setUser(user);*/
-        log.info("...adding order to user "+userId);
-        user.addOrder(order);
+        order.setUser(user);
+        log.info("...adding order to user " + userId);
+        if (!user.getOrderList().contains(order)) {
+            user.addOrder(order);
+        } else user.updateOrder(order);
     }
 
-    //todo implement current date validation as regex in front
     private Double calculateOrderAmount(Order order, Long carId) {
         long days = ChronoUnit.DAYS.between(
                 order.getDateBegin(),
                 order.getDateEnd());
-
-        long daysBefore = ChronoUnit.DAYS.between(
-                LocalDate.now(),
-                order.getDateBegin());
-
-        if (days <= 0 || daysBefore <= 0) throw new IllegalArgumentException
-                (".........DATES OF RENTAL INCORRECT");
+        if (days <= 0) {
+            log.info("...DATES OF RENTAL DIFFER BY " + days + " days");
+            return 0.0;
+        }
         order.setDurability(days);
         Double price = carRepository.findById(carId)
                 .orElseThrow()
