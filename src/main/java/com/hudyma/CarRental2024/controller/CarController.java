@@ -5,6 +5,7 @@ import com.hudyma.CarRental2024.constants.CarPropulsion;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.constants.CarClass;
 import com.hudyma.CarRental2024.repository.CarRepository;
+import com.hudyma.CarRental2024.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class CarController {
     private static final String REDIRECT_CARS = "redirect:/cars";
     private final CarRepository carRepository;
+    private final OrderService orderService;
 
     @GetMapping
     public String getAll(Model model) {
@@ -73,6 +75,7 @@ public class CarController {
         if (updateCar.getId().equals(id)) {
             log.info("............Trying to update car " + id);
             carRepository.save(updateCar);
+            orderService.recalculateOrdersAmountUponCarEdit(id);
         } else log.info("...Car id = " + id + " does not EXIST");
         return REDIRECT_CARS+"/"+id;
     }

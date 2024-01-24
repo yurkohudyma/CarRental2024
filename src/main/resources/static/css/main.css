@@ -51,7 +51,7 @@ form {
     outline-color: #67a300;	
 }
 
-#description_input, #seatsQuantity_input, #price_input
+#description_input
 {
     flex: 1;
     margin: 0 10px;
@@ -60,6 +60,28 @@ form {
     border-radius: 6px;
     outline-color: #67a300;
 	margin-top: 5px;
+}
+
+#price_input {
+	flex: 1;
+    margin: 0 10px;
+    padding-left: 8px;
+    border: 1px solid #67a300;
+    border-radius: 6px;
+    outline-color: #67a300;
+	margin-top: 5px;
+	width: 70px;
+}
+
+#seatsQuantity_input {
+	flex: 1;
+    margin: 0 10px;
+    padding-left: 8px;
+    border: 1px solid #67a300;
+    border-radius: 6px;
+    outline-color: #67a300;
+	margin-top: 5px;
+	width: 35px;
 }
 
 #carclass_input, #color_input, #propulsion_input

@@ -6,6 +6,7 @@ import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.CarRepository;
+import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,11 +24,9 @@ import java.util.NoSuchElementException;
 public class CarService {
 
     private final CarRepository carRepository;
-    @Autowired
-    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<CarDto> getAll (){
+    public List<CarDto> getAll() {
         return carRepository.findAll().stream()
                 .map(s -> new CarDto(
                         s.getCarClass(),
@@ -36,7 +35,4 @@ public class CarService {
                 .toList();
 
     }
-
-
-
 }

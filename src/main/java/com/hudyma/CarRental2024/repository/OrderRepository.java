@@ -20,4 +20,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("delete from Order o where o.id = :id")
     @Modifying
     void deleteById (Long id);
+
+    @Transactional(readOnly = true)
+    List<Order>findAllByCarId (Long id);
 }

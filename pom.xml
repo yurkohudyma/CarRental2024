@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.hudyma</groupId>
     <artifactId>CarRental2024</artifactId>
-    <version>1.1.2</version>
+    <version>1.2</version>
     <packaging>war</packaging>
     <name>CarRental2024</name>
     <description>Car Rental Service</description>
@@ -41,7 +41,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
-
 
 
         <!--<dependency>
@@ -85,4 +84,12 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>aws</id>
+                <properties>
+                    <spring.profiles.active>aws</spring.profiles.active>
+                </properties>
+        </profile>
+    </profiles>
 </project>

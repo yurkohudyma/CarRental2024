@@ -4,15 +4,14 @@ import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.CarRepository;
+import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.Locale;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +20,8 @@ public class OrderService {
 
     private final CarRepository carRepository;
     private final UserRepository userRepository;
+
+    private final OrderRepository orderRepository;
 
     public void setOrder(Order order, Long carId, Long userId) {
         order.setAmount(calculateOrderAmount(order, carId));
@@ -49,6 +50,14 @@ public class OrderService {
         Double price = carRepository.findById(carId)
                 .orElseThrow()
                 .getPrice();
-        return days * price;
+        return Math.round(days * price * 100d) / 100d;
+    }
+
+    public void recalculateOrdersAmountUponCarEdit(Long carId) {
+        List<Order> orderListByCarId = orderRepository.findAllByCarId(carId);
+        for (Order entry : orderListByCarId) {
+            entry.setAmount(calculateOrderAmount(entry, entry.getCar().getId()));
+            orderRepository.save(entry);
+        }
     }
 }
