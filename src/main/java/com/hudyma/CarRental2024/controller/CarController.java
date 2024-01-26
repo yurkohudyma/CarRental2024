@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,9 @@ public class CarController {
         model.addAttribute("carColorArr", CarColor.values());
         model.addAttribute("carPropulsionArr", CarPropulsion.values());
         model.addAttribute("showAddCarForm", true);
+        model.addAttribute("soleCarCard", false);
+        model.addAttribute("carOrdersList",
+                new ArrayList<>());
         log.info("...Retrieving all available cars");
         return "cars";
     }
@@ -41,6 +45,9 @@ public class CarController {
                 .findById(id)
                 .orElseThrow()));
         model.addAttribute("showAddCarForm", false);
+        model.addAttribute("soleCarCard", true);
+        model.addAttribute("carOrdersList",
+                orderService.getOrdersByCarId(id));
         log.info("...Retrieving car "+id);
         return "cars";
     }

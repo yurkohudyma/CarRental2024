@@ -26,9 +26,7 @@ import java.util.Optional;
 public class OrderRestController {
 
     private final OrderRepository orderRepository;
-    @Autowired
     private final CarRepository carRepository;
-    @Autowired
     private final UserRepository userRepository;
 
     @GetMapping

@@ -1,6 +1,5 @@
 package com.hudyma.CarRental2024.repository;
 
-import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

@@ -27,6 +27,10 @@ public class OrderService {
         return orderRepository.findAllByUserId (id);
     }
 
+    public List<Order> getOrdersByCarId (Long id){
+        return orderRepository.findAllByCarId(id);
+    }
+
     public void setOrder(Order order, Long carId, Long userId) {
         order.setAmount(calculateOrderAmount(order, carId));
         if (order.getAuxNeeded() == null) order.setAuxNeeded(false);

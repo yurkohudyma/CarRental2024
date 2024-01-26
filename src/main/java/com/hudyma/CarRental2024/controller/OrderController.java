@@ -28,11 +28,8 @@ public class OrderController {
 
     private static final String REDIRECT_ORDERS = "redirect:/orders";
     private final OrderRepository orderRepository;
-    @Autowired
     private final CarRepository carRepository;
-    @Autowired
     private final UserRepository userRepository;
-    @Autowired
     private final OrderService orderService;
 
     @GetMapping

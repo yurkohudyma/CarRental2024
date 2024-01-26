@@ -22,9 +22,4 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     @Query("delete from Car c where c.id = :id")
     @Modifying
     void deleteById (Long id);
-
-
-
-
-
 }

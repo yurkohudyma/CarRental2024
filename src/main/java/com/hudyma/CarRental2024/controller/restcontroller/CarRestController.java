@@ -21,7 +21,6 @@ public class CarRestController {
     private final CarRepository carRepository;
     private final CarService carService;
 
-    //todo gives JSON of car and profile
     @GetMapping
     public List<Car> getAll() {
         return carRepository.findAll();

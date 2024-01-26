@@ -77,12 +77,11 @@
         <div class="car_unit" th:text="'Місць: '+${car.seatsQuantity}"></div>
         <div class="car_unit" th:text="${car.color}"></div>
         <div class="car_unit" th:text="${car.propulsion}"></div>
-        </br>
+
         <a href="edit.html" th:href="@{'/edit/'+${car.id}+'/car'}">Редагувати</a>
         <form action="#" th:action="@{'/cars/'+${car.id}}" th:method="delete">
             <input type="submit" value="Видалити" class="orange_button">
         </form>
-        </br>
     </div>
 
     <!--CONTEXT ACTIONS BUTTONS-->
@@ -91,7 +90,51 @@
             <input type="submit" value="Видалити все" class="caution_button">
         </form>
     </div>
-    <br>
+
+    <!--CARS ORDERS READOUT SECTION-->
+    <div class="order_header" th:unless="${carOrdersList.isEmpty and !soleCarCard}">Замовлення</div>
+    <table class="order_table" th:unless="${carOrdersList.isEmpty and !soleCarCard}">
+        <thead>
+        <tr class="order_table_legend">
+            <th>№</th>
+            <th>Користувач</th>
+            <th>Початок</th>
+            <th>Кінець</th>
+            <th>Тривалість</th>
+            <th>Сума</th>
+            <th>Водій</th>
+            <th>Статус</th>
+            <th colspan="2">Дія</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="order" th:each="order : ${carOrdersList}">
+            <td class="order_unit" th:text="${order.id}"></td>
+            <td class="order_unit">
+                <a href="users.html" th:href="@{'/users/'+${order.user.id}}" th:text="${order.user.name}"></a>
+            </td>
+            <td class="order_unit" th:text="${order.dateBegin}"></td>
+            <td class="order_unit" th:text="${order.dateEnd}"></td>
+            <td class="order_unit" th:text="${order.durability}+' діб'"></td>
+            <td class="order_unit" th:text="'€'+${order.amount}"></td>
+            <td class="order_unit" th:text="${order.auxNeeded}"></td>
+            <td class="order_unit" th:text="${order.status}"></td>
+            <td>
+                <form action="#" th:action="@{'/orders/'+${order.id}}" th:method="delete">
+                    <input type="hidden"/>
+                    <button type="submit" class="delete_ico_orderlist">
+                        <img th:src="@{/img/delete-button.png}" th:title = "Видалити" />
+                    </button>
+                </form>
+            </td>
+            <td>
+                <a href="edit.html" th:href="@{'/edit/'+${order.id}+'/order'}">
+                    <img th:src="@{/img/edit-button.png}" th:title = "Редагувати"/>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
 
 </div>
