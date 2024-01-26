@@ -253,8 +253,6 @@ textarea {
     border-radius: 4px;
     z-index: 98;	
 	margin: 15px;
-
-
 }
 
 .order_unit {
@@ -293,5 +291,9 @@ textarea {
 	border-style: none;
     outline-color: transparent;
 	cursor: pointer;    
+}
+
+.color_input{
+	
 }
 

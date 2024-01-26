@@ -1,5 +1,6 @@
 package com.hudyma.CarRental2024.controller.restcontroller;
 
+import com.hudyma.CarRental2024.constants.OrderStatus;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.User;
@@ -58,6 +59,7 @@ public class OrderRestController {
                                 (".............Car ID is not available in REQ BODY"));
         order.setCar(car);
         user.addOrder(order);
+        if (order.getStatus() == null) order.setStatus(OrderStatus.REQUESTED);
         orderRepository.save(order);
     }
 

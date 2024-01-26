@@ -14,6 +14,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Transactional(readOnly = true)
     List<Order> findAll();
 
+    List<Order> findAllByUserId(Long id);
+
     @Transactional(readOnly = true)
     Optional<Order> findById(Long id);
 

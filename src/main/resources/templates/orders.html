@@ -111,12 +111,6 @@
                 </form>
             </td>
             <td>
-                <!--<form action="#" th:action="@{'/edit/'+${order.id}+'/order}" th:method="get">
-                    <input type="hidden"/>
-                    <button type="submit" class="edit_ico_orderlist">
-                        <img th:src="@{/img/edit-button.png}" th:title = "Редагувати" />
-                    </button>
-                </form>-->
                 <a href="edit.html" th:href="@{'/edit/'+${order.id}+'/order'}">
                     <img th:src="@{/img/edit-button.png}" th:title = "Редагувати"/>
                 </a>

@@ -1,5 +1,6 @@
 package com.hudyma.CarRental2024.service;
 
+import com.hudyma.CarRental2024.constants.OrderStatus;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.User;
@@ -20,13 +21,16 @@ public class OrderService {
 
     private final CarRepository carRepository;
     private final UserRepository userRepository;
-
     private final OrderRepository orderRepository;
+
+    public List<Order> getOrdersByUserId(Long id) {
+        return orderRepository.findAllByUserId (id);
+    }
 
     public void setOrder(Order order, Long carId, Long userId) {
         order.setAmount(calculateOrderAmount(order, carId));
         if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
-        if (order.getStatus() == null) order.setStatus("REQUESTED");
+        if (order.getStatus() == null) order.setStatus(OrderStatus.REQUESTED);
         Car car = carRepository.findById(carId).orElseThrow();
         log.info("...setting car " + carId + " to order " + order.getId());
         order.setCar(car);
@@ -55,9 +59,10 @@ public class OrderService {
 
     public void recalculateOrdersAmountUponCarEdit(Long carId) {
         List<Order> orderListByCarId = orderRepository.findAllByCarId(carId);
-        for (Order entry : orderListByCarId) {
-            entry.setAmount(calculateOrderAmount(entry, entry.getCar().getId()));
-            orderRepository.save(entry);
-        }
+        orderListByCarId.forEach(order -> {
+            order.setAmount(calculateOrderAmount(
+                    order,order.getCar().getId()));
+            orderRepository.save(order);
+        });
     }
 }

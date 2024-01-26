@@ -2,12 +2,15 @@ package com.hudyma.CarRental2024.controller;
 
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.UserRepository;
+import com.hudyma.CarRental2024.service.OrderService;
+import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
@@ -17,12 +20,14 @@ import java.util.List;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final OrderService orderService;
     private static final String REDIRECT_USERS = "redirect:/users";
 
     @GetMapping
     public String getAll(Model model) {
         model.addAttribute("userList", userRepository.findAll());
         model.addAttribute("soleUserCard", false);
+        model.addAttribute("userOrdersList", new ArrayList<>());
         log.info("...Retrieving All users...");
         return "users";
     }
@@ -33,6 +38,8 @@ public class UserController {
                 List.of(userRepository
                 .findById(id)
                 .orElseThrow()));
+        model.addAttribute("userOrdersList",
+                orderService.getOrdersByUserId(id));
         model.addAttribute("soleUserCard", true);
         log.info("...Retrieving user "+id);
         return "users";
@@ -48,7 +55,7 @@ public class UserController {
     public String delete(@PathVariable Long id) {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
-        } else log.info(
+        } else log.error(
                 "...User " + id + " does not EXIST");
         return REDIRECT_USERS;
     }
@@ -66,9 +73,9 @@ public class UserController {
         if (userRepository.findById(id).isPresent()) {
             log.info("...Blocking user = " + id);
             User user = userRepository.findById(id).orElseThrow();
-            user.setAccessLevel("BLOCKED");
+            user.setAccessLevel(UserAccessLevel.BLOCKED);
             userRepository.save(user);
-        } else log.info("User " + id + " not found");
+        } else log.error("User " + id + " not found");
         return REDIRECT_USERS;
     }
 
@@ -77,9 +84,9 @@ public class UserController {
         if (userRepository.findById(id).isPresent()) {
             log.info("...Blocking user = " + id);
             User user = userRepository.findById(id).orElseThrow();
-            user.setAccessLevel("USER");
+            user.setAccessLevel(UserAccessLevel.USER);
             userRepository.save(user);
-        } else log.info("User " + id + " not found");
+        } else log.error("User " + id + " not found");
         return REDIRECT_USERS;
     }
 
@@ -88,9 +95,9 @@ public class UserController {
         if (userRepository.findById(id).isPresent()) {
             log.info("...Blocking user = " + id);
             User user = userRepository.findById(id).orElseThrow();
-            user.setAccessLevel("MANAGER");
+            user.setAccessLevel(UserAccessLevel.MANAGER);
             userRepository.save(user);
-        } else log.info("User " + id + " not found");
+        } else log.error("User " + id + " not found");
         return REDIRECT_USERS;
     }
 
@@ -98,10 +105,11 @@ public class UserController {
     public String editUser (@PathVariable Long id, User user){
         if (user.getId().equals(id)) {
             log.info("updating user "+id);
-            user.setAccessLevel("USER");
+            User prvUser = userRepository.findById(id).orElseThrow();
+            user.setAccessLevel(prvUser.getAccessLevel());
             userRepository.save(user);
         }
-        else log.info(
+        else log.error(
                 "Id does not correspond to Editable User");
         return REDIRECT_USERS+"/"+id;
     }

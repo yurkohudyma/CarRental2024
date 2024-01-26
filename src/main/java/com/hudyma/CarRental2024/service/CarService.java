@@ -22,7 +22,6 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Log4j2
 public class CarService {
-
     private final CarRepository carRepository;
 
     @Transactional(readOnly = true)

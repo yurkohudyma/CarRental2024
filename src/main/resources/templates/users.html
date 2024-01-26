@@ -39,26 +39,26 @@
         <div class="user_unit" th:text="'Паспорт: ' + ${user.passportData}"></div>
         <div class="user_unit" th:text="'Доступ: ' + ${user.accessLevel}"></div>
         </br>
-        <a href="edit.html" th:unless="${user.accessLevel == 'ADMIN'}"
+        <a href="edit.html" th:unless="${user.accessLevel.toString() == 'ADMIN'}"
            th:href="@{'/edit/'+${user.id}+'/user'}">Редагувати</a>
-        <div class="user_block_btn" th:unless="${user.accessLevel == 'BLOCKED'
-        or user.accessLevel == 'ADMIN'
-        or user.accessLevel == 'MANAGER' }">
+        <div class="user_block_btn" th:unless="${user.accessLevel.toString() == 'BLOCKED'
+        or user.accessLevel.toString() == 'ADMIN'
+        or user.accessLevel.toString() == 'MANAGER' }">
             <form action="#" th:action="@{'/users/'+${user.id}}" th:method="delete">
                 <input type="submit" value="Видалити" class="caution_button">
             </form>
         </div>
-        <div class="user_block_btn" th:unless="${user.accessLevel == 'BLOCKED' or user.accessLevel == 'ADMIN' }">
+        <div class="user_block_btn" th:unless="${user.accessLevel.toString() == 'BLOCKED' or user.accessLevel.toString() == 'ADMIN' }">
             <form action="#" th:action="@{'/users/block/'+${user.id}}" th:method="post">
                 <input type="submit" value="Блокувати" class="orange_button">
             </form>
-            <div class="user_block_btn" th:if="${user.accessLevel == 'USER'}">
+            <div class="user_block_btn" th:if="${user.accessLevel.toString() == 'USER'}">
                 <form action="#" th:action="@{'/users/setMgr/'+${user.id}}" th:method="post">
                     <input type="submit" value="Менеджер" class="button">
                 </form>
             </div>
         </div>
-        <div class="user_unblock_btn" th:if="${user.accessLevel == 'BLOCKED'}">
+        <div class="user_unblock_btn" th:if="${user.accessLevel.toString() == 'BLOCKED'}">
             <form action="#" th:action="@{'/users/unblock/'+${user.id}}" th:method="post">
                 <input type="submit" value="Розблокувати" class="button">
             </form>
@@ -72,6 +72,53 @@
             <input type="submit" value="Видалити все" class="caution_button">
         </form>
     </div>
+
+    <!--USERS ORDERS READOUT SECTION-->
+    <div class="order_header" th:unless="${userOrdersList.isEmpty and !soleUserCard}">Замовлення</div>
+    <table class="order_table" th:unless="${userOrdersList.isEmpty and !soleUserCard}">
+        <thead>
+        <tr class="order_table_legend">
+            <th>№</th>
+            <th>Марка</th>
+            <th>Початок</th>
+            <th>Кінець</th>
+            <th>Тривалість</th>
+            <th>Сума</th>
+            <th>Водій</th>
+            <th>Статус</th>
+            <th colspan="2">Дія</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="order" th:each="order : ${userOrdersList}">
+            <td class="order_unit" th:text="${order.id}"></td>
+            <td class="order_unit">
+                <a href="cars.html" th:href="@{'/cars/'+${order.car.id}}" th:text="${order.car.model}"></a>
+            </td>
+            <td class="order_unit" th:text="${order.dateBegin}"></td>
+            <td class="order_unit" th:text="${order.dateEnd}"></td>
+            <td class="order_unit" th:text="${order.durability}+' діб'"></td>
+            <td class="order_unit" th:text="'€'+${order.amount}"></td>
+            <td class="order_unit" th:text="${order.auxNeeded}"></td>
+            <td class="order_unit" th:text="${order.status}"></td>
+            <td>
+                <form action="#" th:action="@{'/orders/'+${order.id}}" th:method="delete">
+                    <input type="hidden"/>
+                    <button type="submit" class="delete_ico_orderlist">
+                        <img th:src="@{/img/delete-button.png}" th:title = "Видалити" />
+                    </button>
+                </form>
+            </td>
+            <td>
+                <a href="edit.html" th:href="@{'/edit/'+${order.id}+'/order'}">
+                    <img th:src="@{/img/edit-button.png}" th:title = "Редагувати"/>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
 </div>
 </body>
 </html>

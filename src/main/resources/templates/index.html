@@ -32,7 +32,14 @@
             <input type="submit" value="Користувачі" class="button">
         </form>
     </div>
-
+    <form action="#" th:action="@{/cars/color}" th:method="get">
+        <div class="color_input">
+            <input type="color" id="head" name="RED" value="#e66465"/>
+            <label for="head">Червоний</label>
+            <input type="color" id="body" name="YELLOW" value="#f6b73c"/>
+            <label for="body">Жовтий</label>
+        </div>
+    </form>
 
 </div>
 </body>

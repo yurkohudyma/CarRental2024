@@ -1,5 +1,6 @@
 package com.hudyma.CarRental2024.controller.restcontroller;
 
+import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class UserRestController {
     @PostMapping("/one")
     @ResponseStatus(HttpStatus.CREATED)
     public void addUser (@RequestBody User user){
+        if (user.getAccessLevel() == null) user.setAccessLevel(UserAccessLevel.USER);
         userRepository.save(user);
     }
 
