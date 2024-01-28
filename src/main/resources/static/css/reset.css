@@ -47,9 +47,13 @@ a:hover {
 	color: red;
 }
 
+a {
+	padding: inherit;
+}
+
 img {
     max-width: 100%;
-    display: block;
+    /* display: block; */
 }
 
 article > * + * {
@@ -63,9 +67,9 @@ select {
     font: inherit;
 }
 
-img {
+/* img {
     display: block;
-}
+} */
 
 @media (prefers-reduced-motion: reduce) {
     * {

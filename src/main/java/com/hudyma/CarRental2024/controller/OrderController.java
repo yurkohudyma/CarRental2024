@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class OrderController {
 
     @GetMapping
     public String getAll(Model model) {
-        model.addAttribute("orderList", orderRepository.findAll());
+        model.addAttribute("orderList", orderService.getAllOrdersSortedByUsername());
         model.addAttribute("userList", userRepository.findAll());
         model.addAttribute("carList", carRepository.findAll());
         model.addAttribute("currentDate", LocalDate.now());

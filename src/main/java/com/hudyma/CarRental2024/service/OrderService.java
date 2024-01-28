@@ -9,6 +9,7 @@ import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
@@ -25,6 +26,11 @@ public class OrderService {
 
     public List<Order> getOrdersByUserId(Long id) {
         return orderRepository.findAllByUserId (id);
+    }
+
+    public List<Order> getAllOrdersSortedByUsername (){
+        return orderRepository.findAll(Sort.by(
+                Sort.Direction.ASC, "user.name"));
     }
 
     public List<Order> getOrdersByCarId (Long id){

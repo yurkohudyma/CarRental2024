@@ -84,14 +84,8 @@
         <tr class="order" th:each="order : ${orderList}">
             <td class="order_unit" th:text="${order.id}"></td>
             <td class="order_unit">
-                <!--<form action="#" th:action="@{'/users?id='+${order.user.id}}" th:method="get">
-                    <input type="hidden"/>
-                    <button type="submit" th:text="${order.user.name}" class="users_button_in_orderlist">
-                    </button>
-                </form>-->
                 <a href="users.html" th:href="@{'/users/'+${order.user.id}}" th:text="${order.user.name}"></a>
             </td>
-            <!--<td class="order_unit" th:text="${order.car.model}"></td>-->
 
             <td class="order_unit">
                 <a href="cars.html" th:href="@{'/cars/'+${order.car.id}}" th:text="${order.car.model}"></a>
@@ -102,17 +96,17 @@
             <td class="order_unit" th:text="'€'+${order.amount}"></td>
             <td class="order_unit" th:text="${order.auxNeeded}"></td>
             <td class="order_unit" th:text="${order.status}"></td>
-            <td>
+
+            <td class="buttons_order_unit">
                 <form action="#" th:action="@{'/orders/'+${order.id}}" th:method="delete">
-                    <input type="hidden"/>
                     <button type="submit" class="delete_ico_orderlist">
                         <img th:src="@{/img/delete-button.png}" th:title = "Видалити" />
                     </button>
                 </form>
             </td>
-            <td>
+            <td class="buttons_order_unit">
                 <a href="edit.html" th:href="@{'/edit/'+${order.id}+'/order'}">
-                    <img th:src="@{/img/edit-button.png}" th:title = "Редагувати"/>
+                    <img class="edit_ico_orderlist_in_orders" th:src="@{/img/edit-button.png}" th:title = "Редагувати"/>
                 </a>
             </td>
         </tr>

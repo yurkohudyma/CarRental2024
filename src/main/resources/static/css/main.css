@@ -255,9 +255,21 @@ textarea {
 	margin: 15px;
 }
 
+.car_solecard_action_buttons_block, .user_solecard_action_buttons_block {
+	display: inline-flex;
+	margin-top: 10px;
+}
+
+.user_solecard_block-manager_buttons_block  {
+}
+
 .order_unit {
 	text-align: center;
 	padding: 5px;
+}
+
+.buttons_order_unit {
+	vertical-align: baseline;
 }
 
 .order_table_legend {
@@ -282,18 +294,33 @@ textarea {
 	border-radius: 10px;	
 	border: 1px solid /* #f3f3f3 */;
 	border-color: lightskyblue;
-	vertical-align: center;
+	/* vertical-align: baseline; */
 	font-style: inherit
 }
 
-.delete_ico_orderlist, .edit_ico_orderlist {
+.delete_ico_orderlist, 
+.edit_ico_orderlist, 
+.block_ico_userlist, 
+.unblock_ico_userlist, 
+.manager_ico_userlist {
 	background-color: white;
 	border-style: none;
-    outline-color: transparent;
-	cursor: pointer;    
+    /* outline-color: transparent; */
+	cursor: pointer;  
+	vertical-align: baseline;	
+	padding: 2px;	
 }
 
-.color_input{
-	
+.edit_ico_orderlist_in_orders{
+	background-color: white;
+	border-style: none;    
+	cursor: pointer;  
+	vertical-align: baseline;		
+}
+
+.color_input{	
+}
+
+.manager_img_userlist{
 }
 

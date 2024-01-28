@@ -4,7 +4,7 @@
     <meta charset="UTF-8" content="application/json">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-   <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&display=swap"
@@ -28,42 +28,56 @@
         <form action="#" th:action="@{/orders}" th:method="get">
             <input type="submit" value="Замовлення" class="button">
         </form>
+        <form action="#" th:if="${soleUserCard}" th:action="@{/users}" th:method="get">
+            <input type="submit" value="Користувачі" class="button">
+        </form>
     </div>
 
     <!--USERS READOUT SECTION-->
-    <div class = "users_header">Користувачі</div>
+    <div class="users_header">Користувачі</div>
     <div class="user" th:each="user : ${userList}">
         <div class="user_unit" th:text="'№ ' + ${user.id}"></div>
         <div class="user_name" th:text="${user.name}"></div>
         <div class="user_unit" th:text="${user.email}"></div>
         <div class="user_unit" th:text="'Паспорт: ' + ${user.passportData}"></div>
         <div class="user_unit" th:text="'Доступ: ' + ${user.accessLevel}"></div>
-        </br>
-        <a href="edit.html" th:unless="${user.accessLevel.toString() == 'ADMIN'}"
-           th:href="@{'/edit/'+${user.id}+'/user'}">Редагувати</a>
-        <div class="user_block_btn" th:unless="${user.accessLevel.toString() == 'BLOCKED'
-        or user.accessLevel.toString() == 'ADMIN'
-        or user.accessLevel.toString() == 'MANAGER' }">
+
+        <div class="user_solecard_action_buttons_block" th:unless="${user.accessLevel.toString() == 'ADMIN'}">
             <form action="#" th:action="@{'/users/'+${user.id}}" th:method="delete">
-                <input type="submit" value="Видалити" class="caution_button">
+                <button type="submit" class="delete_ico_orderlist" th:unless="${
+                user.accessLevel.toString() == 'BLOCKED'
+             or user.accessLevel.toString() == 'ADMIN'
+             or user.accessLevel.toString() == 'MANAGER' }">
+                    <img th:src="@{/img/delete-button.png}" th:title="Видалити"/>
+                </button>
             </form>
-        </div>
-        <div class="user_block_btn" th:unless="${user.accessLevel.toString() == 'BLOCKED' or user.accessLevel.toString() == 'ADMIN' }">
-            <form action="#" th:action="@{'/users/block/'+${user.id}}" th:method="post">
-                <input type="submit" value="Блокувати" class="orange_button">
+            <a class ="edit_ico_orderlist" href="edit.html" th:href="@{'/edit/'+${user.id}+'/user'}">
+                <img th:src="@{/img/edit-button.png}" th:title="Редагувати"/>
+            </a>
+            <form action="#" th:unless="${user.accessLevel.toString() == 'BLOCKED'
+                                       or user.accessLevel.toString() == 'ADMIN'}"
+                  th:action="@{'/users/block/'+${user.id}}" th:method="post">
+                <button type="submit" class="block_ico_userlist">
+                    <img th:src="@{/img/block-button.png}" th:title="Блокувати"/>
+                </button>
             </form>
-            <div class="user_block_btn" th:if="${user.accessLevel.toString() == 'USER'}">
-                <form action="#" th:action="@{'/users/setMgr/'+${user.id}}" th:method="post">
-                    <input type="submit" value="Менеджер" class="button">
-                </form>
-            </div>
-        </div>
-        <div class="user_unblock_btn" th:if="${user.accessLevel.toString() == 'BLOCKED'}">
-            <form action="#" th:action="@{'/users/unblock/'+${user.id}}" th:method="post">
-                <input type="submit" value="Розблокувати" class="button">
+
+            <form action="#" th:if="${user.accessLevel.toString() == 'USER'}"
+                  th:action="@{'/users/setMgr/'+${user.id}}" th:method="post">
+                <button type="submit" class="manager_ico_userlist">
+                    <img class ="manager_img_userlist" th:src="@{/img/manager-button.png}"
+                         th:title="Зробити-менеджером"/>
+                </button>
             </form>
+
+            <form action="#" th:if="${user.accessLevel.toString() == 'BLOCKED'}"
+                  th:action="@{'/users/unblock/'+${user.id}}" th:method="post">
+                <button type="submit" class="unblock_ico_userlist">
+                    <img th:src="@{/img/unblock-button.png}" th:title="Розблокувати"/>
+                </button>
+            </form>
+
         </div>
-        </br>
     </div>
 
     <!--CONTEXT ACTIONS BUTTONS-->
@@ -101,17 +115,16 @@
             <td class="order_unit" th:text="'€'+${order.amount}"></td>
             <td class="order_unit" th:text="${order.auxNeeded}"></td>
             <td class="order_unit" th:text="${order.status}"></td>
-            <td>
+            <td class="buttons_order_unit">
                 <form action="#" th:action="@{'/orders/'+${order.id}}" th:method="delete">
-                    <input type="hidden"/>
                     <button type="submit" class="delete_ico_orderlist">
-                        <img th:src="@{/img/delete-button.png}" th:title = "Видалити" />
+                        <img th:src="@{/img/delete-button.png}" th:title="Видалити"/>
                     </button>
                 </form>
             </td>
-            <td>
+            <td class="buttons_order_unit">
                 <a href="edit.html" th:href="@{'/edit/'+${order.id}+'/order'}">
-                    <img th:src="@{/img/edit-button.png}" th:title = "Редагувати"/>
+                    <img th:src="@{/img/edit-button.png}" th:title="Редагувати"/>
                 </a>
             </td>
         </tr>
