@@ -30,6 +30,14 @@ header h1 {
     margin-right: 80px;
 }
 
+header h3 {
+    display: block;
+    /* font-size: 2em; */
+    /* margin-right: 80px; */
+}
+
+
+
 /* Form styles */
 
 
@@ -324,3 +332,7 @@ textarea {
 .manager_img_userlist{
 }
 
+.version_block{
+	font-size: 15px;
+    margin-top: auto;
+}

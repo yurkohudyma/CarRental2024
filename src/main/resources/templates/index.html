@@ -18,6 +18,7 @@
 <div class="wrapper">
     <header>
         <h1 class="title">Панель адміна</h1>
+        <h4 class="version_block" th:text="'v.' + ${@environment.getProperty('carrental.version')}"></h4>
     </header>
 
     <!--MAIN MENU -->

@@ -5,6 +5,7 @@ import com.hudyma.CarRental2024.constants.CarPropulsion;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.constants.CarClass;
 import com.hudyma.CarRental2024.repository.CarRepository;
+import com.hudyma.CarRental2024.service.CarService;
 import com.hudyma.CarRental2024.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,6 +25,8 @@ public class CarController {
     private static final String REDIRECT_CARS = "redirect:/cars";
     private final CarRepository carRepository;
     private final OrderService orderService;
+
+    private final CarService carService;
 
     @GetMapping
     public String getAll(Model model) {
@@ -81,6 +84,8 @@ public class CarController {
     public String patchCar(@PathVariable("id") Long id, Car updateCar) {
         if (updateCar.getId().equals(id)) {
             log.info("............Trying to update car " + id);
+            Car prvCar = carRepository.findById(id).orElseThrow();
+            updateCar = carService.ifNullableMergeOldValues(updateCar, prvCar);
             carRepository.save(updateCar);
             orderService.recalculateOrdersAmountUponCarEdit(id);
         } else log.info("...Car id = " + id + " does not EXIST");

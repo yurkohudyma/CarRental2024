@@ -18,7 +18,9 @@
 <div class="wrapper">
     <header>
         <h1 class="title">Панель адміна</h1>
+        <h4 class="version_block" th:text="'v.' + ${@environment.getProperty('carrental.version')}"></h4>
     </header>
+
 
     <!--MAIN MENU -->
     <div class="buttons_block">
@@ -51,7 +53,7 @@
                     <img th:src="@{/img/delete-button.png}" th:title="Видалити"/>
                 </button>
             </form>
-            <a class ="edit_ico_orderlist" href="edit.html" th:href="@{'/edit/'+${user.id}+'/user'}">
+            <a class="edit_ico_orderlist" href="edit.html" th:href="@{'/edit/'+${user.id}+'/user'}">
                 <img th:src="@{/img/edit-button.png}" th:title="Редагувати"/>
             </a>
             <form action="#" th:unless="${user.accessLevel.toString() == 'BLOCKED'
@@ -65,7 +67,7 @@
             <form action="#" th:if="${user.accessLevel.toString() == 'USER'}"
                   th:action="@{'/users/setMgr/'+${user.id}}" th:method="post">
                 <button type="submit" class="manager_ico_userlist">
-                    <img class ="manager_img_userlist" th:src="@{/img/manager-button.png}"
+                    <img class="manager_img_userlist" th:src="@{/img/manager-button.png}"
                          th:title="Зробити-менеджером"/>
                 </button>
             </form>

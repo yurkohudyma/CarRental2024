@@ -4,6 +4,7 @@ import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import com.hudyma.CarRental2024.service.OrderService;
 import com.hudyma.CarRental2024.constants.UserAccessLevel;
+import com.hudyma.CarRental2024.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final OrderService orderService;
+    private final UserService userService;
     private static final String REDIRECT_USERS = "redirect:/users";
 
     @GetMapping
@@ -107,6 +109,7 @@ public class UserController {
             log.info("updating user "+id);
             User prvUser = userRepository.findById(id).orElseThrow();
             user.setAccessLevel(prvUser.getAccessLevel());
+            user = userService.ifNullableMergeOldValues(user, prvUser);
             userRepository.save(user);
         }
         else log.error(

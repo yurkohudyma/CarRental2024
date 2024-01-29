@@ -16,6 +16,7 @@
 <div class="wrapper">
     <header>
         <h1 class="title">Панель адміна</h1>
+        <h4 class="version_block" th:text="'v.' + ${@environment.getProperty('carrental.version')}"></h4>
     </header>
     <div class="buttons_block">
         <form action="#" th:action="@{/cars}" th:method="get">
@@ -34,15 +35,15 @@
             <div class="cars_header" th:text="@{'Редагувати користувача ' +${user.name}}"></div>
             <form action="#" th:action="@{'/users/' + ${user.id}}" th:method="patch">
                 <label for="name_input"></label>
-                <input id="name_input" name="name" type="text" th:placeholder="${user.name}" autofocus required
+                <input id="name_input" name="name" type="text" th:placeholder="${user.name}" autofocus
                        pattern="^[А-ЯҐЇІЄ]{1}[а-яґїіє]{2,}\s[А-ЯҐЇІЄ]{1}[а-яґїіє]{2,}|[A-Z]{1}[a-z]{2,}\s[A-Z]{1}[a-z]{2,}$"
                        title="Степан Жменя / John Mitchell">
                 <label for="email_input"></label>
                 <input id="email_input" name="email" th:placeholder="${user.email}" title="user@domain.com"
-                       autofocus required pattern="\b[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\b">
+                       autofocus pattern="\b[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\b">
                 <label for="passportData_input"></label>
                 <input id="passportData_input" name="passportData" th:placeholder="${user.passportData}"
-                       autofocus required pattern="^[A-Z]{2}[0-9]{6}" title="XY123456">
+                       autofocus pattern="^[A-Z]{2}[0-9]{6}" title="XY123456">
                 <input type="submit" value="Оновити" class="button">
             </form>
         </div>
@@ -52,12 +53,12 @@
             <form action="#" th:action="@{'/cars/' + ${car.id}}" th:method="patch">
                 <div class="car_edit_form_level">
                     <label for="model_input">Марка</label>
-                    <input id="model_input" name="model" type="text" th:placeholder="${car.model}" required>
+                    <input id="model_input" name="model" type="text" th:placeholder="${car.model}" >
                     <label for="description_input" id="description">Опис</label>
-                    <input id="description_input" name="description" th:placeholder="${car.description}" required>
+                    <input id="description_input" name="description" th:placeholder="${car.description}" >
                     <label for="price_input">€</label>
                     <input id="price_input" name="price" type="text" th:placeholder="${car.price}" title="[xx.yy]"
-                           required pattern="\d+[.]?\d*">
+                            pattern="\d+[.]?\d*">
                 </div>
                 <div class="car_edit_form_level">
                     <label for="carclass_input">Клас</label>
@@ -67,7 +68,7 @@
                     </select>
                     <label for="seatsQuantity_input" id="seatsQuantity">Місць</label>
                     <input id="seatsQuantity_input" name="seatsQuantity" type="text"
-                           th:placeholder="${car.seatsQuantity}" required pattern="\d+">
+                           th:placeholder="${car.seatsQuantity}"  pattern="\d+">
                     <label for="color_input">Колір</label>
                     <select class="select_button" id="color_input" name="color" th:field="${car.color}">
                         <option th:each="car_color : ${carColorArr}" th:value="${car_color}"
@@ -95,20 +96,6 @@
                         <option th:each="car : ${carList}" th:value="${car.id}"
                                 th:text="${car.model}"></option>
                     </select>
-
-                    <!--th:field="${order.car.model}"-->
-
-                    <!--<label for="order_model">Марка</label>
-                    <select class="select_button" id="order_model" name="car_id">
-                        <option th:each="car : ${carList}" th:value="${car.id}"
-                                th:text="${car.model}"></option>
-                    </select>-->
-
-
-                    <!--<select class="select_button" id="color_input" name="color" th:field="${car.color}">
-                        <option th:each="car_color : ${carColorArr}" th:value="${car_color}"
-                                th:text="${car_color}"></option>
-                    </select>-->
 
                     <label for="pickup_date">Початок</label>
                     <input id="pickup_date" name="dateBegin" type="date"

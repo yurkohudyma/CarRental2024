@@ -22,6 +22,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Log4j2
 public class CarService {
+    public static final String IS_MISSING_FOR_USER = "{} is missing for User {}";
     private final CarRepository carRepository;
 
     @Transactional(readOnly = true)
@@ -34,4 +35,26 @@ public class CarService {
                 .toList();
 
     }
+
+    public Car ifNullableMergeOldValues(Car car, Car prvCar) {
+        if (car.getModel().equals("")) {
+            car.setModel(prvCar.getModel());
+            log.error(IS_MISSING_FOR_USER, "model", car.getId());
+        }
+        if (car.getDescription().equals("")) {
+            car.setDescription(prvCar.getDescription());
+            log.error(IS_MISSING_FOR_USER, "description", car.getId());
+        }
+        if (car.getPrice() == null) {
+            car.setPrice(prvCar.getPrice());
+            log.error(IS_MISSING_FOR_USER, "price", car.getId());
+        }
+
+        if (car.getSeatsQuantity() == null) {
+            car.setSeatsQuantity(prvCar.getSeatsQuantity());
+            log.error(IS_MISSING_FOR_USER, "seatsQuantity", car.getId());
+        }
+        return car;
+    }
+
 }
