@@ -28,20 +28,79 @@ import java.util.Optional;
 public class OrderController {
 
     private static final String REDIRECT_ORDERS = "redirect:/orders";
+    public static final String ORDERS = "orders";
+    public static final String ORDER_LIST = "orderList";
     private final OrderRepository orderRepository;
     private final CarRepository carRepository;
     private final UserRepository userRepository;
     private final OrderService orderService;
 
-    @GetMapping
+    @GetMapping({"", "/sortById"})
     public String getAll(Model model) {
-        model.addAttribute("orderList", orderService.getAllOrdersSortedByUsername());
+        model.addAttribute(ORDER_LIST,
+                orderService.getAllOrders ());
+        assignAttributes(model);
+        return ORDERS;
+    }
+
+    @GetMapping("/sortByName")
+    public String getAllSortName(Model model) {
+        model.addAttribute(ORDER_LIST,
+                orderService.getAllOrdersSortedByFieldAsc("user.name"));
+        assignAttributes(model);
+        return ORDERS;
+    }
+
+    @GetMapping("/sortByModel")
+    public String getAllSortByModel(Model model) {
+        model.addAttribute(ORDER_LIST,
+                orderService.getAllOrdersSortedByFieldAsc("car.model"));
+        assignAttributes(model);
+        return ORDERS;
+    }
+
+    @GetMapping("/sortByDateBegin")
+    public String getAllSortByDateBegin(Model model) {
+        model.addAttribute(ORDER_LIST,
+                orderService.getAllOrdersSortedByFieldAsc("dateBegin"));
+        assignAttributes(model);
+        return ORDERS;
+    }
+
+    @GetMapping("/sortByDateEnd")
+    public String getAllSortByDateEnd(Model model) {
+        model.addAttribute(ORDER_LIST,
+                orderService.getAllOrdersSortedByFieldAsc("dateEnd"));
+        assignAttributes(model);
+        return ORDERS;
+    }
+
+    @GetMapping("/sortByDurability")
+    public String getAllSortByDurability(Model model) {
+        model.addAttribute(ORDER_LIST,
+                orderService.getAllOrdersSortedByFieldAsc("durability"));
+        assignAttributes(model);
+        return ORDERS;
+    }
+
+    @GetMapping("/sortByAmount")
+    public String getAllSortByAmount(Model model) {
+        model.addAttribute(ORDER_LIST,
+                orderService.getAllOrdersSortedByFieldAsc("amount"));
+        assignAttributes(model);
+        return ORDERS;
+    }
+
+
+
+    private void assignAttributes(Model model) {
         model.addAttribute("userList", userRepository.findAll());
         model.addAttribute("carList", carRepository.findAll());
         model.addAttribute("currentDate", LocalDate.now());
         model.addAttribute("currentNextDate", LocalDate.now().plusDays(1));
-        return "orders";
     }
+
+
 
     @PostMapping
     public String addOrder(Order order,

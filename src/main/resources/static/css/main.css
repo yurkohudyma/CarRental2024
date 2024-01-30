@@ -103,6 +103,16 @@ form {
 	margin-top: 5px;
 }
 
+#pickup_date, #drop-off_date, #driver_checkbox {
+	flex: 1;
+    margin: 0 10px;    
+    border: 1px solid #67a300;
+    border-radius: 6px;
+    outline-color: #67a300;
+	background-color:white;
+	margin-top: 5px;
+}
+
 textarea {
     flex: 2;
     margin: 0 10px;

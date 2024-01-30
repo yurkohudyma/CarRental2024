@@ -28,10 +28,23 @@ public class OrderService {
         return orderRepository.findAllByUserId (id);
     }
 
-    public List<Order> getAllOrdersSortedByUsername (){
-        return orderRepository.findAll(Sort.by(
-                Sort.Direction.ASC, "user.name"));
+    public List<Order> getAllOrders (){
+        return orderRepository.findAll();
     }
+
+    public List<Order> getAllOrdersSortedByFieldAsc (String sortField){
+        return orderRepository.findAll(Sort.by(
+                Sort.Direction.ASC, sortField));
+    }
+
+    public List<Order> getAllOrdersSortedByFieldDesc (String sortField){
+        return orderRepository.findAll(Sort.by(
+                Sort.Direction.DESC, sortField));
+    }
+
+
+
+
 
     public List<Order> getOrdersByCarId (Long id){
         return orderRepository.findAllByCarId(id);

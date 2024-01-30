@@ -51,7 +51,7 @@
             <div class="order_entry_form_level">
                 <label for="pickup_date">Початок</label>
                 <input id="pickup_date" name="dateBegin" type="date" th:value = "${currentDate}"
-                       placeholder="ДД-ММ-РРРР" th:min = "${currentDate}" autofocus required>
+                       placeholder="ДД-ММ-РРРР" th:min = "${currentDate}" required>
                 <label for="drop-off_date">Кінець</label>
                 <input id="drop-off_date" name="dateEnd" type="date" th:min = "${currentNextDate}"
                        placeholder="ДД-ММ-РРРР" autofocus required>
@@ -64,18 +64,17 @@
     </div>
 
     <!--ORDERS READOUT SECTION-->
-
     <div class="order_header">Замовлення</div>
     <table class="order_table" th:unless="${orderList.isEmpty}">
         <thead>
         <tr class="order_table_legend">
-            <th>№</th>
-            <th>Користувач</th>
-            <th>Марка</th>
-            <th>Початок</th>
-            <th>Кінець</th>
-            <th>Тривалість</th>
-            <th>Сума</th>
+            <th><a href="/orders/sortById">№</a></th>
+            <th><a href="/orders/sortByName">Користувач</a></th>
+            <th><a href="/orders/sortByModel">Марка</a></th>
+            <th><a href="/orders/sortByDateBegin">Початок</a></th>
+            <th><a href="/orders/sortByDateEnd">Кінець</a></th>
+            <th><a href="/orders/sortByDurability">Тривалість</a></th>
+            <th><a href="/orders/sortByAmount">Сума</a></th>
             <th>Водій</th>
             <th>Статус</th>
             <th colspan="2">Дія</th>
