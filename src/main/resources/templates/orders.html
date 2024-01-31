@@ -54,7 +54,7 @@
                        placeholder="ДД-ММ-РРРР" th:min = "${currentDate}" required>
                 <label for="drop-off_date">Кінець</label>
                 <input id="drop-off_date" name="dateEnd" type="date" th:min = "${currentNextDate}"
-                       placeholder="ДД-ММ-РРРР" autofocus required>
+                       placeholder="ДД-ММ-РРРР" required>
                 <label for="driver_checkbox">Водій</label>
                 <input id="driver_checkbox" type="checkbox" checked value = "true"
                        th:checked="${auxNeeded}" name="auxNeeded"/>
