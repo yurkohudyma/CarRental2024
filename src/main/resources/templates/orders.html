@@ -59,6 +59,7 @@
                 <input id="driver_checkbox" type="checkbox" checked value = "true"
                        th:checked="${auxNeeded}" name="auxNeeded"/>
                 <input type="submit" value="Додати" class="button">
+                <div class="errorDatesAssign" th:if="${errorDatesAssign}">Помилка встановлення дати</div>
             </div>
         </form>
     </div>

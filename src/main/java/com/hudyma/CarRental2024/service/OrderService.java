@@ -50,8 +50,13 @@ public class OrderService {
         return orderRepository.findAllByCarId(id);
     }
 
-    public void setOrder(Order order, Long carId, Long userId) {
-        order.setAmount(calculateOrderAmount(order, carId));
+    public boolean setOrder(Order order, Long carId, Long userId) {
+        Double setOrderAmount = calculateOrderAmount(order, carId);
+        if (setOrderAmount == 0d) {
+            log.error("...set order: computed amount is {}", setOrderAmount);
+            return false;
+        }
+        order.setAmount(setOrderAmount);
         if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
         if (order.getStatus() == null) order.setStatus(OrderStatus.REQUESTED);
         Car car = carRepository.findById(carId).orElseThrow();
@@ -62,7 +67,10 @@ public class OrderService {
         log.info("...adding order to user " + userId);
         if (!user.getOrderList().contains(order)) {
             user.addOrder(order);
-        } else user.updateOrder(order);
+        } else {
+            user.updateOrder(order);
+        }
+        return true;
     }
 
     private Double calculateOrderAmount(Order order, Long carId) {
@@ -71,7 +79,7 @@ public class OrderService {
                 order.getDateEnd());
         if (days <= 0) {
             log.info("...DATES OF RENTAL DIFFER BY " + days + " days");
-            return 0.0;
+            return 0d;
         }
         order.setDurability(days);
         Double price = carRepository.findById(carId)

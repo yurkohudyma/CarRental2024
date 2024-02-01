@@ -23,6 +23,7 @@ import java.util.Optional;
 @Controller
 public class CarController {
     private static final String REDIRECT_CARS = "redirect:/cars";
+    public static final String CARS = "cars";
     private final CarRepository carRepository;
     private final OrderService orderService;
 
@@ -39,7 +40,7 @@ public class CarController {
         model.addAttribute("carOrdersList",
                 new ArrayList<>());
         log.info("...Retrieving all available cars");
-        return "cars";
+        return CARS;
     }
 
     @GetMapping("/{id}")
@@ -52,7 +53,7 @@ public class CarController {
         model.addAttribute("carOrdersList",
                 orderService.getOrdersByCarId(id));
         log.info("...Retrieving car "+id);
-        return "cars";
+        return CARS;
     }
 
     @PostMapping

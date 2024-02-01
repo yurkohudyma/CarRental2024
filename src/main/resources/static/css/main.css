@@ -245,11 +245,16 @@ textarea {
     font-weight: 500;
 }
 
-.cars_header, .users_header, .order_header  {		
+.cars_header, .users_header{		
 	font-size: 1.3em;    
 	margin: 10px;	
 	margin-top: 30px;
 } 
+
+.order_header {
+	font-size: 1.3em;    
+	margin: 10px;	
+}
 
 .car_unit, .user_unit  {    
 }
@@ -345,4 +350,15 @@ textarea {
 .version_block{
 	font-size: 15px;
     margin-top: auto;
+}
+
+.errorDatesAssign {
+	color: red;
+	margin: 10px;
+	display: inline;
+}
+
+.errorDatesAssignEdit {
+	color: red;
+	margin: 10px;	
 }

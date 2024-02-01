@@ -35,15 +35,15 @@
             <div class="cars_header" th:text="@{'Редагувати користувача ' +${user.name}}"></div>
             <form action="#" th:action="@{'/users/' + ${user.id}}" th:method="patch">
                 <label for="name_input"></label>
-                <input id="name_input" name="name" type="text" th:placeholder="${user.name}" autofocus
+                <input id="name_input" name="name" type="text" th:placeholder="${user.name}"
                        pattern="^[А-ЯҐЇІЄ]{1}[а-яґїіє]{2,}\s[А-ЯҐЇІЄ]{1}[а-яґїіє]{2,}|[A-Z]{1}[a-z]{2,}\s[A-Z]{1}[a-z]{2,}$"
                        title="Степан Жменя / John Mitchell">
                 <label for="email_input"></label>
                 <input id="email_input" name="email" th:placeholder="${user.email}" title="user@domain.com"
-                       autofocus pattern="\b[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\b">
+                       pattern="\b[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\b">
                 <label for="passportData_input"></label>
                 <input id="passportData_input" name="passportData" th:placeholder="${user.passportData}"
-                       autofocus pattern="^[A-Z]{2}[0-9]{6}" title="XY123456">
+                       pattern="^[A-Z]{2}[0-9]{6}" title="XY123456">
                 <input type="submit" value="Оновити" class="button">
             </form>
         </div>
@@ -99,14 +99,15 @@
 
                     <label for="pickup_date">Початок</label>
                     <input id="pickup_date" name="dateBegin" type="date"
-                           th:value="${order.dateBegin}" th:min="${currentDate}" autofocus required>
+                           th:value="${order.dateBegin}" th:min="${currentDate}" required>
                     <label for="drop-off_date">Кінець</label>
                     <input id="drop-off_date" name="dateEnd" type="date" th:min="${currentNextDate}"
-                           th:value="${order.dateEnd}" autofocus required>
+                           th:value="${order.dateEnd}" required>
                     <label for="driver_checkbox">Водій</label>
                     <input id="driver_checkbox" type="checkbox"
                            th:checked="${order.auxNeeded}" name="auxNeeded"/>
                     <input type="submit" value="Оновити" class="button">
+                    <div class="errorDatesAssignEdit" th:if="${errorDatesAssign}">Помилка встановлення дати</div>
 
                 </div>
             </form>

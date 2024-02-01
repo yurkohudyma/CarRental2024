@@ -20,6 +20,12 @@ import java.util.List;
 @Controller
 public class UserController {
 
+    public static final String BLOCKING_USER = "...Blocking user = ";
+    public static final String USER = "...User ";
+    public static final String NOT_FOUND = "not found";
+    public static final String USER_LIST = "userList";
+    public static final String USER_ORDERS_LIST = "userOrdersList";
+    public static final String SOLE_USER_CARD = "soleUserCard";
     private final UserRepository userRepository;
     private final OrderService orderService;
     private final UserService userService;
@@ -27,22 +33,22 @@ public class UserController {
 
     @GetMapping
     public String getAll(Model model) {
-        model.addAttribute("userList", userRepository.findAll());
-        model.addAttribute("soleUserCard", false);
-        model.addAttribute("userOrdersList", new ArrayList<>());
+        model.addAttribute(USER_LIST, userRepository.findAll());
+        model.addAttribute(SOLE_USER_CARD, false);
+        model.addAttribute(USER_ORDERS_LIST, new ArrayList<>());
         log.info("...Retrieving All users...");
         return "users";
     }
 
     @GetMapping("/{id}")
     public String getById(@PathVariable Long id, Model model) {
-        model.addAttribute("userList",
+        model.addAttribute(USER_LIST,
                 List.of(userRepository
                 .findById(id)
                 .orElseThrow()));
-        model.addAttribute("userOrdersList",
+        model.addAttribute(USER_ORDERS_LIST,
                 orderService.getOrdersByUserId(id));
-        model.addAttribute("soleUserCard", true);
+        model.addAttribute(SOLE_USER_CARD, true);
         log.info("...Retrieving user "+id);
         return "users";
     }
@@ -58,7 +64,7 @@ public class UserController {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
         } else log.error(
-                "...User " + id + " does not EXIST");
+                USER + id + " " + NOT_FOUND);
         return REDIRECT_USERS;
     }
 
@@ -73,47 +79,46 @@ public class UserController {
     @PostMapping("/block/{id}")
     public String blockUser(@PathVariable Long id) {
         if (userRepository.findById(id).isPresent()) {
-            log.info("...Blocking user = " + id);
+            log.info(BLOCKING_USER + id);
             User user = userRepository.findById(id).orElseThrow();
             user.setAccessLevel(UserAccessLevel.BLOCKED);
             userRepository.save(user);
-        } else log.error("User " + id + " not found");
+        } else log.error(USER + id + " " + NOT_FOUND);
         return REDIRECT_USERS;
     }
 
     @PostMapping("/unblock/{id}")
     public String unblockUser(@PathVariable Long id) {
         if (userRepository.findById(id).isPresent()) {
-            log.info("...Blocking user = " + id);
+            log.info(BLOCKING_USER + id);
             User user = userRepository.findById(id).orElseThrow();
             user.setAccessLevel(UserAccessLevel.USER);
             userRepository.save(user);
-        } else log.error("User " + id + " not found");
+        } else log.error(USER + id + " " + NOT_FOUND);
         return REDIRECT_USERS;
     }
 
     @PostMapping("/setMgr/{id}")
     public String setManager(@PathVariable Long id) {
         if (userRepository.findById(id).isPresent()) {
-            log.info("...Blocking user = " + id);
+            log.info(BLOCKING_USER + id);
             User user = userRepository.findById(id).orElseThrow();
             user.setAccessLevel(UserAccessLevel.MANAGER);
             userRepository.save(user);
-        } else log.error("User " + id + " not found");
+        } else log.error(USER + id + " " + NOT_FOUND);
         return REDIRECT_USERS;
     }
 
     @PatchMapping ("/{id}")
     public String editUser (@PathVariable Long id, User user){
         if (user.getId().equals(id)) {
-            log.info("updating user "+id);
+            log.info("...updating user "+id);
             User prvUser = userRepository.findById(id).orElseThrow();
             user.setAccessLevel(prvUser.getAccessLevel());
             user = userService.ifNullableMergeOldValues(user, prvUser);
             userRepository.save(user);
         }
-        else log.error(
-                "Id does not correspond to Editable User");
+        else log.error(USER + id + " " + NOT_FOUND);
         return REDIRECT_USERS+"/"+id;
     }
 }
