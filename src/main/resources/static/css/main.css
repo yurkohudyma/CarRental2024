@@ -362,3 +362,8 @@ textarea {
 	color: red;
 	margin: 10px;	
 }
+
+.carDeleteErrorBlock {
+	color: red;
+	margin-top: 10px;
+}

@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
@@ -58,6 +60,7 @@ public class OrderRestController {
         order.setCar(car);
         user.addOrder(order);
         if (order.getStatus() == null) order.setStatus(OrderStatus.REQUESTED);
+        order.setRegisterDate(LocalDateTime.now());
         orderRepository.save(order);
     }
 

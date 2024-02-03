@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +35,7 @@ public class UserRestController {
     @ResponseStatus(HttpStatus.CREATED)
     public void addUser (@RequestBody User user){
         if (user.getAccessLevel() == null) user.setAccessLevel(UserAccessLevel.USER);
+        user.setRegisterDate(LocalDateTime.now());
         userRepository.save(user);
     }
 
@@ -61,7 +63,4 @@ public class UserRestController {
                 .findAll()
                 .forEach(userRepository::delete);
     }
-
-
-
 }

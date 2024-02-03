@@ -5,6 +5,7 @@ import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,11 +33,21 @@ public class User {
     @Column (name = "access_level")
     UserAccessLevel accessLevel;
 
+    @Column(name = "register_date")
+    LocalDateTime registerDate;
+
+    @Column(name = "update_date")
+    LocalDateTime updateDate;
+
+
+
     //todo Cannot delete or update a parent row: a foreign key constraint fails
+    //todo MySQL has a RESTRICT option on order.user_id constraint,
+    //todo change manually to CASCADE
     @JsonManagedReference(value = "users_orders")
     @OneToMany (mappedBy = "user",
             cascade = CascadeType.ALL,
-            //todo restFUL fetches no data on user's retrieval
+            //todo WHEN LAZY, restFUL fetches no data on user's retrieval
             fetch = FetchType.EAGER)
     @Setter(AccessLevel.PRIVATE)
     private List<Order> orderList = new ArrayList<>();

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "orders")
@@ -21,7 +22,7 @@ public class Order {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "amount", nullable = false)
+    @Column(name = "amount")
     Double amount;
 
     @Column(name = "date_begin")
@@ -40,10 +41,14 @@ public class Order {
     @Column(name = "aux_needed")
     Boolean auxNeeded;
 
-    //@JsonManagedReference(value = "cars_orders")
-    //todo upon creating new table HIBER creates `car_id` CONSTRAINT column as unique
-    @OneToOne
-    @JoinColumn(unique = false, name = "car_id") //todo this does not help, one must delete CONSTRAINT from DB manually
+    @Column(name = "register_date")
+    LocalDateTime registerDate;
+
+    @Column(name = "update_date")
+    LocalDateTime updateDate;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "car_id")
     private Car car;
 
     @JsonBackReference(value = "users_orders")

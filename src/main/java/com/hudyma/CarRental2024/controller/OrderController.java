@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Log4j2
@@ -20,15 +21,9 @@ import java.util.Optional;
 @Controller
 public class OrderController {
 
-    private static final String REDIRECT_ORDERS = "redirect:/orders";
-    public static final String ORDERS = "orders";
-    public static final String ORDER_LIST = "orderList";
-    public static final String ERROR_DATES_ASSIGN = "errorDatesAssign";
-    public static final String USER_LIST = "userList";
-    public static final String CAR_LIST = "carList";
-    public static final String CURRENT_DATE = "currentDate";
-    public static final String CURRENT_NEXT_DATE = "currentNextDate";
-    public static final String ORDER = "order";
+    private static final String REDIRECT_ORDERS = "redirect:/orders", ORDERS = "orders", ORDER_LIST = "orderList";
+    public static final String ERROR_DATES_ASSIGN = "errorDatesAssign", USER_LIST = "userList", CAR_LIST = "carList";
+    public static final String CURRENT_DATE = "currentDate", CURRENT_NEXT_DATE = "currentNextDate", ORDER = "order";
     public static final String ACTION = "action";
     private final OrderRepository orderRepository;
     private final CarRepository carRepository;
@@ -91,14 +86,12 @@ public class OrderController {
         return ORDERS;
     }
 
-
     private void assignAttributesWhenSortingFields(Model model) {
         model.addAttribute(USER_LIST, userRepository.findAll());
         model.addAttribute(CAR_LIST, carRepository.findAll());
         model.addAttribute(CURRENT_DATE, LocalDate.now());
         model.addAttribute(CURRENT_NEXT_DATE, LocalDate.now().plusDays(1));
     }
-
 
     @PostMapping
     public String addOrder(Order order,
@@ -108,6 +101,7 @@ public class OrderController {
         if (orderService.setOrder(order, carId, userId)) {
             if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
             log.info ("...add Order: persisting order of {}", order.getUser().getName());
+            order.setRegisterDate(LocalDateTime.now());
             orderRepository.save(order);
             return REDIRECT_ORDERS;
         } else {
@@ -128,7 +122,6 @@ public class OrderController {
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
-        //todo deletes users only without orders
         Optional<Order> order = orderRepository.findById(id);
         if (order.isPresent()) {
             orderRepository.deleteById(id);
@@ -158,6 +151,8 @@ public class OrderController {
                 return "edit";
             } else {
                 log.info("...updating order = " + updatedOrder);
+                updatedOrder.setRegisterDate(prevOrder.getRegisterDate());
+                updatedOrder.setUpdateDate(LocalDateTime.now());
                 orderRepository.save(updatedOrder);
             }
         } else log.info("id does not correspond to order id");

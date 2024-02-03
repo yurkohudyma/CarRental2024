@@ -9,6 +9,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +43,7 @@ public class CarRestController {
     @PostMapping("/one")
     @ResponseStatus(HttpStatus.CREATED)
     public void addCar(@RequestBody Car car) {
+        car.setRegisterDate(LocalDateTime.now());
         carRepository.save(car);
     }
 
@@ -49,7 +51,7 @@ public class CarRestController {
     @ResponseStatus(HttpStatus.CREATED)
     public void addCars(@RequestBody Car[] car) {
         Arrays.stream(car)
-                .forEach(carRepository::save);
+                .forEach(this::addCar);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -72,6 +74,7 @@ public class CarRestController {
     @PatchMapping("/{id}")
     public void patchCar(@PathVariable("id") Long id, @RequestBody Car updateCar){
         log.info("............Trying to update car " + carRepository.findById(id));
+        updateCar.setUpdateDate(LocalDateTime.now());
         carRepository.save(updateCar);
     }
 }

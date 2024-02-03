@@ -54,7 +54,8 @@
                             th:text="${car_class}"></option>
                 </select>
                 <label for="seatsQuantity_input" id="seatsQuantity">Місць</label>
-                <input id="seatsQuantity_input" name="seatsQuantity" type="text" placeholder="5" required pattern="\d+">
+                <input id="seatsQuantity_input" name="seatsQuantity" type="text" placeholder="5"
+                       required pattern="\d+">
                 <label for="color_input">Колір</label>
                 <select class="select_button" id="color_input" name="color">
                     <option th:each="car_color : ${carColorArr}" th:value="${car_color}"
@@ -145,6 +146,9 @@
         </tr>
         </tbody>
     </table>
+    <div class = "carDeleteErrorBlock" th:if="${showErrorCarUsedInOrder}">
+        Неможливо видалити авто з чинного замовлення, видаліть або відредагуйте замовлення з цим авто
+    </div>
 
 
 </div>

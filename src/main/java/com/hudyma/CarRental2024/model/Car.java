@@ -1,11 +1,12 @@
 package com.hudyma.CarRental2024.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.hudyma.CarRental2024.constants.CarClass;
 import com.hudyma.CarRental2024.constants.CarColor;
 import com.hudyma.CarRental2024.constants.CarPropulsion;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "cars")
@@ -43,15 +44,9 @@ public class Car {
     @Column (name = "propulsion", nullable = false)
     CarPropulsion propulsion;
 
-    /*@JsonManagedReference(value = "cars_carProfiles")
-    @OneToOne(mappedBy = "car", cascade = CascadeType.ALL)
-    private CarProfile carProfile;
+    @Column(name = "register_date")
+    LocalDateTime registerDate;
 
-    public void setProfile (CarProfile carProfile){
-        carProfile.setCar(this);
-        this.carProfile = carProfile;
-    }*/
-    /*@JsonBackReference(value = "cars_orders")
-    @OneToOne
-    private Order order;*/
+    @Column(name = "update_date")
+    LocalDateTime updateDate;
 }

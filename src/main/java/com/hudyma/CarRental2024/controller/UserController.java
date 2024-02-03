@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +57,7 @@ public class UserController {
     @PostMapping
     public String addUser(User user) {
         userRepository.save(user);
+        user.setRegisterDate(LocalDateTime.now());
         return REDIRECT_USERS;
     }
 
@@ -63,6 +65,7 @@ public class UserController {
     public String delete(@PathVariable Long id) {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
+            log.info("...deleting user {}", id);
         } else log.error(
                 USER + id + " " + NOT_FOUND);
         return REDIRECT_USERS;
@@ -73,6 +76,7 @@ public class UserController {
         userRepository
                 .findAll()
                 .forEach(userRepository::delete);
+        log.info("...deleting All users");
         return REDIRECT_USERS;
     }
 
@@ -82,6 +86,7 @@ public class UserController {
             log.info(BLOCKING_USER + id);
             User user = userRepository.findById(id).orElseThrow();
             user.setAccessLevel(UserAccessLevel.BLOCKED);
+            user.setUpdateDate(LocalDateTime.now());
             userRepository.save(user);
         } else log.error(USER + id + " " + NOT_FOUND);
         return REDIRECT_USERS;
@@ -93,6 +98,7 @@ public class UserController {
             log.info(BLOCKING_USER + id);
             User user = userRepository.findById(id).orElseThrow();
             user.setAccessLevel(UserAccessLevel.USER);
+            user.setUpdateDate(LocalDateTime.now());
             userRepository.save(user);
         } else log.error(USER + id + " " + NOT_FOUND);
         return REDIRECT_USERS;
@@ -104,6 +110,7 @@ public class UserController {
             log.info(BLOCKING_USER + id);
             User user = userRepository.findById(id).orElseThrow();
             user.setAccessLevel(UserAccessLevel.MANAGER);
+            user.setUpdateDate(LocalDateTime.now());
             userRepository.save(user);
         } else log.error(USER + id + " " + NOT_FOUND);
         return REDIRECT_USERS;
@@ -116,6 +123,7 @@ public class UserController {
             User prvUser = userRepository.findById(id).orElseThrow();
             user.setAccessLevel(prvUser.getAccessLevel());
             user = userService.ifNullableMergeOldValues(user, prvUser);
+            user.setUpdateDate(LocalDateTime.now());
             userRepository.save(user);
         }
         else log.error(USER + id + " " + NOT_FOUND);
