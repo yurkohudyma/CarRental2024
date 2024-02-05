@@ -26,37 +26,35 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     public Double getAllOrdersAmount() {
-        return orderRepository
+        Double result = orderRepository
                 .findAll()
                 .stream()
                 .map(Order::getAmount)
                 .reduce(Double::sum)
                 .orElse(0d);
+        return Math.round(result * 100d) / 100d;
     }
 
     public List<Order> getOrdersByUserId(Long id) {
-        return orderRepository.findAllByUserId (id);
+        return orderRepository.findAllByUserId(id);
     }
 
-    public List<Order> getAllOrders (){
+    public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
-    public List<Order> getAllOrdersSortedByFieldAsc (String sortField){
+    public List<Order> getAllOrdersSortedByFieldAsc(String sortField) {
         return orderRepository.findAll(Sort.by(
                 Sort.Direction.ASC, sortField));
     }
 
-    public List<Order> getAllOrdersSortedByFieldDesc (String sortField){
+    public List<Order> getAllOrdersSortedByFieldDesc(String sortField) {
         return orderRepository.findAll(Sort.by(
                 Sort.Direction.DESC, sortField));
     }
 
 
-
-
-
-    public List<Order> getOrdersByCarId (Long id){
+    public List<Order> getOrdersByCarId(Long id) {
         return orderRepository.findAllByCarId(id);
     }
 
@@ -102,7 +100,7 @@ public class OrderService {
         List<Order> orderListByCarId = orderRepository.findAllByCarId(carId);
         orderListByCarId.forEach(order -> {
             order.setAmount(calculateOrderAmount(
-                    order,order.getCar().getId()));
+                    order, order.getCar().getId()));
             orderRepository.save(order);
         });
     }

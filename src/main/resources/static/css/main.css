@@ -320,7 +320,7 @@ textarea {
 
 }
 
-.order_table {
+.order_table  { 
 	box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 	text-align: center;	
 	border-radius: 10px;	
@@ -328,6 +328,17 @@ textarea {
 	border-color: lightskyblue;
 	/* vertical-align: baseline; */
 	font-style: inherit
+}
+
+.stats_table {
+	box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+	text-align: center;	
+	border-radius: 10px;	
+	border: 1px solid ;
+	border-color: lightskyblue;	
+	font-style: inherit;
+	padding: 10px;
+	margin-top: 20px;
 }
 
 .delete_ico_orderlist, 

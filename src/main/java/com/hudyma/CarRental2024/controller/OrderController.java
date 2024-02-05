@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Log4j2
@@ -41,66 +42,78 @@ public class OrderController {
         model.addAttribute(ORDER_LIST,
                 orderList);
         assignAttributesWhenSortingFields(model);
-        model.addAttribute("ordersQuantity", orderList.size());
-        model.addAttribute("ordersAmount", orderService.getAllOrdersAmount());
-        model.addAttribute("carsQuantity", carService.getAllCarsQuantity());
-        model.addAttribute("usersQuantity", userService.getAllUsersQuantity());
+        assignAttributesForStats(model, orderList);
         return ORDERS;
+    }
+
+    private void assignAttributesForStats(Model model, List<Order> orderList) {
+        model.addAllAttributes(
+                Map.of("ordersQuantity", orderList.size(),
+                        "ordersAmount", orderService.getAllOrdersAmount(),
+                        "carsQuantity", carService.getAllCarsQuantity(),
+                        "usersQuantity", userService.getAllUsersQuantity()));
     }
 
     @GetMapping("/sortByName")
     public String getAllSortName(Model model) {
-        model.addAttribute(ORDER_LIST,
-                orderService.getAllOrdersSortedByFieldAsc("user.name"));
+        List<Order> orderList = orderService.getAllOrdersSortedByFieldAsc("user.name");
+        model.addAttribute(ORDER_LIST, orderList);
         assignAttributesWhenSortingFields(model);
+        assignAttributesForStats(model, orderList);
         return ORDERS;
     }
 
     @GetMapping("/sortByModel")
     public String getAllSortByModel(Model model) {
-        model.addAttribute(ORDER_LIST,
-                orderService.getAllOrdersSortedByFieldAsc("car.model"));
+        List<Order> orderList = orderService.getAllOrdersSortedByFieldAsc("car.model");
+        model.addAttribute(ORDER_LIST, orderList);
         assignAttributesWhenSortingFields(model);
+        assignAttributesForStats(model, orderList);
         return ORDERS;
     }
 
     @GetMapping("/sortByDateBegin")
     public String getAllSortByDateBegin(Model model) {
-        model.addAttribute(ORDER_LIST,
-                orderService.getAllOrdersSortedByFieldAsc("dateBegin"));
+        List<Order> orderList = orderService.getAllOrdersSortedByFieldAsc("dateBegin");
+        model.addAttribute(ORDER_LIST, orderList);
         assignAttributesWhenSortingFields(model);
+        assignAttributesForStats(model, orderList);
         return ORDERS;
     }
 
     @GetMapping("/sortByDateEnd")
     public String getAllSortByDateEnd(Model model) {
-        model.addAttribute(ORDER_LIST,
-                orderService.getAllOrdersSortedByFieldAsc("dateEnd"));
+        List<Order> orderList = orderService.getAllOrdersSortedByFieldAsc("dateEnd");
+        model.addAttribute(ORDER_LIST, orderList);
         assignAttributesWhenSortingFields(model);
+        assignAttributesForStats(model, orderList);
         return ORDERS;
     }
 
     @GetMapping("/sortByDurability")
     public String getAllSortByDurability(Model model) {
-        model.addAttribute(ORDER_LIST,
-                orderService.getAllOrdersSortedByFieldAsc("durability"));
+        List<Order> orderList = orderService.getAllOrdersSortedByFieldAsc("durability");
+        model.addAttribute(ORDER_LIST, orderList);
         assignAttributesWhenSortingFields(model);
+        assignAttributesForStats(model, orderList);
         return ORDERS;
     }
 
     @GetMapping("/sortByAmount")
     public String getAllSortByAmount(Model model) {
-        model.addAttribute(ORDER_LIST,
-                orderService.getAllOrdersSortedByFieldAsc("amount"));
+        List<Order> orderList = orderService.getAllOrdersSortedByFieldAsc("amount");
+        model.addAttribute(ORDER_LIST, orderList);
         assignAttributesWhenSortingFields(model);
+        assignAttributesForStats(model, orderList);
         return ORDERS;
     }
 
     private void assignAttributesWhenSortingFields(Model model) {
-        model.addAttribute(USER_LIST, userRepository.findAll());
-        model.addAttribute(CAR_LIST, carRepository.findAll());
-        model.addAttribute(CURRENT_DATE, LocalDate.now());
-        model.addAttribute(CURRENT_NEXT_DATE, LocalDate.now().plusDays(1));
+        model.addAllAttributes(Map.of(
+                USER_LIST, userRepository.findAll(),
+                CAR_LIST, carRepository.findAll(),
+                CURRENT_DATE, LocalDate.now(),
+                CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
     }
 
     @PostMapping
@@ -110,7 +123,7 @@ public class OrderController {
         Long userId = Long.parseLong(userIdStr), carId = Long.parseLong(carIdStr);
         if (orderService.setOrder(order, carId, userId)) {
             if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
-            log.info ("...add Order: persisting order of {}", order.getUser().getName());
+            log.info("...add Order: persisting order of {}", order.getUser().getName());
             order.setRegisterDate(LocalDateTime.now());
             orderRepository.save(order);
             return REDIRECT_ORDERS;
@@ -122,12 +135,13 @@ public class OrderController {
     }
 
     private void assignAttributesWhenSetNewOrderFails(Model model) {
-        model.addAttribute(ERROR_DATES_ASSIGN, true);
-        model.addAttribute(ORDER_LIST, orderRepository.findAll());
-        model.addAttribute(USER_LIST, userRepository.findAll());
-        model.addAttribute(CAR_LIST, carRepository.findAll());
-        model.addAttribute(CURRENT_DATE, LocalDate.now());
-        model.addAttribute(CURRENT_NEXT_DATE, LocalDate.now().plusDays(1));
+        model.addAllAttributes(Map.of(
+                ERROR_DATES_ASSIGN, true,
+                ORDER_LIST, orderRepository.findAll(),
+                USER_LIST, userRepository.findAll(),
+                CAR_LIST, carRepository.findAll(),
+                CURRENT_DATE, LocalDate.now(),
+                CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
     }
 
     @DeleteMapping("/{id}")
@@ -171,11 +185,12 @@ public class OrderController {
 
     private void setModelAttributesWhenOrderFails(Model model, Order prevOrder) {
         assignAttributesWhenSetNewOrderFails(model);
-        model.addAttribute(ORDER, prevOrder);
-        model.addAttribute(CAR_LIST, carRepository.findAll());
-        model.addAttribute(ACTION, ORDER);
-        model.addAttribute(CURRENT_DATE, LocalDate.now());
-        model.addAttribute(CURRENT_NEXT_DATE, LocalDate.now().plusDays(1));
+        model.addAllAttributes(Map.of(
+                ORDER, prevOrder,
+                CAR_LIST, carRepository.findAll(),
+                ACTION, ORDER,
+                CURRENT_DATE, LocalDate.now(),
+                CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
     }
 }
 
