@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8" content="application/json">
     <meta name="viewport"
@@ -60,7 +60,8 @@
                 <input id="driver_checkbox" type="checkbox" checked value = "true"
                        th:checked="${auxNeeded}" name="auxNeeded"/>
                 <input type="submit" value="Додати" class="button">
-                <div class="errorDatesAssign" th:if="${errorDatesAssign}">Помилка встановлення дати</div>
+                <div class="errorDatesAssign" th:if="${errorDatesAssign}">
+                    Помилка встановлення дати</div>
             </div>
         </form>
     </div>
@@ -86,11 +87,13 @@
         <tr class="order" th:each="order : ${orderList}">
             <td class="order_unit" th:text="${order.id}"></td>
             <td class="order_unit">
-                <a href="users.html" th:href="@{'/users/'+${order.user.id}}" th:text="${order.user.name}"></a>
+                <a href="users.html" th:href="@{'/users/'+${order.user.id}}"
+                   th:text="${order.user.name}"></a>
             </td>
 
             <td class="order_unit">
-                <a href="cars.html" th:href="@{'/cars/'+${order.car.id}}" th:text="${order.car.model}"></a>
+                <a href="cars.html" th:href="@{'/cars/'+${order.car.id}}"
+                   th:text="${order.car.model}"></a>
             </td>
             <td class="order_unit" th:text="${order.dateBegin}"></td>
             <td class="order_unit" th:text="${order.dateEnd}"></td>
@@ -108,7 +111,8 @@
             </td>
             <td class="buttons_order_unit">
                 <a href="edit.html" th:href="@{'/edit/'+${order.id}+'/order'}">
-                    <img class="edit_ico_orderlist_in_orders" th:src="@{/img/edit-button.png}" th:title = "Редагувати"/>
+                    <img class="edit_ico_orderlist_in_orders"
+                         th:src="@{/img/edit-button.png}" th:title = "Редагувати"/>
                 </a>
             </td>
         </tr>
@@ -121,9 +125,18 @@
             <input type="submit" value="Видалити все" class="caution_button">
         </form>
         <div class = "carDeleteErrorBlock" th:if="${showErrorCarUsedInOrder}">
-            Неможливо видалити авто з чинного замовлення, видаліть або відредагуйте замовлення з цим авто
+            Неможливо видалити авто з чинних замовлень, видаліть або відредагуйте замовлення з цим авто
         </div>
     </div>
+
+    <!--STATS BLOCK-->
+    <div th:unless="${showErrorCarUsedInOrder}" class="overall_stats">
+        <p>Замовлень: <span class = "stats_unit" th:text = "'' + ${ordersQuantity}"></span></p>
+        <p>Авто: <span class = "stats_unit" th:text = "${carsQuantity}"></span></p>
+        <p>Користувачів: <span class = "stats_unit" th:text = "${usersQuantity}"></span></p>
+        <p>Сума: €<span class = "stats_unit" th:text = "${ordersAmount}"></span></p>
+    </div>
+
 </div>
 </body>
 </html>

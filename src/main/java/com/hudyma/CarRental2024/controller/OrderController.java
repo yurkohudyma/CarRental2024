@@ -4,7 +4,9 @@ import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
+import com.hudyma.CarRental2024.service.CarService;
 import com.hudyma.CarRental2024.service.OrderService;
+import com.hudyma.CarRental2024.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Log4j2
@@ -29,12 +32,19 @@ public class OrderController {
     private final CarRepository carRepository;
     private final UserRepository userRepository;
     private final OrderService orderService;
+    private final CarService carService;
+    private final UserService userService;
 
     @GetMapping({"", "/sortById"})
     public String getAll(Model model) {
+        List<Order> orderList = orderService.getAllOrders();
         model.addAttribute(ORDER_LIST,
-                orderService.getAllOrders());
+                orderList);
         assignAttributesWhenSortingFields(model);
+        model.addAttribute("ordersQuantity", orderList.size());
+        model.addAttribute("ordersAmount", orderService.getAllOrdersAmount());
+        model.addAttribute("carsQuantity", carService.getAllCarsQuantity());
+        model.addAttribute("usersQuantity", userService.getAllUsersQuantity());
         return ORDERS;
     }
 

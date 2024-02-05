@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,15 @@ public class OrderService {
     private final CarRepository carRepository;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
+
+    public Double getAllOrdersAmount() {
+        return orderRepository
+                .findAll()
+                .stream()
+                .map(Order::getAmount)
+                .reduce(Double::sum)
+                .orElse(0d);
+    }
 
     public List<Order> getOrdersByUserId(Long id) {
         return orderRepository.findAllByUserId (id);

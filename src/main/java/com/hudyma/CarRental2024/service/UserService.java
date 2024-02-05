@@ -13,6 +13,10 @@ public class UserService {
     public static final String IS_MISSING_FOR_USER = "{} is missing for User {}";
     private final UserRepository userRepository;
 
+    public int getAllUsersQuantity() {
+        return userRepository.findAll().size();
+    }
+
     public User ifNullableMergeOldValues(User user, User prvUser) {
         if (user.getName().equals("")) {
             user.setName(prvUser.getName());
