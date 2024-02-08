@@ -18,6 +18,20 @@
 <div class="wrapper">
     <header>
         <h1 class="title">Панель адміна</h1>
+
+        <div class="stats_block" th:unless="${errorDatesAssign}">
+
+                <div class="stats_unit"><img class = "stats_img" th:src="@{/img/order-icon.png}" th:title="Замовлень"/></div>
+                <div class="stats_unit" th:text="${ordersQuantity}"></div>
+                <div class="stats_unit"><img class = "stats_img" th:src="@{/img/car-icon.png}" th:title="Авто"/></div>
+                <div class="stats_unit" th:text="${carsQuantity}"></div>
+                <div class="stats_unit"><img class = "stats_img" th:src="@{/img/user-icon.png}" th:title="Користувачів"/></div>
+                <div class="stats_unit" th:text="${usersQuantity}"></div>
+                <div class="stats_unit"><img class = "stats_img" th:src="@{/img/euro-icon.png}" title="Сума замовлень"/></div>
+                <div class="stats_unit" th:text="${ordersAmount}"></div>
+
+        </div>
+
         <h4 class="version_block" th:text="'v.' + ${@environment.getProperty('carrental.version')}"></h4>
     </header>
 
@@ -72,13 +86,13 @@
     <table class="order_table" th:unless="${orderList.isEmpty}">
         <thead>
         <tr class="order_table_legend">
-            <th><a href="/orders/sortById">№</a></th>
-            <th><a href="/orders/sortByName">Користувач</a></th>
-            <th><a href="/orders/sortByModel">Марка</a></th>
-            <th><a href="/orders/sortByDateBegin">Початок</a></th>
-            <th><a href="/orders/sortByDateEnd">Кінець</a></th>
-            <th><a href="/orders/sortByDurability">Тривалість</a></th>
-            <th><a href="/orders/sortByAmount">Сума</a></th>
+            <th><a href="/orders/sortById" title="Сорт за номером">№</a></th>
+            <th><a href="/orders/sortByName" title="Сорт за ім'ям">Користувач</a></th>
+            <th><a href="/orders/sortByModel" title="Сорт за маркою">Марка</a></th>
+            <th><a href="/orders/sortByDateBegin" title="Сорт за датою початку">Початок</a></th>
+            <th><a href="/orders/sortByDateEnd" title="Сорт за датою кінця">Кінець</a></th>
+            <th><a href="/orders/sortByDurability" title="Сорт за тривалістю">Тривалість</a></th>
+            <th><a href="/orders/sortByAmount" title="Сорт за сумою">Сума</a></th>
             <th>Водій</th>
             <th>Статус</th>
             <th colspan="2">Дія</th>
@@ -126,31 +140,11 @@
             <input type="submit" value="Видалити все" class="caution_button">
         </form>
         <div class="carDeleteErrorBlock" th:if="${showErrorCarUsedInOrder}">
-            Неможливо видалити авто з чинних замовлень, видаліть або відредагуйте замовлення з цим авто
+            Неможливо видалити авто з чинних замовлень, спочатку видаліть замовлення з цими авто
         </div>
     </div>
 
-    <!--STATS BLOCK-->
-    <table class="stats_table" th:unless="${showErrorCarUsedInOrder}">
-        <tbody>
-        <tr>
-            <td>Замовлень:</td>
-            <td class="stats_unit" th:text="${ordersQuantity}"></td>
-        </tr>
-        <tr>
-            <td>Авто:</td>
-            <td class="stats_unit" th:text="${carsQuantity}"></td>
-        </tr>
-        <tr>
-            <td>Користувачів:</td>
-            <td class="stats_unit" th:text="${usersQuantity}"></td>
-        </tr>
-        <tr>
-            <td>Сума (€):</td>
-            <td class="stats_unit" th:text="${ordersAmount}"></td>
-        </tr>
-        </tbody>
-    </table>
+
 
 </div>
 </body>

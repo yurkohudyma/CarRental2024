@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.hudyma</groupId>
     <artifactId>CarRental2024</artifactId>
-    <version>${carrental.version}</version>
+    <!--<version></version>-->
     <packaging>war</packaging>
     <name>CarRental2024</name>
     <description>Car Rental Service</description>
