@@ -14,13 +14,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class OrderService {
-
     private final CarRepository carRepository;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;

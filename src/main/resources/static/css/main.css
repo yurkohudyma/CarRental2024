@@ -162,7 +162,7 @@ textarea {
 .edit_ico_orderlist:hover {
 	background-color: white;
 	color: #b90000;
-	border: /* 1px solid */ #b90000;
+	/* border:  1px solid  #b90000; */
 }
 
 .buttons_block {

@@ -28,7 +28,7 @@
                 <div class="stats_unit"><img class = "stats_img" th:src="@{/img/user-icon.png}" th:title="Користувачів"/></div>
                 <div class="stats_unit" th:text="${usersQuantity}"></div>
                 <div class="stats_unit"><img class = "stats_img" th:src="@{/img/euro-icon.png}" title="Сума замовлень"/></div>
-                <div class="stats_unit" th:text="${ordersAmount}"></div>
+                <div class="stats_unit" th:text="'€'+${ordersAmount}"></div>
 
         </div>
 
@@ -140,7 +140,7 @@
             <input type="submit" value="Видалити все" class="caution_button">
         </form>
         <div class="carDeleteErrorBlock" th:if="${showErrorCarUsedInOrder}">
-            Неможливо видалити авто з чинних замовлень, спочатку видаліть замовлення з цими авто
+            Неможливо видалити авто з чинних замовлень, спочатку видаліть всі замовлення з цими авто
         </div>
     </div>
 
