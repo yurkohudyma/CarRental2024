@@ -29,7 +29,8 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req.requestMatchers(FREE_ACCESS_URL_LIST)
+                .authorizeHttpRequests(req ->
+                        req.requestMatchers(FREE_ACCESS_URL_LIST)
                         .permitAll()
                         .requestMatchers("test_access/user.html").hasRole(UserAccessLevel.USER.name())
                         .requestMatchers("test_access/admin.html").hasRole(UserAccessLevel.ADMIN.name())
@@ -37,12 +38,14 @@ public class SecurityConfiguration {
                         .anyRequest()
                         .authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout.logoutUrl("auth/logout")
                         .addLogoutHandler(logoutHandler)
-                        .logoutSuccessHandler( (request, response, authentication) -> SecurityContextHolder.clearContext()));
+                        .logoutSuccessHandler( (request, response, authentication) ->
+                                SecurityContextHolder.clearContext()));
         return http.build();
     }
 }

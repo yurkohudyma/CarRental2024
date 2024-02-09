@@ -2,7 +2,6 @@ package com.hudyma.CarRental2024.config;
 
 import com.hudyma.CarRental2024.repository.TokenRepository;
 import com.hudyma.CarRental2024.service.JwtService;
-import com.hudyma.CarRental2024.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +27,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final TokenRepository tokenRepository;
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         if (request.getServletPath().contains("/auth")) {
             filterChain.doFilter(request, response);

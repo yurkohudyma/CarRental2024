@@ -19,6 +19,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(of = "id")
 @ToString
+@Builder
 public class User implements UserDetails {
 
     @Id
