@@ -23,30 +23,30 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(name = "name", nullable = false)
-    String name;
+    private String name;
 
     @Column(name = "email", unique = true)
-    String email;
+    private String email;
 
     @Column(name = "password")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    String password;
+    private String password;
 
     @Column(name = "passport_data", unique = true)
-    String passportData;
+    private String passportData;
 
     @Enumerated(EnumType.STRING)
     @Column (name = "access_level")
-    UserAccessLevel accessLevel;
+    private UserAccessLevel accessLevel;
 
     @Column(name = "register_date")
-    LocalDateTime registerDate;
+    private LocalDateTime registerDate;
 
     @Column(name = "update_date")
-    LocalDateTime updateDate;
+    private LocalDateTime updateDate;
 
 
 
@@ -62,6 +62,7 @@ public class User implements UserDetails {
     private List<Order> orderList = new ArrayList<>();
 
     @OneToMany (mappedBy = "user")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Token> tokens;
 
     public void addOrder (Order order){
@@ -93,7 +94,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return email;
     }
 
     @Override
