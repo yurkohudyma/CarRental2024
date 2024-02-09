@@ -1,12 +1,16 @@
 package com.hudyma.CarRental2024.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Entity(name = "tokens")
+@Entity
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Token {
 
     @Id

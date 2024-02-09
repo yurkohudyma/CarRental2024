@@ -20,6 +20,8 @@ import java.util.List;
 @EqualsAndHashCode(of = "id")
 @ToString
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User implements UserDetails {
 
     @Id
