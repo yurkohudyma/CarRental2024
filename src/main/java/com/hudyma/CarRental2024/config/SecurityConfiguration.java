@@ -21,7 +21,13 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-    private static final String [] FREE_ACCESS_URL_LIST = {"/index.html"};
+    private static final String [] FREE_ACCESS_URL_LIST = {
+            "/cars",
+            "/users",
+            "/api/**",
+            "/orders",
+            "/"
+    };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
@@ -34,9 +40,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(FREE_ACCESS_URL_LIST)
                         .permitAll()
-                        .requestMatchers("/test_access/user.html").hasRole(UserAccessLevel.USER.name())
-                        .requestMatchers("/test_access/admin.html").hasRole(UserAccessLevel.ADMIN.name())
-                        .requestMatchers("/test_access/manager.html").hasRole(UserAccessLevel.MANAGER.name())
+                        .requestMatchers("/user").hasRole(UserAccessLevel.USER.name())
+                        .requestMatchers("/admin").hasRole(UserAccessLevel.ADMIN.name())
+                        .requestMatchers("/manager").hasRole(UserAccessLevel.MANAGER.name())
                         .anyRequest()
                         .authenticated()
                 )
