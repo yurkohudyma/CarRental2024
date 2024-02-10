@@ -1,6 +1,6 @@
 package com.hudyma.CarRental2024.controller.restcontroller;
 
-import lombok.RequiredArgsConstructor;
+/*import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,4 +20,4 @@ public class IndexRestController {
         log.info("...access granted");
         return "admin";
     }
-}
+}*/

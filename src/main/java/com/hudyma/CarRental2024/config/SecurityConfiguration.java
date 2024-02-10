@@ -47,8 +47,8 @@ public class SecurityConfiguration {
                         req.requestMatchers(FREE_ACCESS_URL_LIST)
                         .permitAll()
 //                        .requestMatchers("/user").hasRole(UserAccessLevel.USER.name())
-                        .requestMatchers("/admin").hasAnyRole(ADMIN.name(), MANAGER.name())
-                                .requestMatchers(GET, "/admin").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
+//                        .requestMatchers("/admin").hasAnyRole(ADMIN.name(), MANAGER.name())
+//                                .requestMatchers(GET, "/admin").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
                         .anyRequest()
                         .authenticated()
                 )
@@ -56,7 +56,7 @@ public class SecurityConfiguration {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout(logout -> logout.logoutUrl("auth/logout")
+                .logout(logout -> logout.logoutUrl("/auth/logout")
                         .addLogoutHandler(logoutHandler)
                         .logoutSuccessHandler( (request, response, authentication) ->
                                 SecurityContextHolder.clearContext()));

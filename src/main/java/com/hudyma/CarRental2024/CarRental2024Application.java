@@ -34,14 +34,6 @@ public class CarRental2024Application {
 					.role(MANAGER)
 					.build();
 			System.out.println("Manager token: " + authService.register(manager).getAccessToken());
-
-			var user = RegisterRequest.builder()
-					.name("Степан Кузьо")
-					.email("user@hudyma.com")
-					.password("password789")
-					.role(USER)
-					.build();
-			System.out.println("User token: " + authService.register(user).getAccessToken());
 		};
 
 	}
