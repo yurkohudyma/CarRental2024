@@ -59,9 +59,17 @@ public class User implements UserDetails {
     @Setter(AccessLevel.PRIVATE)
     private transient List<Order> orderList = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return role.getAuthorities();
+    }
+
     @OneToMany (mappedBy = "user")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<Token> tokens;
+    private transient List<Token> tokens;
 
     public void addOrder (Order order){
         orderList.add(order);
@@ -77,12 +85,6 @@ public class User implements UserDetails {
         int idx = orderList.indexOf(updatedOrder);
         orderList.remove(idx);
         orderList.add(updatedOrder);
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(
-                "ROLE_" + this.getAccessLevel().name()));
     }
 
     @Override

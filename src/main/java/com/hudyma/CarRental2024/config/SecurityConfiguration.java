@@ -15,6 +15,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
+import static com.hudyma.CarRental2024.model.Permission.ADMIN_READ;
+import static com.hudyma.CarRental2024.model.Permission.MANAGER_READ;
+import static com.hudyma.CarRental2024.model.Role.ADMIN;
+import static com.hudyma.CarRental2024.model.Role.MANAGER;
+import static org.springframework.http.HttpMethod.GET;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -26,7 +32,7 @@ public class SecurityConfiguration {
             "/users",
             "/api/**",
             "/orders",
-            "/auth"
+            "/auth/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -40,9 +46,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(FREE_ACCESS_URL_LIST)
                         .permitAll()
-                        .requestMatchers("/user").hasRole(UserAccessLevel.USER.name())
-                        .requestMatchers("/admin").hasRole(UserAccessLevel.ADMIN.name())
-                        .requestMatchers("/manager").hasRole(UserAccessLevel.MANAGER.name())
+//                        .requestMatchers("/user").hasRole(UserAccessLevel.USER.name())
+                        .requestMatchers("/admin").hasAnyRole(ADMIN.name(), MANAGER.name())
+                                .requestMatchers(GET, "/admin").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
                         .anyRequest()
                         .authenticated()
                 )
