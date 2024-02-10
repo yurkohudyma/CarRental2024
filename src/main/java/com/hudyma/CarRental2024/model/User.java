@@ -51,18 +51,13 @@ public class User implements UserDetails {
     @Column(name = "update_date")
     private LocalDateTime updateDate;
 
-
-
-    //todo Cannot delete or update a parent row: a foreign key constraint fails
-    //todo MySQL has a RESTRICT option on order.user_id constraint,
-    //todo change manually to CASCADE
     @JsonManagedReference(value = "users_orders")
     @OneToMany (mappedBy = "user",
             cascade = CascadeType.ALL,
             //todo WHEN LAZY, restFUL fetches no data on user's retrieval
             fetch = FetchType.EAGER)
     @Setter(AccessLevel.PRIVATE)
-    private List<Order> orderList = new ArrayList<>();
+    private transient List<Order> orderList = new ArrayList<>();
 
     @OneToMany (mappedBy = "user")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

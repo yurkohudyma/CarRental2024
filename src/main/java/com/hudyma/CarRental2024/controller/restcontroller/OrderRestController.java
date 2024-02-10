@@ -9,11 +9,9 @@ import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -70,7 +68,7 @@ public class OrderRestController {
                 order.getDateEnd());
         if (days <= 0) throw new IllegalArgumentException
                 (".........DATES OF RENTAL INCORRECT");
-        order.setDurability(days);
+        order.setDuration(days);
         Double price = carRepository.findById(order.getCar()
                 .getId())
                 .orElseThrow()

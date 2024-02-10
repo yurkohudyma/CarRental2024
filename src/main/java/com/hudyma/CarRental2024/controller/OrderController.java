@@ -90,9 +90,9 @@ public class OrderController {
         return ORDERS;
     }
 
-    @GetMapping("/sortByDurability")
-    public String getAllSortByDurability(Model model) {
-        List<Order> orderList = orderService.getAllOrdersSortedByFieldAsc("durability");
+    @GetMapping("/sortByDuration")
+    public String getAllSortByDuration (Model model) {
+        List<Order> orderList = orderService.getAllOrdersSortedByFieldAsc("duration");
         model.addAttribute(ORDER_LIST, orderList);
         assignAttributesWhenSortingFields(model);
         assignAttributesForStats(model, orderList);

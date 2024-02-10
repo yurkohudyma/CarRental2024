@@ -15,7 +15,7 @@ public class CarRental2024Application {
 		SpringApplication.run(CarRental2024Application.class, args);
 	}
 
-	/*@Bean
+	@Bean
 	public CommandLineRunner commandLineRunner(
 			AuthenticationService authService
 	) {
@@ -45,6 +45,6 @@ public class CarRental2024Application {
 			System.out.println("User token: " + authService.register(user).getAccessToken());
 
 		};
-	}*/
+	}
 
 }

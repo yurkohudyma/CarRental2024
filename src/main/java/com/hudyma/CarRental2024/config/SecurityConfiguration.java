@@ -26,7 +26,7 @@ public class SecurityConfiguration {
             "/users",
             "/api/**",
             "/orders",
-            "/"
+            "/auth"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;

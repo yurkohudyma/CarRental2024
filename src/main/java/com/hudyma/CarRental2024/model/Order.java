@@ -1,7 +1,6 @@
 package com.hudyma.CarRental2024.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.hudyma.CarRental2024.constants.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,8 +30,8 @@ public class Order {
     @Column(name = "date_end")
     LocalDate dateEnd;
 
-    @Column(name = "durability")
-    Long durability;
+    @Column(name = "duration")
+    Long duration;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
