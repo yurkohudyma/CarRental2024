@@ -61,11 +61,11 @@ public class UserController {
         return REDIRECT_USERS;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") //todo needs DB FK on ORDER => CASCADE instead of RESTRICT
     public String delete(@PathVariable Long id) {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
-            log.info("...deleting user {}", id);
+            log.info("...deleting user {} with all orders", id);
         } else log.error(
                 USER + id + " " + NOT_FOUND);
         return REDIRECT_USERS;

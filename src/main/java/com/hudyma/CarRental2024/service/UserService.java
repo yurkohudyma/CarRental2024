@@ -1,10 +1,14 @@
 package com.hudyma.CarRental2024.service;
 
+import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Log4j2
@@ -15,6 +19,11 @@ public class UserService {
 
     public int getAllUsersQuantity() {
         return userRepository.findAll().size();
+    }
+
+    public List<User> getAllUsersSortedByFieldAsc(String sortField) {
+        return userRepository.findAll(Sort.by(
+                Sort.Direction.ASC, sortField));
     }
 
     public User ifNullableMergeOldValues(User user, User prvUser) {

@@ -110,8 +110,8 @@ public class OrderController {
 
     private void assignAttributesWhenSortingFields(Model model) {
         model.addAllAttributes(Map.of(
-                USER_LIST, userRepository.findAll(),
-                CAR_LIST, carRepository.findAll(),
+                USER_LIST, userService.getAllUsersSortedByFieldAsc("name"),
+                CAR_LIST, carService.getAllCarsSortedByFieldAsc("model"),
                 CURRENT_DATE, LocalDate.now(),
                 CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
     }
@@ -174,9 +174,9 @@ public class OrderController {
                 log.error("... editOrder: dates assignation error");
                 return "edit";
             } else {
-                log.info("...updating order = " + updatedOrder);
                 updatedOrder.setRegisterDate(prevOrder.getRegisterDate());
                 updatedOrder.setUpdateDate(LocalDateTime.now());
+                log.info("...updating order = " + updatedOrder);
                 orderRepository.save(updatedOrder);
             }
         } else log.info("id does not correspond to order id");

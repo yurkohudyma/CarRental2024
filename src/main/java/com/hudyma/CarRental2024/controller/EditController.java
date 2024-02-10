@@ -9,6 +9,7 @@ import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
+import com.hudyma.CarRental2024.service.CarService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -25,11 +26,11 @@ import java.time.LocalDate;
 @Log4j2
 public class EditController {
 
-    public static final String EDIT = "edit";
-    public static final String ACTION = "action";
+    public static final String EDIT = "edit", ACTION = "action";
     private final UserRepository userRepository;
     private final CarRepository carRepository;
     private final OrderRepository orderRepository;
+    private final CarService carService;
 
     @GetMapping("/{id}/user")
     public String editUser(@PathVariable Long id, Model model) {
@@ -53,10 +54,11 @@ public class EditController {
     @GetMapping("/{id}/order")
     public String editOrder (@PathVariable Long id, Model model){
         Order order = orderRepository.findById(id).orElseThrow();
-        model.addAttribute("carList", carRepository.findAll());
+        model.addAttribute("carList",
+                carService.getAllCarsSortedByFieldAsc("model"));
         model.addAttribute("order", order);
         model.addAttribute(ACTION, "order");
-        model.addAttribute("currentDate", LocalDate.now());
+        model.addAttribute("currentDate", order.getDateBegin());
         model.addAttribute("currentNextDate", LocalDate.now().plusDays(1));
         return EDIT;
     }

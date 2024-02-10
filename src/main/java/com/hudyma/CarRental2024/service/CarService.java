@@ -11,6 +11,7 @@ import com.hudyma.CarRental2024.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,12 @@ import java.util.NoSuchElementException;
 public class CarService {
     public static final String IS_MISSING_FOR_USER = "{} is missing for User {}";
     private final CarRepository carRepository;
+
+
+    public List<Car> getAllCarsSortedByFieldAsc(String sortField) {
+        return carRepository.findAll(Sort.by(
+                Sort.Direction.ASC, sortField));
+    }
 
     @Transactional(readOnly = true)
     public List<CarDto> getAll() {

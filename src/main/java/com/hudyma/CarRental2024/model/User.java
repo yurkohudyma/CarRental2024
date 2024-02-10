@@ -40,12 +40,9 @@ public class User {
     LocalDateTime updateDate;
 
 
-
-    //todo Cannot delete or update a parent row: a foreign key constraint fails
-    //todo MySQL has a RESTRICT option on order.user_id constraint,
-    //todo change manually to CASCADE
     @JsonManagedReference(value = "users_orders")
     @OneToMany (mappedBy = "user",
+            //todo ORDER.FK manually CHANGED DB to CASCADE, CascadeType.ALL does not work
             cascade = CascadeType.ALL,
             //todo WHEN LAZY, restFUL fetches no data on user's retrieval
             fetch = FetchType.EAGER)
