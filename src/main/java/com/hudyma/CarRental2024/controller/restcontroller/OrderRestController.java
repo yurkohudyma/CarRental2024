@@ -70,7 +70,7 @@ public class OrderRestController {
                 order.getDateEnd());
         if (days <= 0) throw new IllegalArgumentException
                 (".........DATES OF RENTAL INCORRECT");
-        order.setDurability(days);
+        order.setDuration(days);
         Double price = carRepository.findById(order.getCar()
                 .getId())
                 .orElseThrow()

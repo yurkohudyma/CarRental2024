@@ -87,7 +87,7 @@ public class OrderService {
             log.info("...DATES OF RENTAL DIFFER BY " + days + " days");
             return 0d;
         }
-        order.setDurability(days);
+        order.setDuration(days);
         Double price = carRepository.findById(carId)
                 .orElseThrow()
                 .getPrice();

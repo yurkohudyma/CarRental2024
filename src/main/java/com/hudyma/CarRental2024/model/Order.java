@@ -31,8 +31,8 @@ public class Order {
     @Column(name = "date_end")
     LocalDate dateEnd;
 
-    @Column(name = "durability")
-    Long durability;
+    @Column(name = "duration")
+    Long duration;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
