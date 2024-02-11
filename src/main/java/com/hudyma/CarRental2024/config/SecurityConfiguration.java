@@ -20,6 +20,7 @@ import static com.hudyma.CarRental2024.model.Permission.MANAGER_READ;
 import static com.hudyma.CarRental2024.model.Role.ADMIN;
 import static com.hudyma.CarRental2024.model.Role.MANAGER;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
@@ -53,7 +54,7 @@ public class SecurityConfiguration {
                         .authenticated()
                 )
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout.logoutUrl("/auth/logout")
