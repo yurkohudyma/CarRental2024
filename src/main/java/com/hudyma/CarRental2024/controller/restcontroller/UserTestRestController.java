@@ -5,31 +5,27 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin")
-@PreAuthorize("hasRole('ADMIN')")
-public class AdminController {
+@RequestMapping("/user")
+@PreAuthorize("hasRole('USER')")
+public class UserTestRestController {
 
     @GetMapping
-    @PreAuthorize("hasAuthority('admin:read')")
     public String get() {
-        return "GET:: admin controller";
+        return "GET:: user controller";
     }
     @PostMapping
-    @PreAuthorize("hasAuthority('admin:create')")
     @Hidden
     public String post() {
-        return "POST:: admin controller";
+        return "POST:: user controller";
     }
     @PutMapping
-    @PreAuthorize("hasAuthority('admin:update')")
     @Hidden
     public String put() {
-        return "PUT:: admin controller";
+        return "PUT:: user controller";
     }
     @DeleteMapping
-    @PreAuthorize("hasAuthority('admin:delete')")
     @Hidden
     public String delete() {
-        return "DELETE:: admin controller";
+        return "DELETE:: user controller";
     }
 }

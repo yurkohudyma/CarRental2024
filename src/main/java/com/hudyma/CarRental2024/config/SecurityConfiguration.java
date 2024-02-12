@@ -1,15 +1,13 @@
 package com.hudyma.CarRental2024.config;
 
-import com.hudyma.CarRental2024.constants.UserAccessLevel;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.authentication.AuthenticationProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -28,12 +26,16 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-    private static final String [] FREE_ACCESS_URL_LIST = {
+    private static final String[] FREE_ACCESS_URL_LIST = {
             "/cars",
             "/users",
             "/api/**",
             "/orders",
-            "/auth/**"
+            "/edit",
+            "/auth/**",
+            "/",
+            "/img/**",
+            "/css/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -41,17 +43,21 @@ public class SecurityConfiguration {
     private final LogoutHandler logoutHandler;
 
     @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers(FREE_ACCESS_URL_LIST)
-                        .permitAll()
-//                        .requestMatchers("/user").hasRole(UserAccessLevel.USER.name())
-//                        .requestMatchers("/admin").hasAnyRole(ADMIN.name(), MANAGER.name())
-//                                .requestMatchers(GET, "/admin").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
-                        .anyRequest()
-                        .authenticated()
+                                req.requestMatchers(FREE_ACCESS_URL_LIST)
+                                        .permitAll()
+//                                      .requestMatchers("/user").hasRole(UserAccessLevel.USER.name())
+                                        .requestMatchers("/admin").hasAnyRole(ADMIN.name(), MANAGER.name())
+                                        .requestMatchers(GET, "/admin").hasAnyAuthority(
+                                                ADMIN_READ.name(), MANAGER_READ.name())
+                                        .requestMatchers("/mgr").hasAnyRole(ADMIN.name(), MANAGER.name())
+                                        .requestMatchers(GET, "/mgr").hasAnyAuthority(
+                                                ADMIN_READ.name(), MANAGER_READ.name())
+                                        .anyRequest()
+                                        .authenticated()
                 )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(STATELESS))
@@ -59,7 +65,7 @@ public class SecurityConfiguration {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout.logoutUrl("/auth/logout")
                         .addLogoutHandler(logoutHandler)
-                        .logoutSuccessHandler( (request, response, authentication) ->
+                        .logoutSuccessHandler((request, response, authentication) ->
                                 SecurityContextHolder.clearContext()));
         return http.build();
     }
