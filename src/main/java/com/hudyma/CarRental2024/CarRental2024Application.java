@@ -40,7 +40,7 @@ public class CarRental2024Application {
 
             var user = RegisterRequest.builder()
                     .name("Степан Жменя")
-                    .email("zhmemia@hudyma.com")
+                    .email("zhmenia@hudyma.com")
                     .password("password789")
                     .role(USER)
                     .accessLevel(UserAccessLevel.USER)

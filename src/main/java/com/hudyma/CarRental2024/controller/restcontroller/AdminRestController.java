@@ -6,11 +6,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin")
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
 public class AdminRestController {
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('manager:read', 'admin:read')")
     public String get() {
         return "GET:: admin controller";
     }

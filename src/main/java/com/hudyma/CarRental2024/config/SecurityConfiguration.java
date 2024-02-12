@@ -31,9 +31,12 @@ public class SecurityConfiguration {
             "/users",
             "/api/**",
             "/orders",
-            "/edit",
+            "/edit/**",
             "/auth/**",
             "/",
+            "static/**",
+            "css/**",
+            "img/**",
             "/img/**",
             "/css/**"
     };
@@ -50,12 +53,12 @@ public class SecurityConfiguration {
                                 req.requestMatchers(FREE_ACCESS_URL_LIST)
                                         .permitAll()
 //                                      .requestMatchers("/user").hasRole(UserAccessLevel.USER.name())
-                                        .requestMatchers("/admin").hasAnyRole(ADMIN.name(), MANAGER.name())
-                                        .requestMatchers(GET, "/admin").hasAnyAuthority(
-                                                ADMIN_READ.name(), MANAGER_READ.name())
-                                        .requestMatchers("/mgr").hasAnyRole(ADMIN.name(), MANAGER.name())
-                                        .requestMatchers(GET, "/mgr").hasAnyAuthority(
-                                                ADMIN_READ.name(), MANAGER_READ.name())
+//                                        .requestMatchers("/admin").hasAnyRole(ADMIN.name(), MANAGER.name())
+//                                        .requestMatchers(GET, "/admin").hasAnyAuthority(
+//                                                ADMIN_READ.name(), MANAGER_READ.name())
+//                                        .requestMatchers("/mgr").hasAnyRole(ADMIN.name(), MANAGER.name())
+//                                        .requestMatchers(GET, "/mgr").hasAnyAuthority(
+//                                                ADMIN_READ.name(), MANAGER_READ.name())
                                         .anyRequest()
                                         .authenticated()
                 )
