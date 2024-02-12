@@ -27,12 +27,9 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfiguration {
 
     private static final String[] FREE_ACCESS_URL_LIST = {
-            "/cars",
-            "/users",
             "/api/**",
-            "/orders",
-            "/edit/**",
             "/auth/**",
+            "/login",
             "/",
             "static/**",
             "css/**",

@@ -1,5 +1,6 @@
 package com.hudyma.CarRental2024.repository;
 
+import com.hudyma.CarRental2024.model.Role;
 import com.hudyma.CarRental2024.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -17,6 +18,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAll();
 
     Optional<User> findByEmail(String email);
+
+    @Query("select role from User u where u.email = :email")
+    Role findRoleByEmail (String email);
 
     @Transactional(readOnly = true)
     Optional<User> findById(Long id);

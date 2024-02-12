@@ -19,7 +19,7 @@
     <header>
         <h1 class="title">Сайт прокату автомобілів</h1>
         <div class = "login_block">
-            <form action="#" th:action="@{/authenticate}" th:method = "post">
+            <form action="#" th:action="@{/login}" th:method = "post">
                 <input id="email_input" name="email" type="text" placeholder="user@domain.com" title="user@domain.com" required
                        pattern="\b[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\b">
                 <input id = "password_input" name = "password" type="password" placeholder="пароль" required>
