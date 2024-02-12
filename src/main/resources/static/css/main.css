@@ -49,7 +49,7 @@ form {
     z-index: 99;
 }
 
-#model_input, #name_input, #email_input , #passportData_input
+#model_input, #name_input, #email_input , #passportData_input, #password_input
 {
     flex: 1;
     margin: 0 10px;
@@ -159,7 +159,8 @@ textarea {
 .users_button_in_orderlist:hover,
 .caution_button_orderlist:hover,
 .delete_ico_orderlist:hover,
-.edit_ico_orderlist:hover {
+.edit_ico_orderlist:hover,
+.register_button:hover {
 	background-color: white;
 	color: #b90000;
 }
@@ -224,6 +225,23 @@ textarea {
     margin-right: 10px;
     margin-top: 10px;
 	text-align: center
+}
+
+.register_button {
+	border-style: none;
+    outline-color: transparent;
+    border-radius: 6px;
+    background-color: blue;
+    color: #fff;    
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: 10px;
+	text-align: center	
+}
+
+.register_button_div{
+	display: flex;
+    align-items: flex-end;
 }
 
 /* Cars styles */
@@ -336,7 +354,7 @@ textarea {
 	font-style: inherit
 }
 
-.stats_block {	
+.stats_block, .login_block {	
 	text-align: center;			
 	font-style: inherit;
 	/* padding: 10px; */

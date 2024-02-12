@@ -17,7 +17,18 @@
 
 <div class="wrapper">
     <header>
-        <h1 class="title">Панель адміна</h1>
+        <h1 class="title">Сайт прокату автомобілів</h1>
+        <div class = "login_block">
+            <form action="#" th:action="@{/authenticate}" th:method = "post">
+                <input id="email_input" name="email" type="text" placeholder="user@domain.com" title="user@domain.com" required
+                       pattern="\b[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\b">
+                <input id = "password_input" name = "password" type="password" placeholder="пароль" required>
+                <input type="submit" value="Ввійти" class="button">
+            </form>
+        </div>
+        <div class = "register_button_div" th:action="@{/registration}" th:method = "get">
+            <input type="submit" value="Реєстрація" class="register_button">
+        </div>
         <h4 class="version_block" th:text="'v.' + ${@environment.getProperty('carrental.version')}"></h4>
     </header>
 

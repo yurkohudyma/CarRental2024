@@ -87,7 +87,6 @@ public class AuthService {
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
-
     }
 
     private void revokeAllUserTokens(User user) {
