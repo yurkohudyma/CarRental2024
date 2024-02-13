@@ -7,8 +7,12 @@ import com.hudyma.CarRental2024.repository.UserRepository;
 import com.hudyma.CarRental2024.service.CarService;
 import com.hudyma.CarRental2024.service.OrderService;
 import com.hudyma.CarRental2024.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.hudyma.CarRental2024.controller.AuthController.getSessionContext;
+
 @Log4j2
 @RequestMapping("/orders")
 @RequiredArgsConstructor
 @Controller
+@Secured({"ADMIN", "MANAGER"})
 public class OrderController {
 
     private static final String REDIRECT_ORDERS = "redirect:/orders", ORDERS = "orders", ORDER_LIST = "orderList";
@@ -37,12 +44,13 @@ public class OrderController {
     private final UserService userService;
 
     @GetMapping({"", "/sortById"})
-    public String getAll(Model model) {
+    public String getAll(Model model, HttpSession session) {
         List<Order> orderList = orderService.getAllOrders();
         model.addAttribute(ORDER_LIST,
                 orderList);
         assignAttributesWhenSortingFields(model);
         assignAttributesForStats(model, orderList);
+        getSessionContext(session);
         return ORDERS;
     }
 

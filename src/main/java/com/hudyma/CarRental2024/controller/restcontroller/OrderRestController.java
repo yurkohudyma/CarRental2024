@@ -7,9 +7,13 @@ import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -19,10 +23,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static com.hudyma.CarRental2024.controller.AuthController.getSessionContext;
+
 @RestController
 @Log4j2
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
+@Secured({"ADMIN", "MANAGER"})
 public class OrderRestController {
 
     private final OrderRepository orderRepository;
@@ -30,7 +37,8 @@ public class OrderRestController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public List<Order> getAll (){
+    public List<Order> getAll (HttpSession session){
+        getSessionContext(session);
         return orderRepository.findAll();
     }
     @GetMapping("{id}")

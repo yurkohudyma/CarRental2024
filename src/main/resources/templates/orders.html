@@ -15,12 +15,12 @@
 </head>
 <body>
 
-<div class="wrapper">
+<div class="wrapper" th:if="${isAdmin}">
     <header>
-        <h1 class="title">Панель адміна</h1>
+        <h1 class="title" th:if="${isAdmin}">Панель адміна</h1>
+        <h1 class="title" th:if="${isManager}">Панель менеджера</h1>
 
         <div class="stats_block" th:unless="${errorDatesAssign}">
-
                 <div class="stats_unit"><img class = "stats_img" th:src="@{/img/order-icon.png}" th:title="Замовлень"/></div>
                 <div class="stats_unit" th:text="${ordersQuantity}"></div>
                 <div class="stats_unit"><img class = "stats_img" th:src="@{/img/car-icon.png}" th:title="Авто"/></div>
@@ -29,8 +29,8 @@
                 <div class="stats_unit" th:text="${usersQuantity}"></div>
                 <div class="stats_unit"><img class = "stats_img" th:src="@{/img/euro-icon.png}" title="Сума замовлень"/></div>
                 <div class="stats_unit" th:text="${ordersAmount}"></div>
-
         </div>
+        <div class = "email_block" th:text="${email}"></div>
 
         <h4 class="version_block" th:text="'v.' + ${@environment.getProperty('carrental.version')}"></h4>
     </header>

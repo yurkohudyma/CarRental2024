@@ -1,7 +1,3 @@
-/*old color #67a300
-new color #67a300
-*/
-
 body {
 	/* background: url(../img/bg.jpg) no-repeat; */
 	-moz-background-size: 100%; /* Firefox 3.6+ */
@@ -35,11 +31,6 @@ header h3 {
     /* font-size: 2em; */
     /* margin-right: 80px; */
 }
-
-
-
-/* Form styles */
-
 
 form {
     /* display: flex; */
@@ -160,7 +151,8 @@ textarea {
 .caution_button_orderlist:hover,
 .delete_ico_orderlist:hover,
 .edit_ico_orderlist:hover,
-.register_button:hover {
+.register_button:hover,
+.logout_button:hover {
 	background-color: white;
 	color: #b90000;
 }
@@ -227,7 +219,7 @@ textarea {
 	text-align: center
 }
 
-.register_button {
+.register_button, .logout_button {
 	border-style: none;
     outline-color: transparent;
     border-radius: 6px;
@@ -239,12 +231,10 @@ textarea {
 	text-align: center	
 }
 
-.register_button_div{
+.register_button_div, .logout_button_div {
 	display: flex;
     align-items: flex-end;
 }
-
-/* Cars styles */
 
 .car, .user, .overall_stats {    
     padding: 15px;

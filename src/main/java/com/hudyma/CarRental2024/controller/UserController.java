@@ -7,6 +7,7 @@ import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import com.hudyma.CarRental2024.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,18 +20,15 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @Controller
+@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
-    public static final String BLOCKING_USER = "...Blocking user = ";
-    public static final String USER = "...User ";
-    public static final String NOT_FOUND = "not found";
-    public static final String USER_LIST = "userList";
-    public static final String USER_ORDERS_LIST = "userOrdersList";
-    public static final String SOLE_USER_CARD = "soleUserCard";
+    public static final String BLOCKING_USER = "...Blocking user = ", USER = "...User ", NOT_FOUND = "not found";
+    public static final String USER_LIST = "userList", USER_ORDERS_LIST = "userOrdersList";
+    public static final String SOLE_USER_CARD = "soleUserCard", REDIRECT_USERS = "redirect:/users";
     private final UserRepository userRepository;
     private final OrderService orderService;
     private final UserService userService;
-    private static final String REDIRECT_USERS = "redirect:/users";
 
     @GetMapping
     public String getAll(Model model) {
