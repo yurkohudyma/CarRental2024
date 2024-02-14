@@ -56,10 +56,10 @@ public class OrderService {
         return orderRepository.findAllByCarId(id);
     }
 
-    public boolean setOrder(Order order, Long carId, Long userId) {
+    boolean setOrder(Order order, Long carId, Long userId) {
         Double setOrderAmount = calculateOrderAmount(order, carId);
         if (setOrderAmount == 0d) {
-            log.error("...set order: computed amount is {}", setOrderAmount);
+            log.error("...set order: computed amount is 0");
             return false;
         }
         order.setAmount(setOrderAmount);

@@ -36,7 +36,7 @@
             <form action="#" th:action="@{'/users/' + ${user.id}}" th:method="patch">
                 <label for="name_input"></label>
                 <input id="name_input" name="name" type="text" th:placeholder="${user.name}"
-                       pattern="^[А-ЯҐЇІЄ]{1}[а-яґїіє]{2,}\s[А-ЯҐЇІЄ]{1}[а-яґїіє]{2,}|[A-Z]{1}[a-z]{2,}\s[A-Z]{1}[a-z]{2,}$"
+                       pattern="^[А-ЯҐЇІЄ|A-Z]{1}[а-яґїіє|a-z]{2,}\s[А-ЯҐЇІЄ|A-Z]{1}[а-яґїіє|A-za-z]{2,}.+$"
                        title="Степан Жменя / John Mitchell">
                 <label for="email_input"></label>
                 <input id="email_input" name="email" th:placeholder="${user.email}" title="user@domain.com"
