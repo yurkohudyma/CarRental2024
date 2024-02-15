@@ -12,9 +12,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,14 +26,25 @@ public class OrderService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
 
-    public Double getAllOrdersAmount() {
+    public String getAllOrdersAmount() {
         Double result = orderRepository
                 .findAll()
                 .stream()
                 .map(Order::getAmount)
                 .reduce(Double::sum)
                 .orElse(0d);
-        return Math.round(result * 100d) / 100d;
+        double res = Math.round(result * 100d) / 100d;
+        return formatDecimalNum (res);
+    }
+
+    private String formatDecimalNum(double res) {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator(' ');
+        DecimalFormat dfDecimal = new DecimalFormat("###########0.00###");
+        dfDecimal.setDecimalFormatSymbols(symbols);
+        dfDecimal.setGroupingSize(3);
+        dfDecimal.setGroupingUsed(true);
+        return dfDecimal.format(res);
     }
 
     public List<Order> getOrdersByUserId(Long id) {

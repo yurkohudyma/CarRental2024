@@ -1,6 +1,8 @@
 package com.hudyma.CarRental2024.controller.restcontroller;
 
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 public class AdminRestController {
 
     @GetMapping
-    public String get() {
-        return "GET:: admin controller";
+    public Cookie[] get(HttpServletRequest req) {
+        return req.getCookies();
     }
     @PostMapping
     @PreAuthorize("hasAuthority('admin:create')")
