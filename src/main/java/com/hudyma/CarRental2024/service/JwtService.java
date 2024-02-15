@@ -88,4 +88,8 @@ public class JwtService {
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
+
+    public int extractExpirationInSecs(String token) {
+        return extractClaim(token, Claims::getExpiration).getSeconds();
+    }
 }

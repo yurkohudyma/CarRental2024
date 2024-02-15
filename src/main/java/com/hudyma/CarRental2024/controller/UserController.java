@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 @Controller
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
 public class UserController {
 
     public static final String BLOCKING_USER = "...Blocking user = ", USER = "...User ", NOT_FOUND = "not found";

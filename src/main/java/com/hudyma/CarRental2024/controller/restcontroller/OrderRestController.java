@@ -29,7 +29,7 @@ import static com.hudyma.CarRental2024.controller.AuthController.getSessionConte
 @Log4j2
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
-@Secured({"ADMIN", "MANAGER"})
+@PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
 public class OrderRestController {
 
     private final OrderRepository orderRepository;

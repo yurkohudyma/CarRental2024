@@ -29,7 +29,7 @@ import static com.hudyma.CarRental2024.controller.AuthController.getSessionConte
 @RequestMapping("/orders")
 @RequiredArgsConstructor
 @Controller
-@Secured({"ADMIN", "MANAGER"})
+@PreAuthorize("hasAnyRole('MANAGER','ADMIN')")
 public class OrderController {
 
     private static final String REDIRECT_ORDERS = "redirect:/orders", ORDERS = "orders", ORDER_LIST = "orderList";
