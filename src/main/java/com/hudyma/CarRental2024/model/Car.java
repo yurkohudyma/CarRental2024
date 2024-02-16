@@ -49,4 +49,10 @@ public class Car {
 
     @Column(name = "update_date")
     LocalDateTime updateDate;
+
+    @Column(name = "available")
+    Integer available;
+
+    @Column(name = "total_qty")
+    Integer totalQty;
 }
