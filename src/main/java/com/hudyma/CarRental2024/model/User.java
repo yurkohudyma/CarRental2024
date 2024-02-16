@@ -39,6 +39,8 @@ public class User {
     @Column(name = "update_date")
     LocalDateTime updateDate;
 
+    @Column(name = "balance")
+    Double balance;
 
     @JsonManagedReference(value = "users_orders")
     @OneToMany (mappedBy = "user",

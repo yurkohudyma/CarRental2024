@@ -118,9 +118,9 @@ public class OrderController {
 
     @PostMapping
     public String addOrder(Order order,
-                           @ModelAttribute("user_id") String userIdStr,
-                           @ModelAttribute("car_id") String carIdStr, Model model) {
-        Long userId = Long.parseLong(userIdStr), carId = Long.parseLong(carIdStr);
+                           @ModelAttribute("user_id") Long userId,
+                           @ModelAttribute("car_id") Long carId, Model model) {
+        //Long userId = Long.parseLong(userIdStr), carId = Long.parseLong(carIdStr);
         if (orderService.setOrder(order, carId, userId)) {
             if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
             log.info("...add Order: persisting order of {}", order.getUser().getName());

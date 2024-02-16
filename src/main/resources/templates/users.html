@@ -43,6 +43,7 @@
         <div class="user_unit" th:text="${user.email}"></div>
         <div class="user_unit" th:text="'Паспорт: ' + ${user.passportData}"></div>
         <div class="user_unit" th:text="'Доступ: ' + ${user.accessLevel}"></div>
+        <div class="user_unit" th:text="'Баланс: €' + ${user.balance}"></div>
 
         <div class="user_solecard_action_buttons_block" th:unless="${user.accessLevel.toString() == 'ADMIN'}">
             <form action="#" th:action="@{'/users/'+${user.id}}" th:method="delete">

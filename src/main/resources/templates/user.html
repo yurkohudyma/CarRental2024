@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" content="application/json">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <title>Автопрокат ::: Панель користувача</title>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <h1 class="title">Панель користувача</h1>
+    </header>
+
+    <!--USERS READOUT SECTION-->
+    <div class="users_header">Ваші дані</div>
+    <div class="user">
+        <div class="user_name" th:text="${user.name}"></div>
+        <div class="user_unit" th:text="${user.email}"></div>
+        <div class="user_unit" th:text="'Паспорт: ' + ${user.passportData}"></div>
+        <div class="user_unit">Баланс: €<span class="user_solecard_values" th:text="${user.balance}"></span></div>
+
+        <div class="user_solecard_action_buttons_block">
+            <a class="edit_ico_orderlist" href="edit.html" th:href="@{'/edit/'+${user.id}+'/user'}">
+                <img th:src="@{/img/edit-button.png}" th:title="Редагувати"/>
+            </a>
+        </div>
+    </div>
+    <div class="top-up_panel">
+        <form action="#" th:modelAttribute="balance" th:action="@{'/users/' + ${user.id}+'/top-up'}" th:method="patch">
+            <label for="balance_input" id="balance">€</label>
+            <input id="balance_input" name="balance" type="text" placeholder="100"
+                   title="Введіть число" required pattern="\d+[.]?\d*">
+            <input type="submit" value="Поповнити баланс" class="button">
+        </form>
+    </div>
+
+    <!--USER ORDERS READOUT SECTION-->
+    <div class="order_header">
+        <p th:if = "${!userOrdersList.isEmpty}">Ваші замовлення</p>
+        <p th:if = "${userOrdersList.isEmpty}">Замовлень поки немає</p>
+    </div>
+    <table class="order_table" th:unless="${userOrdersList.isEmpty}">
+        <thead>
+        <tr class="order_table_legend">
+            <th>Марка</th>
+            <th>Початок</th>
+            <th>Кінець</th>
+            <th>Тривалість</th>
+            <th>Сума</th>
+            <th>Водій</th>
+            <th>Статус</th>
+            <th colspan="3">Дія</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="order" th:each="order : ${userOrdersList}">
+            <td class="order_unit">
+                <a href="cars.html" th:href="@{'/cars/'+${order.car.id}}"
+                   th:text="${order.car.model}"></a>
+            </td>
+            <td class="order_unit" th:text="${order.dateBegin}"></td>
+            <td class="order_unit" th:text="${order.dateEnd}"></td>
+            <td class="order_unit" th:text="${order.duration}+' діб'"></td>
+            <td class="order_unit" th:text="'€'+${order.amount}"></td>
+            <td class="order_unit" th:text="${order.auxNeeded}"></td>
+            <td class="order_unit" th:text="${order.status}"></td>
+            <td class="buttons_order_unit">
+                <form action="#" th:action="@{'/orders/'+${order.id}}" th:method="delete">
+                    <button type="submit" class="delete_ico_orderlist">
+                        <img th:src="@{/img/delete-button.png}" th:title="Видалити"/>
+                    </button>
+                </form>
+            </td>
+            <td class="buttons_order_unit">
+                <a href="edit.html" th:href="@{'/edit/'+${order.id}+'/order'}">
+                    <img th:src="@{/img/edit-button.png}" th:title="Редагувати"/>
+                </a>
+            </td>
+            <td class="buttons_order_unit">
+                <a href="pay.html" th:href="@{'/pay/'+${order.id}}">
+                    <img th:src="@{/img/green_euro_icon.png}" th:title="Оплатити"/>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

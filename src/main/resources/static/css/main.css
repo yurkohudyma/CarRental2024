@@ -41,9 +41,7 @@ header h3 {
 /* Form styles */
 
 
-form {
-    /* display: flex; */
-    /* background-color: white; */
+form {    
     justify-content: space-between;
     align-items: baseline;
     z-index: 99;
@@ -70,7 +68,7 @@ form {
 	margin-top: 5px;
 }
 
-#price_input {
+#price_input, #balance_input{
 	flex: 1;
     margin: 0 10px;
     padding-left: 8px;
@@ -230,13 +228,25 @@ textarea {
 
 .car, .user, .overall_stats {    
     padding: 15px;
-    border: 1px solid /* #f3f3f3 */;
+    border: 1px solid;
     border-radius: 10px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 	display: inline-table;
 	text-align: center;
 	border-color: lightskyblue;
 	margin: 5px;
+}
+
+.top-up_panel {
+	padding: 8px;
+    border: 1px solid;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+	display: inline-table;
+	text-align: center;
+	border-color: lightskyblue;
+	margin: 5px;
+	padding-bottom: 15px;	
 }
 
 .stats_unit {
@@ -264,11 +274,6 @@ textarea {
 	font-size: 1.3em;    
 	margin: 10px;	
 }
-
-/* .stats_header {
-	font-size: 1.3em;    
-	margin-top: 10px;	
-} */
 
 .car_unit, .user_unit  {    
 }
@@ -390,4 +395,8 @@ textarea {
 .carDeleteErrorBlock {
 	color: red;
 	margin-top: 10px;
+}
+
+.user_solecard_values {
+	font-weight: bold;
 }
