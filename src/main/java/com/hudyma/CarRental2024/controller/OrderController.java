@@ -1,5 +1,6 @@
 package com.hudyma.CarRental2024.controller;
 
+import com.hudyma.CarRental2024.exception.CarNotAvailableException;
 import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.OrderRepository;
@@ -111,7 +112,7 @@ public class OrderController {
     private void assignAttributesWhenSortingFields(Model model) {
         model.addAllAttributes(Map.of(
                 USER_LIST, userService.getAllUsersSortedByFieldAsc("name"),
-                CAR_LIST, carService.getAllCarsSortedByFieldAsc("model"),
+                CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc("model"),
                 CURRENT_DATE, LocalDate.now(),
                 CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
     }
@@ -120,7 +121,7 @@ public class OrderController {
     public String addOrder(Order order,
                            @ModelAttribute("user_id") Long userId,
                            @ModelAttribute("car_id") Long carId, Model model) {
-        //Long userId = Long.parseLong(userIdStr), carId = Long.parseLong(carIdStr);
+        if (order.getCar().getAvailable() != 0) throw new CarNotAvailableException();
         if (orderService.setOrder(order, carId, userId)) {
             if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
             log.info("...add Order: persisting order of {}", order.getUser().getName());

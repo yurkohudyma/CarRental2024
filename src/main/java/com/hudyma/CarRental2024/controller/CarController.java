@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @RequestMapping("/cars")
@@ -32,14 +33,14 @@ public class CarController {
 
     @GetMapping
     public String getAll(Model model) {
-        model.addAttribute("carList", carRepository.findAll());
-        model.addAttribute("carClassArr", CarClass.values());
-        model.addAttribute("carColorArr", CarColor.values());
-        model.addAttribute("carPropulsionArr", CarPropulsion.values());
-        model.addAttribute("showAddCarForm", true);
-        model.addAttribute("soleCarCard", false);
-        model.addAttribute("carOrdersList",
-                new ArrayList<>());
+        model.addAllAttributes(Map.of(
+                "carList", carRepository.findByAvailableNot(0),
+                "carClassArr", CarClass.values(),
+                "carColorArr", CarColor.values(),
+                "carPropulsionArr", CarPropulsion.values(),
+                "showAddCarForm", true,
+                "soleCarCard", false,
+                "carOrdersList",new ArrayList<>()));
         log.info("...Retrieving all available cars");
         return CARS;
     }

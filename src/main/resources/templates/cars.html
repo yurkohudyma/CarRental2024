@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8" content="application/json">
     <meta name="viewport"
@@ -35,6 +35,7 @@
     </div>
 
     <div class="car_entry_form_block" th:if="${showAddCarForm}">
+
         <!--CAR ENTRY FORM SECTION-->
         <form action="#" th:action="@{/cars}" th:method="post">
             <div class="car_entry_form_level">
@@ -56,11 +57,11 @@
                 <label for="seatsQuantity_input" id="seatsQuantity">Місць</label>
                 <input id="seatsQuantity_input" name="seatsQuantity" type="text" placeholder="5"
                        required pattern="\d+">
-                <label for="color_input">Колір</label>
+                <!--<label for="color_input">Колір</label>
                 <select class="select_button" id="color_input" name="color">
                     <option th:each="car_color : ${carColorArr}" th:value="${car_color}"
                             th:text="${car_color}"></option>
-                </select>
+                </select>-->
                 <label for="propulsion_input">Рушій</label>
                 <select class="select_button" id="propulsion_input" name="propulsion">
                     <option th:each="propulsion : ${carPropulsionArr}" th:value="${propulsion}"
@@ -80,8 +81,14 @@
         <div class="car_unit" th:text="${car.carClass}"></div>
         <div class="car_unit" th:text="'€ '+${car.price}"></div>
         <div class="car_unit" th:text="'Місць: '+${car.seatsQuantity}"></div>
-        <div class="car_unit" th:text="${car.color}"></div>
+        <!--<div class="car_unit" th:text="${car.color}"></div>-->
         <div class="car_unit" th:text="${car.propulsion}"></div>
+        <div class="car_unit">∑<span><sub>пот</sub></span>
+            <span th:text="': ' + ${car.available}"></span>
+        </div>
+        <div class="car_unit">∑<span><sub>заг</sub></span>
+            <span th:text="': ' + ${car.totalQty}"></span>
+        </div>
 
         <!--CAR MODIFY ACTIONS BUTTONS-->
         <div class="car_solecard_action_buttons_block">
@@ -116,8 +123,6 @@
             <th>Сума</th>
             <th>Водій</th>
             <th>Статус</th>
-            <th>Наявно</th>
-            <th>Всього</th>
             <th colspan="2">Дія</th>
         </tr>
         </thead>
@@ -133,8 +138,6 @@
             <td class="order_unit" th:text="'€'+${order.amount}"></td>
             <td class="order_unit" th:text="${order.auxNeeded}"></td>
             <td class="order_unit" th:text="${order.status}"></td>
-            <td class="order_unit" th:text="${order.available}"></td>
-            <td class="order_unit" th:text="${order.totalQty}"></td>
             <td class="buttons_order_unit">
                 <form action="#" th:action="@{'/orders/'+${order.id}}" th:method="delete">
                     <button type="submit" class="delete_ico_orderlist">

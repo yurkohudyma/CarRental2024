@@ -33,7 +33,15 @@ public class OrderService {
                 .reduce(Double::sum)
                 .orElse(0d);
         double res = Math.round(result * 100d) / 100d;
-        return formatDecimalNum (res);
+        return formatDecimalNum(res);
+    }
+
+    public void updateCarAvailabilityNumber (OrderStatus status, Long id){
+        switch (status){
+            case COMPLETE -> carRepository.incrementCarAvailableWhenOrderComplete(id);
+            case CONFIRMED -> carRepository.decrementCarAvailableWhenOrderConfirmed(id);
+            default -> log.error("car {} availability num NOT changed)", id);
+        }
     }
 
     private String formatDecimalNum(double res) {

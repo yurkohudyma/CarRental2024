@@ -32,6 +32,11 @@ public class CarService {
                 Sort.Direction.ASC, sortField));
     }
 
+    public List<Car> getAllAvailableCarsSortedByFieldAsc(String sortField) {
+        return carRepository.findByAvailableNot(0, Sort.by(
+                Sort.Direction.ASC, sortField));
+    }
+
     @Transactional(readOnly = true)
     public List<CarDto> getAll() {
         return carRepository.findAll().stream()

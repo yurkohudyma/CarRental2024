@@ -52,8 +52,6 @@
             <div class="order_entry_form_level">
                 <label for="order_user">Користувач</label>
                 <select class="select_button" id="order_user" name="user_id">
-                    <!-- many efforts to retrieve field userId from User,
-                    therefore it's relayed via ModelAttrib as String -->
                     <option th:each="user : ${userList}" th:value="${user.id}"
                             th:text="${user.name}"></option>
                 </select>
