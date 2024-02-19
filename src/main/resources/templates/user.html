@@ -18,7 +18,22 @@
 <div class="wrapper">
     <header>
         <h1 class="title">Панель користувача</h1>
+        <div class="top-up_panel">
+            <form action="#" th:modelAttribute="balance" th:action="@{'/users/' + ${user.id}+'/top-up'}"
+                  th:method="patch">
+                <label for="balance_input" id="balance">€</label>
+                <input id="balance_input" name="balance" type="text" placeholder="100"
+                       title="Введіть число" required pattern="\d+[.]?\d*">
+                <input type="submit" value="Поповнити баланс" class="button">
+            </form>
+        </div>
     </header>
+
+    <div class="buttons_block">
+        <form action="/" method="get">
+            <input type="submit" value="Головна" class="button">
+        </form>
+    </div>
 
     <!--USERS READOUT SECTION-->
     <div class="users_header">Ваші дані</div>
@@ -34,19 +49,12 @@
             </a>
         </div>
     </div>
-    <div class="top-up_panel">
-        <form action="#" th:modelAttribute="balance" th:action="@{'/users/' + ${user.id}+'/top-up'}" th:method="patch">
-            <label for="balance_input" id="balance">€</label>
-            <input id="balance_input" name="balance" type="text" placeholder="100"
-                   title="Введіть число" required pattern="\d+[.]?\d*">
-            <input type="submit" value="Поповнити баланс" class="button">
-        </form>
-    </div>
+
 
     <!--USER ORDERS READOUT SECTION-->
     <div class="order_header">
-        <p th:if = "${!userOrdersList.isEmpty}">Ваші замовлення</p>
-        <p th:if = "${userOrdersList.isEmpty}">Замовлень поки немає</p>
+        <p th:if="${!userOrdersList.isEmpty}">Ваші замовлення</p>
+        <p th:if="${userOrdersList.isEmpty}">Замовлень поки немає</p>
     </div>
     <table class="order_table" th:unless="${userOrdersList.isEmpty}">
         <thead>
@@ -74,8 +82,8 @@
             <td class="order_unit" th:text="${order.auxNeeded}"></td>
             <td class="order_unit" th:text="${order.status}"></td>
             <td class="buttons_order_unit">
-                <form action="#" th:action="@{'/orders/'+${order.id}}" th:method="delete">
-                    <button type="submit" class="delete_ico_orderlist">
+                <form action="#" th:action="@{'/orders/'+${order.id} + '/user-acc/' + ${order.user.id}}"
+                      th:method="delete"><button type="submit" class="delete_ico_orderlist">
                         <img th:src="@{/img/delete-button.png}" th:title="Видалити"/>
                     </button>
                 </form>
@@ -93,6 +101,45 @@
         </tr>
         </tbody>
     </table>
+
+    <!--ORDER ENTRY FORM SECTION-->
+    <div class="order_header_user_account">Нове замовлення:</div>
+    <div class="order_entry_form_block_user_account">
+        <form action="#" th:action="@{'/orders/user-acc/'+${user.id}}" th:method="post">
+            <div class="order_entry_form_level_user_account">
+                <label for="order_model">Марка</label>
+                <select class="select_button_user_account" id="order_model" name="car_id">
+                    <option th:each="car : ${carList}" th:value="${car.id}"
+                            th:text="${car.model}"></option>
+                </select>
+                <label for="pickup_date_user_account">Початок</label>
+                <input id="pickup_date_user_account" name="dateBegin" type="date" th:value="${currentDate}"
+                       placeholder="ДД-ММ-РРРР" th:min="${currentDate}" required>
+                <label for="drop-off_date_user_account">Кінець</label>
+                <input id="drop-off_date_user_account" name="dateEnd" type="date" th:min="${currentNextDate}"
+                       placeholder="ДД-ММ-РРРР" required>
+            </div>
+            <div class="order_entry_form_level_user_account">
+                <div class="driver_checkbox_user_account_block">
+                    <input id="driver_checkbox_user_account" type="checkbox"
+                           checked value="true" th:checked="${auxNeeded}" name="auxNeeded"/>
+                    <label for="driver_checkbox_user_account">Водій +10% (€ SS)</label>
+                </div>
+                <div class="payment_block">
+                    <input id="prepayment" type="radio" th:name="payment" value="30" checked/>
+                    <label for="prepayment"><span>Cплатити 30% (€ XX)</span></label>
+                </div>
+                <div class="payment_block">
+                    <input id="full_pay" type="radio" th:name="payment" value="100"/>
+                    <label for="full_pay">100% (€ YY)</label>
+                </div>
+            </div>
+            <input type="submit" value="Оформити" class="button_user_account">
+        </form>
+    </div>
+    <div class=".errorDatesAssignUserAccount" th:if="${errorDatesAssign}">
+        <span>Помилка встановлення дати</span>
+    </div>
 </div>
 </body>
 </html>

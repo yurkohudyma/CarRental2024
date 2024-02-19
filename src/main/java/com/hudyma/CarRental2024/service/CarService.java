@@ -37,6 +37,13 @@ public class CarService {
                 Sort.Direction.ASC, sortField));
     }
 
+    public List<Car> getAllAvailableCarsSortedByFieldAsc() {
+        return carRepository.findByAvailableNot(0, Sort.by(
+                Sort.Direction.ASC, "model"));
+    }
+
+
+
     @Transactional(readOnly = true)
     public List<CarDto> getAll() {
         return carRepository.findAll().stream()

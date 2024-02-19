@@ -17,8 +17,7 @@ body {
 
 header {
     display: flex;
-    justify-content: space-between;
-    /* align-items: baseline; */
+    justify-content: space-between;    
     padding-top: 30px;
     padding-bottom: 15px;
     border-bottom: solid 1px gray;
@@ -26,20 +25,12 @@ header {
 
 header h1 {
     display: block;
-    font-size: 2em;
-    /* margin-right: 80px; */
+    font-size: 2em; 
 }
 
 header h3 {
-    display: block;
-    /* font-size: 2em; */
-    /* margin-right: 80px; */
+    display: block;    
 }
-
-
-
-/* Form styles */
-
 
 form {    
     justify-content: space-between;
@@ -111,6 +102,16 @@ form {
 	margin-top: 5px;
 }
 
+#pickup_date_user_account, #drop-off_date_user_account, #driver_checkbox_user_account {
+	flex: 1;
+    margin: 0 10px;    
+    border: 1px solid #67a300;
+    border-radius: 6px;
+    outline-color: #67a300;
+	background-color:white;	
+}
+
+
 textarea {
     flex: 2;
     margin: 0 10px;
@@ -134,14 +135,16 @@ textarea {
 	margin-top: 10px;	
 }
 
-.select_button{	
-	/* border-style: none;
-    outline-color: transparent;
-    border-radius: 6px;   
-    cursor: pointer;
-    margin-right: 10px;
-    margin-top: 10px;
-	text-align: center */
+.select_button{		
+	flex: 1;
+    margin: 0 10px;    
+    border: 1px solid #67a300;
+    border-radius: 6px;
+    outline-color: #67a300;
+	background-color:white
+}
+
+.select_button_user_account {
 	flex: 1;
     margin: 0 10px;    
     border: 1px solid #67a300;
@@ -151,6 +154,8 @@ textarea {
 }
 
 .select_button:hover, 
+.select_button_user_account:hover,
+.button_user_account:hover,
 .button:hover, 
 .caution_button:hover, 
 .orange_button:hover, 
@@ -164,8 +169,7 @@ textarea {
 
 .buttons_block {
 	flex:1;	
-	display: flex;
-    /* display: block; */
+	display: flex;    
     background-color: white;
     border-radius: 4px;
     z-index: 98;	
@@ -185,18 +189,28 @@ textarea {
 	text-align: center
 }
 
+.button_user_account {
+	border-style: none;
+    outline-color: transparent;
+    border-radius: 6px;
+    background-color: #67a300;
+    color: #fff;    
+    cursor: pointer;    
+	text-align: center;
+	margin-top: 10px;
+	margin-left: 15px;
+}
+
 .caution_button {
 	border-style: none;
     outline-color: transparent;
     border-radius: 6px;
     background-color: brown;
-    color: #fff;
-    /* width: 100px;
-    height: 40px; */
+    color: #fff;    
     cursor: pointer;
     margin-right: 10px;
     margin-top: 10px;
-	text-align: center
+	text-align: center;
 }
 
 .caution_button_orderlist {
@@ -221,10 +235,8 @@ textarea {
     cursor: pointer;
     margin-right: 10px;
     margin-top: 10px;
-	text-align: center
+	text-align: center;
 }
-
-/* Cars styles */
 
 .car, .user, .overall_stats {    
     padding: 15px;
@@ -238,7 +250,7 @@ textarea {
 }
 
 .top-up_panel {
-	padding: 8px;
+	/* padding: 8px;
     border: 1px solid;
     border-radius: 10px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
@@ -246,7 +258,7 @@ textarea {
 	text-align: center;
 	border-color: lightskyblue;
 	margin: 5px;
-	padding-bottom: 15px;	
+	padding-bottom: 15px; */	
 }
 
 .stats_unit {
@@ -275,11 +287,21 @@ textarea {
 	margin: 10px;	
 }
 
+.order_header_user_account{
+	font-size: 1.3em;    
+	margin: 10px;
+	margin-top: 20px;
+}
+
 .car_unit, .user_unit  {    
 }
 
 .car_entry_form_level, .order_entry_form_level {
 	width: 860px;
+}
+
+.order_entry_form_level_user_account {
+	display: inline-flex;
 }
 
 .car_edit_form_level{
@@ -295,6 +317,18 @@ textarea {
     border-radius: 4px;
     z-index: 98;	
 	margin: 15px;
+}
+
+.order_entry_form_block_user_account{	
+    background-color: white;
+    border-radius: 4px;
+    z-index: 98;		
+	border: 1px solid;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+	border-color: lightskyblue;
+	padding: 10px;
+	display: table-caption;
 }
 
 .car_solecard_action_buttons_block, .user_solecard_action_buttons_block {
@@ -387,6 +421,13 @@ textarea {
 	display: inline;
 }
 
+.errorDatesAssignUserAccount {
+	color: red;
+	margin: 10px;
+	display: inline;
+	margin-top: 10px;
+}
+
 .errorDatesAssignEdit {
 	color: red;
 	margin: 10px;	
@@ -400,3 +441,14 @@ textarea {
 .user_solecard_values {
 	font-weight: bold;
 }
+
+.payment_radio_block {
+}
+
+.driver_checkbox_user_account_block {
+	margin-top: 8px;
+}
+.payment_block{
+	margin-left: 20px;
+    margin-top: 8px;
+} 

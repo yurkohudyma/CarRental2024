@@ -25,6 +25,11 @@ public class UserService {
                 Sort.Direction.ASC, sortField));
     }
 
+    public List<User> getAllUsersSortedByFieldAsc() {
+        return userRepository.findAll(Sort.by(
+                Sort.Direction.ASC, "name"));
+    }
+
     public User ifNullableMergeOldValues(User user, User prvUser) {
         if (user.getName().equals("")) {
             user.setName(prvUser.getName());

@@ -17,17 +17,20 @@
 
 <div class="wrapper">
     <header>
-        <h1 class="title">Автопрокат Юрка Гудими</h1>
+        <h1 class="title">Панель адміна</h1>
         <h4 class="version_block" th:text="'v.' + ${@environment.getProperty('carrental.version')}"></h4>
     </header>
 
     <!--MAIN MENU -->
     <div class="buttons_block">
-        <form action="#" th:action="@{/admin}" th:method="get">
-            <input type="submit" value="Кабінет адміна" class="button">
+        <form action="#" th:action="@{/cars}" th:method="get">
+            <input type="submit" value="Авто" class="button">
         </form>
-        <form action="#" th:action="@{/users/account/1}" th:method="get">
-            <input type="submit" value="Кабінет користувача" class="button">
+        <form action="#" th:action="@{/orders}" th:method="get">
+            <input type="submit" value="Замовлення" class="button">
+        </form>
+        <form action="#" th:action="@{/users}" th:method="get">
+            <input type="submit" value="Користувачі" class="button">
         </form>
     </div>
 </div>

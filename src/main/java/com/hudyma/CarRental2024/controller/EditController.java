@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
 import java.util.BitSet;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/edit")
@@ -44,23 +45,23 @@ public class EditController {
     @GetMapping("/{id}/car")
     public String editCar(@PathVariable Long id, Model model) {
         Car car = carRepository.findById(id).orElseThrow();
-        model.addAttribute("car", car);
-        model.addAttribute(ACTION, "car");
-        model.addAttribute("carColorArr", CarColor.values());
-        model.addAttribute("carClassArr", CarClass.values());
-        model.addAttribute("carPropulsionArr", CarPropulsion.values());
+        model.addAllAttributes(Map.of("car", car,
+                                                ACTION, "car",
+                                                "carColorArr", CarColor.values(),
+                                                "carClassArr", CarClass.values(),
+                                                "carPropulsionArr", CarPropulsion.values()));
         return EDIT;
     }
 
     @GetMapping("/{id}/order")
     public String editOrder (@PathVariable Long id, Model model){
         Order order = orderRepository.findById(id).orElseThrow();
-        model.addAttribute("carList",
-                carService.getAllCarsSortedByFieldAsc("model"));
-        model.addAttribute("order", order);
-        model.addAttribute(ACTION, "order");
-        model.addAttribute("currentDate", order.getDateBegin());
-        model.addAttribute("currentNextDate", LocalDate.now().plusDays(1));
+        model.addAllAttributes(Map.of(
+        "carList", carService.getAllAvailableCarsSortedByFieldAsc(),
+        "order", order,
+        ACTION, "order",
+        "currentDate", order.getDateBegin(),
+        "currentNextDate", LocalDate.now().plusDays(1)));
         return EDIT;
     }
 }

@@ -1,8 +1,10 @@
 package com.hudyma.CarRental2024.controller;
 
 import com.hudyma.CarRental2024.exception.UserNotFoundException;
+import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.UserRepository;
+import com.hudyma.CarRental2024.service.CarService;
 import com.hudyma.CarRental2024.service.OrderService;
 import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import com.hudyma.CarRental2024.service.UserService;
@@ -13,10 +15,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import static com.hudyma.CarRental2024.controller.OrderController.ERROR_DATES_ASSIGN;
 
 @Log4j2
 @RequestMapping("/users")
@@ -26,10 +32,12 @@ public class UserController {
 
     public static final String BLOCKING_USER = "...Blocking user = ", USER = "...User ", NOT_FOUND = "not found";
     public static final String USER_LIST = "userList", USER_ORDERS_LIST = "userOrdersList", SOLE_USER_CARD = "soleUserCard";
-    private static final String REDIRECT_USERS = "redirect:/users", REDIRECT_USER = "redirect:/user";
+    private static final String REDIRECT_USERS = "redirect:/users", CAR_LIST = "carList";
+    public static final String CURRENT_DATE = "currentDate", CURRENT_NEXT_DATE = "currentNextDate", ORDER = "order";
     private final UserRepository userRepository;
     private final OrderService orderService;
     private final UserService userService;
+    private final CarService carService;
 
     @GetMapping
     public String getAll(Model model) {
@@ -53,13 +61,29 @@ public class UserController {
         return "users";
     }
 
-    @GetMapping("/{id}/account")
+    @GetMapping("/account/{id}")
     public String getUser(@PathVariable Long id, Model model) {
         model.addAttribute("user", userRepository
                 .findById(id).orElseThrow(UserNotFoundException::new));
-        model.addAttribute(USER_ORDERS_LIST,
-                orderService.getOrdersByUserId(id));
+        assignModelAttributes(model, id);
         return "user";
+    }
+
+    @GetMapping("/account/{id}/dateError")
+    public String getUserDateError(@PathVariable Long id, Model model) {
+        model.addAttribute("user", userRepository
+                .findById(id).orElseThrow(UserNotFoundException::new));
+        assignModelAttributes(model, id);
+        model.addAttribute(ERROR_DATES_ASSIGN, true);
+        return "user";
+    }
+
+    private void assignModelAttributes(Model model, Long id) {
+        model.addAllAttributes(Map.of(
+                USER_ORDERS_LIST,orderService.getOrdersByUserId(id),
+                CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
+                CURRENT_DATE, LocalDate.now(),
+                CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
     }
 
     @PostMapping
@@ -147,7 +171,7 @@ public class UserController {
         Double prevBalance = user.getBalance();
         user.setBalance(Math.round((balance + prevBalance) * 100d) / 100d);
         user.setUpdateDate(LocalDateTime.now());
-        log.info("...topping up user {} balance",id);
+        log.info("...topping up user {} balance", id);
         userRepository.save(user);
         return REDIRECT_USERS + "/" + id + "/account";
     }

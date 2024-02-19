@@ -19,6 +19,9 @@
         <h4 class="version_block" th:text="'v.' + ${@environment.getProperty('carrental.version')}"></h4>
     </header>
     <div class="buttons_block">
+        <form action="/" method="get">
+            <input type="submit" value="Головна" class="button">
+        </form>
         <form action="#" th:action="@{/cars}" th:method="get">
             <input type="submit" value="Авто" class="button">
         </form>

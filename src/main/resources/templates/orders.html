@@ -21,14 +21,16 @@
 
         <div class="stats_block" th:unless="${errorDatesAssign}">
 
-                <div class="stats_unit"><img class = "stats_img" th:src="@{/img/order-icon.png}" th:title="Замовлень"/></div>
-                <div class="stats_unit" th:text="${ordersQuantity}"></div>
-                <div class="stats_unit"><img class = "stats_img" th:src="@{/img/car-icon.png}" th:title="Авто"/></div>
-                <div class="stats_unit" th:text="${carsQuantity}"></div>
-                <div class="stats_unit"><img class = "stats_img" th:src="@{/img/user-icon.png}" th:title="Користувачів"/></div>
-                <div class="stats_unit" th:text="${usersQuantity}"></div>
-                <div class="stats_unit"><img class = "stats_img" th:src="@{/img/green_euro_icon.png}" title="Сума замовлень"/></div>
-                <div class="stats_unit" th:text="'€'+${ordersAmount}"></div>
+            <div class="stats_unit"><img class="stats_img" th:src="@{/img/order-icon.png}" th:title="Замовлень"/></div>
+            <div class="stats_unit" th:text="${ordersQuantity}"></div>
+            <div class="stats_unit"><img class="stats_img" th:src="@{/img/car-icon.png}" th:title="Авто"/></div>
+            <div class="stats_unit" th:text="${carsQuantity}"></div>
+            <div class="stats_unit"><img class="stats_img" th:src="@{/img/user-icon.png}" th:title="Користувачів"/>
+            </div>
+            <div class="stats_unit" th:text="${usersQuantity}"></div>
+            <div class="stats_unit"><img class="stats_img" th:src="@{/img/green_euro_icon.png}" title="Сума замовлень"/>
+            </div>
+            <div class="stats_unit" th:text="'€'+${ordersAmount}"></div>
 
         </div>
 
@@ -37,6 +39,9 @@
 
     <!--MAIN MENU -->
     <div class="buttons_block">
+        <form action="/" method="get">
+            <input type="submit" value="Головна" class="button">
+        </form>
         <form action="#" th:action="@{/cars}" th:method="get">
             <input type="submit" value="Авто" class="button">
         </form>
@@ -73,7 +78,7 @@
                        th:checked="${auxNeeded}" name="auxNeeded"/>
                 <input type="submit" value="Додати" class="button">
                 <div class="errorDatesAssign" th:if="${errorDatesAssign}">
-                    Помилка встановлення дати
+                    <span>Помилка встановлення дати</span>
                 </div>
             </div>
         </form>
@@ -84,13 +89,15 @@
     <table class="order_table" th:unless="${orderList.isEmpty}">
         <thead>
         <tr class="order_table_legend">
-            <th><a href="/orders/sortById" title="Сорт за номером">№</a></th>
-            <th><a href="/orders/sortByName" title="Сорт за ім'ям">Користувач</a></th>
-            <th><a href="/orders/sortByModel" title="Сорт за маркою">Марка</a></th>
-            <th><a href="/orders/sortByDateBegin" title="Сорт за датою початку">Початок</a></th>
-            <th><a href="/orders/sortByDateEnd" title="Сорт за датою кінця">Кінець</a></th>
-            <th><a href="/orders/sortByDuration" title="Сорт за тривалістю">Тривалість</a></th>
-            <th><a href="/orders/sortByAmount" title="Сорт за сумою">Сума</a></th>
+            <th><a href="/orders/sortById" title="За номером">№</a></th>
+            <th><a href="/orders/sortByName" title="За ім'ям">Користувач</a></th>
+            <th><a href="/orders/sortByModel" title="За маркою">Марка</a></th>
+            <th><a href="/orders/sortByRegister" title="За створенням">Створено</a></th>
+            <th><a href="/orders/sortByUpdate" title="За оновленням">Оновлено</a></th>
+            <th><a href="/orders/sortByDateBegin" title="За початком">Початок</a></th>
+            <th><a href="/orders/sortByDateEnd" title="За кінцем">Кінець</a></th>
+            <th><a href="/orders/sortByDuration" title="За тривалістю">Тривалість</a></th>
+            <th><a href="/orders/sortByAmount" title="За сумою">Сума</a></th>
             <th>Водій</th>
             <th>Статус</th>
             <th colspan="2">Дія</th>
@@ -108,6 +115,8 @@
                 <a href="cars.html" th:href="@{'/cars/'+${order.car.id}}"
                    th:text="${order.car.model}"></a>
             </td>
+            <td class="order_unit" th:text="${order.registerDate}"></td>
+            <td class="order_unit" th:text="${order.updateDate}"></td>
             <td class="order_unit" th:text="${order.dateBegin}"></td>
             <td class="order_unit" th:text="${order.dateEnd}"></td>
             <td class="order_unit" th:text="${order.duration}+' діб'"></td>
@@ -141,7 +150,6 @@
             Неможливо видалити авто з чинних замовлень, спочатку видаліть всі замовлення з цими авто
         </div>
     </div>
-
 
 
 </div>

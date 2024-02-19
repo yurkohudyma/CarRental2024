@@ -91,11 +91,12 @@ public class OrderService {
         order.setCar(car);
         User user = userRepository.findById(userId).orElseThrow();
         order.setUser(user);
-        log.info("...adding order to user " + userId);
         if (!user.getOrderList().contains(order)) {
             user.addOrder(order);
+            log.info("...adding order to user {}", userId);
         } else {
             user.updateOrder(order);
+            log.info("order {} exists, updating one", order.getId());
         }
         return true;
     }
