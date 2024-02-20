@@ -1,6 +1,7 @@
 package com.hudyma.CarRental2024.service;
 
 import com.hudyma.CarRental2024.constants.OrderStatus;
+import com.hudyma.CarRental2024.exception.LowBalanceException;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.User;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -21,9 +23,72 @@ import java.util.List;
 @RequiredArgsConstructor
 @Log4j2
 public class OrderService {
+
+    private static final Double CAR_DEPOSIT = 1000d;
     private final CarRepository carRepository;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
+
+    @Transactional
+    public void calculateOrderPayment(Order order, Integer paymentId) {
+        Double orderAmount = calculateOrderAmount(order, order.getCar().getId());
+        User user = userRepository.findById(order.getUser().getId()).orElseThrow();
+        Long carId = order.getCar().getId();
+        Double userBalance = user.getBalance();
+        log.info("...calculated order amount {}", orderAmount);
+        Double deductible;
+        switch (paymentId) {
+            case 30 -> {
+                deductible = orderAmount * paymentId / 100;
+                Double overallPaymentDeducted = orderAmount + CAR_DEPOSIT + deductible;
+                checkBalance(userBalance, overallPaymentDeducted);
+                order.setRentalPayment(doubleRound(deductible));
+                log.info("....order payment registered = {}", deductible);
+                Double withdrawalAmount = userBalance - deductible - CAR_DEPOSIT;
+                user.setBalance(withdrawalAmount);
+                log.info("....user balance set = {}", withdrawalAmount);
+                order.setStatus(OrderStatus.CONFIRMED);
+                order.setDeposit(CAR_DEPOSIT);
+                log.info("....order deposit SET {}", CAR_DEPOSIT);
+                updateCarAvailabilityNumber(OrderStatus.CONFIRMED, carId);
+                log.info("....car available num decremented");
+            }
+            case 100 -> {
+                Double overallPaymentDeducted = orderAmount + CAR_DEPOSIT / 2;
+                checkBalance(userBalance, overallPaymentDeducted);
+                order.setRentalPayment(doubleRound(orderAmount));
+                log.info("....order payment registered = {}", orderAmount);
+                user.setBalance(doubleRound(userBalance - orderAmount - CAR_DEPOSIT / 2));
+                log.info("....order deposit SET {}", CAR_DEPOSIT / 2);
+                order.setStatus(OrderStatus.PAID);
+                updateCarAvailabilityNumber(OrderStatus.PAID, carId);
+                log.info("....car available num decremented");
+            }
+            default -> log.info("...unknown paymentId parameter");
+        }
+        orderRepository.save(order);
+    }
+
+    private Double doubleRound(Double deductible) {
+        return Math.round(deductible * 100d) / 100d;
+    }
+
+    private static void checkBalance(Double userBalance, Double overallPaymentDeducted) {
+        if (userBalance < overallPaymentDeducted) {
+            log.error(".... low balance = {}, while deducted to pay = {}",
+                    userBalance, overallPaymentDeducted);
+            throw new LowBalanceException();
+        }
+    }
+
+    @Transactional
+    public void updateCarAvailabilityNumber(OrderStatus status, Long carId) {
+        switch (status) {
+            case COMPLETE -> carRepository.incrementCarAvailableWhenOrderComplete(carId);
+            case CONFIRMED, PAID -> carRepository.decrementCarAvailableWhenOrderConfirmed(carId);
+            default -> log.error("car {} availability num NOT changed)", carId);
+        }
+    }
 
     public String getAllOrdersAmount() {
         Double result = orderRepository
@@ -34,14 +99,6 @@ public class OrderService {
                 .orElse(0d);
         double res = Math.round(result * 100d) / 100d;
         return formatDecimalNum(res);
-    }
-
-    public void updateCarAvailabilityNumber (OrderStatus status, Long id){
-        switch (status){
-            case COMPLETE -> carRepository.incrementCarAvailableWhenOrderComplete(id);
-            case CONFIRMED -> carRepository.decrementCarAvailableWhenOrderConfirmed(id);
-            default -> log.error("car {} availability num NOT changed)", id);
-        }
     }
 
     private String formatDecimalNum(double res) {
@@ -113,7 +170,7 @@ public class OrderService {
         Double price = carRepository.findById(carId)
                 .orElseThrow()
                 .getPrice();
-        return Math.round(days * price * 100d) / 100d;
+        return doubleRound(days * price);
     }
 
     public void recalculateOrdersAmountUponCarEdit(Long carId) {

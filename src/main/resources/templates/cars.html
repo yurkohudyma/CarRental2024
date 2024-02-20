@@ -70,6 +70,9 @@
                     <option th:each="propulsion : ${carPropulsionArr}" th:value="${propulsion}"
                             th:text="${propulsion}"></option>
                 </select>
+                <label for="totalQty_input">∑<span><sub>заг</sub></span></label>
+                <input id="totalQty_input" name="totalQty" type="text" placeholder="0"
+                       required pattern="\d+">
                 <input type="submit" value="Додати" class="button">
             </div>
         </form>
@@ -124,7 +127,7 @@
             <th>Кінець</th>
             <th>Тривалість</th>
             <th>Сума</th>
-            <th>Водій</th>
+            <th>GPS</th>
             <th>Статус</th>
             <th colspan="2">Дія</th>
         </tr>
@@ -157,7 +160,7 @@
         </tbody>
     </table>
     <div class = "carDeleteErrorBlock" th:if="${showErrorCarUsedInOrder}">
-        Неможливо видалити авто з чинного замовлення, видаліть або відредагуйте замовлення з цим авто
+        <span>Неможливо видалити авто з чинного замовлення, видаліть або відредагуйте замовлення з цим авто</span>
     </div>
 
 

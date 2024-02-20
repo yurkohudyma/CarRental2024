@@ -70,7 +70,7 @@ form {
 	width: 70px;
 }
 
-#seatsQuantity_input {
+#seatsQuantity_input, #totalQty_input {
 	flex: 1;
     margin: 0 10px;
     padding-left: 8px;
@@ -81,7 +81,7 @@ form {
 	width: 35px;
 }
 
-#carclass_input, #color_input, #propulsion_input
+#carclass_input, #color_input, #propulsion_input 
 {
     flex: 1;
     margin: 0 10px;    
@@ -92,7 +92,7 @@ form {
 	margin-top: 5px;
 }
 
-#pickup_date, #drop-off_date, #driver_checkbox {
+#pickup_date, #drop-off_date, #aux_checkbox {
 	flex: 1;
     margin: 0 10px;    
     border: 1px solid #67a300;
@@ -102,7 +102,7 @@ form {
 	margin-top: 5px;
 }
 
-#pickup_date_user_account, #drop-off_date_user_account, #driver_checkbox_user_account {
+#pickup_date_user_account, #drop-off_date_user_account, #aux_checkbox_user_account {
 	flex: 1;
     margin: 0 10px;    
     border: 1px solid #67a300;
@@ -285,16 +285,17 @@ textarea {
 .order_header {
 	font-size: 1.3em;    
 	margin: 10px;	
+	margin-top: 12px;
 }
 
 .order_header_user_account{
-	font-size: 1.3em;    
-	margin: 10px;
-	margin-top: 20px;
+	font-size: 1.3em;    	
 }
 
 .car_unit, .user_unit  {    
 }
+
+
 
 .car_entry_form_level, .order_entry_form_level {
 	width: 860px;
@@ -424,7 +425,6 @@ textarea {
 .errorDatesAssignUserAccount {
 	color: red;
 	margin: 10px;
-	display: inline;
 	margin-top: 10px;
 }
 
@@ -445,10 +445,21 @@ textarea {
 .payment_radio_block {
 }
 
-.driver_checkbox_user_account_block {
+.aux_checkbox_user_account_block {
 	margin-top: 8px;
 }
 .payment_block{
 	margin-left: 20px;
     margin-top: 8px;
 } 
+
+.order_entry_form_section_USER_ACCOUNT {
+	display: inline-block;
+}
+.user_data_block_USER_ACCOUNT{	
+}
+
+.user_hints_block {
+	width: 650px;
+    text-align: justify;
+}

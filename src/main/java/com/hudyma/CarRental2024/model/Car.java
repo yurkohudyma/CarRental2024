@@ -37,7 +37,7 @@ public class Car {
     Integer seatsQuantity;
 
     @Enumerated(EnumType.STRING)
-    @Column (name = "color", nullable = false)
+    @Column (name = "color")
     CarColor color;
 
     @Enumerated(EnumType.STRING)

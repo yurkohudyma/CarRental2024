@@ -36,18 +36,68 @@
     </div>
 
     <!--USERS READOUT SECTION-->
-    <div class="users_header">Ваші дані</div>
-    <div class="user">
-        <div class="user_name" th:text="${user.name}"></div>
-        <div class="user_unit" th:text="${user.email}"></div>
-        <div class="user_unit" th:text="'Паспорт: ' + ${user.passportData}"></div>
-        <div class="user_unit">Баланс: €<span class="user_solecard_values" th:text="${user.balance}"></span></div>
+    <div class="user_data_block_USER_ACCOUNT">
+        <div class="users_header">Ваші дані</div>
+        <div class="user">
+            <div class="user_name" th:text="${user.name}"></div>
+            <div class="user_unit" th:text="${user.email}"></div>
+            <div class="user_unit" th:text="'Паспорт: ' + ${user.passportData}"></div>
+            <div class="user_unit">Баланс: €<span class="user_solecard_values" th:text="${user.balance}"></span></div>
 
-        <div class="user_solecard_action_buttons_block">
-            <a class="edit_ico_orderlist" href="edit.html" th:href="@{'/edit/'+${user.id}+'/user'}">
-                <img th:src="@{/img/edit-button.png}" th:title="Редагувати"/>
-            </a>
+            <div class="user_solecard_action_buttons_block">
+                <a class="edit_ico_orderlist" href="edit.html" th:href="@{'/edit/'+${user.id}+'/user'}">
+                    <img th:src="@{/img/edit-button.png}" th:title="Редагувати"/>
+                </a>
+            </div>
         </div>
+    </div>
+
+    <!--ORDER ENTRY FORM SECTION-->
+    <h4 class="order_entry_form_section_USER_ACCOUNT"></h4>
+    <div class="order_header_user_account">Нове замовлення:</div>
+    <h5 class="user_hints_block">Для бронювання потрібно внести завдаток 30% повної вартості оренди,
+        після чого на рахунку буде заблокована сума страхового депозиту в розмірі €1000. В разі
+        внесення 100% коштів вартості оренди, сума депозиту становить €500. В разі недостачі коштів
+        на балансі замовлення буде оформлене без гарантованого бронювання. Замовлення можна буде
+        оплатити після поповнення балансу. Відповідна сума депозиту буде розблокована протягом одного
+        дня після повернення авто до прокатної служби.
+    </h5>
+    <div class="order_entry_form_block_user_account">
+        <form action="#" th:action="@{'/orders/user-acc/'+${user.id}}" th:method="post">
+            <div class="order_entry_form_level_user_account">
+                <label for="order_model">Марка</label>
+                <select class="select_button_user_account" id="order_model" name="car_id">
+                    <option th:each="car : ${carList}" th:value="${car.id}"
+                            th:text="${car.model}"></option>
+                </select>
+                <label for="pickup_date_user_account">Початок</label>
+                <input id="pickup_date_user_account" name="dateBegin" type="date" th:value="${currentDate}"
+                       placeholder="ДД-ММ-РРРР" th:min="${currentDate}" required>
+                <label for="drop-off_date_user_account">Кінець</label>
+                <input id="drop-off_date_user_account" name="dateEnd" type="date" th:min="${currentNextDate}"
+                       placeholder="ДД-ММ-РРРР" required>
+            </div>
+            <div class="order_entry_form_level_user_account">
+                <div class="aux_checkbox_user_account_block">
+                    <input id="aux_checkbox_user_account_block" type="checkbox"
+                           checked value="true" th:checked="${auxNeeded}" name="auxNeeded"/>
+                    <label for="aux_checkbox_user_account_block">GPS</label>
+                </div>
+                <div class="payment_block">
+                    <input id="prepayment" type="radio" th:name="payment" value="30" checked/>
+                    <label for="prepayment"><span>Cплатити 30% (€ XX)</span></label>
+                </div>
+                <div class="payment_block">
+                    <input id="full_pay" type="radio" th:name="payment" value="100"/>
+                    <label for="full_pay">100% (€ YY)</label>
+                </div>
+            </div>
+            <input type="submit" value="Оформити" class="button_user_account">
+        </form>
+    </div>
+
+    <div class="errorDatesAssignUserAccount" th:if="${errorDatesAssign}">
+        <span>Помилка встановлення дати</span>
     </div>
 
 
@@ -64,17 +114,14 @@
             <th>Кінець</th>
             <th>Тривалість</th>
             <th>Сума</th>
-            <th>Водій</th>
+            <th>GPS</th>
             <th>Статус</th>
             <th colspan="3">Дія</th>
         </tr>
         </thead>
         <tbody>
         <tr class="order" th:each="order : ${userOrdersList}">
-            <td class="order_unit">
-                <a href="cars.html" th:href="@{'/cars/'+${order.car.id}}"
-                   th:text="${order.car.model}"></a>
-            </td>
+            <td class="order_unit" th:text="${order.car.model}"></td>
             <td class="order_unit" th:text="${order.dateBegin}"></td>
             <td class="order_unit" th:text="${order.dateEnd}"></td>
             <td class="order_unit" th:text="${order.duration}+' діб'"></td>
@@ -83,7 +130,8 @@
             <td class="order_unit" th:text="${order.status}"></td>
             <td class="buttons_order_unit">
                 <form action="#" th:action="@{'/orders/'+${order.id} + '/user-acc/' + ${order.user.id}}"
-                      th:method="delete"><button type="submit" class="delete_ico_orderlist">
+                      th:method="delete">
+                    <button type="submit" class="delete_ico_orderlist">
                         <img th:src="@{/img/delete-button.png}" th:title="Видалити"/>
                     </button>
                 </form>
@@ -102,44 +150,7 @@
         </tbody>
     </table>
 
-    <!--ORDER ENTRY FORM SECTION-->
-    <div class="order_header_user_account">Нове замовлення:</div>
-    <div class="order_entry_form_block_user_account">
-        <form action="#" th:action="@{'/orders/user-acc/'+${user.id}}" th:method="post">
-            <div class="order_entry_form_level_user_account">
-                <label for="order_model">Марка</label>
-                <select class="select_button_user_account" id="order_model" name="car_id">
-                    <option th:each="car : ${carList}" th:value="${car.id}"
-                            th:text="${car.model}"></option>
-                </select>
-                <label for="pickup_date_user_account">Початок</label>
-                <input id="pickup_date_user_account" name="dateBegin" type="date" th:value="${currentDate}"
-                       placeholder="ДД-ММ-РРРР" th:min="${currentDate}" required>
-                <label for="drop-off_date_user_account">Кінець</label>
-                <input id="drop-off_date_user_account" name="dateEnd" type="date" th:min="${currentNextDate}"
-                       placeholder="ДД-ММ-РРРР" required>
-            </div>
-            <div class="order_entry_form_level_user_account">
-                <div class="driver_checkbox_user_account_block">
-                    <input id="driver_checkbox_user_account" type="checkbox"
-                           checked value="true" th:checked="${auxNeeded}" name="auxNeeded"/>
-                    <label for="driver_checkbox_user_account">Водій +10% (€ SS)</label>
-                </div>
-                <div class="payment_block">
-                    <input id="prepayment" type="radio" th:name="payment" value="30" checked/>
-                    <label for="prepayment"><span>Cплатити 30% (€ XX)</span></label>
-                </div>
-                <div class="payment_block">
-                    <input id="full_pay" type="radio" th:name="payment" value="100"/>
-                    <label for="full_pay">100% (€ YY)</label>
-                </div>
-            </div>
-            <input type="submit" value="Оформити" class="button_user_account">
-        </form>
-    </div>
-    <div class=".errorDatesAssignUserAccount" th:if="${errorDatesAssign}">
-        <span>Помилка встановлення дати</span>
-    </div>
+
 </div>
 </body>
 </html>

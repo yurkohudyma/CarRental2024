@@ -73,8 +73,8 @@
                 <label for="drop-off_date">Кінець</label>
                 <input id="drop-off_date" name="dateEnd" type="date" th:min="${currentNextDate}"
                        placeholder="ДД-ММ-РРРР" required>
-                <label for="driver_checkbox">Водій</label>
-                <input id="driver_checkbox" type="checkbox" checked value="true"
+                <label for="aux_checkbox">GPS</label>
+                <input id="aux_checkbox" type="checkbox" checked value="true"
                        th:checked="${auxNeeded}" name="auxNeeded"/>
                 <input type="submit" value="Додати" class="button">
                 <div class="errorDatesAssign" th:if="${errorDatesAssign}">
@@ -98,8 +98,8 @@
             <th><a href="/orders/sortByDateEnd" title="За кінцем">Кінець</a></th>
             <th><a href="/orders/sortByDuration" title="За тривалістю">Тривалість</a></th>
             <th><a href="/orders/sortByAmount" title="За сумою">Сума</a></th>
-            <th>Водій</th>
-            <th>Статус</th>
+            <th>GPS</th>
+            <th>GPS</th>
             <th colspan="2">Дія</th>
         </tr>
         </thead>

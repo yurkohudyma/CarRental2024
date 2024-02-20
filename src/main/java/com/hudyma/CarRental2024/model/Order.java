@@ -47,6 +47,11 @@ public class Order {
     @Column(name = "update_date")
     LocalDateTime updateDate;
 
+    @Column(name = "rental_payment")
+    Double rentalPayment;
+
+    Double deposit;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "car_id")
     private Car car;

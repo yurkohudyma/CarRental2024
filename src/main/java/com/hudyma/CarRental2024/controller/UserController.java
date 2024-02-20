@@ -173,6 +173,6 @@ public class UserController {
         user.setUpdateDate(LocalDateTime.now());
         log.info("...topping up user {} balance", id);
         userRepository.save(user);
-        return REDIRECT_USERS + "/" + id + "/account";
+        return REDIRECT_USERS + "/account/" + id;
     }
 }

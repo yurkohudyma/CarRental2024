@@ -165,11 +165,8 @@ public class OrderController {
             log.info("...add Order: persisting order of {}",
                     order.getUser().getName());
             order.setRegisterDate(LocalDateTime.now());
-            //todo introduce New Column in Orders for effected payments
-            //todo if paid 30% - set Status approved
-            //todo if paid 100% - give discount 10%
-            log.info("...user has chosen {} % payment, with auxNeeded {}",
-                    paymentId, order.getAuxNeeded());
+            log.info("...user has chosen {} % payment", paymentId);
+            orderService.calculateOrderPayment (order, paymentId);
             orderRepository.save(order);
         } else {
             assignAttribIfNewOrderFailsUserAccOrder(model, userId);

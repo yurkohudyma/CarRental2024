@@ -83,6 +83,13 @@
                         <option th:each="car_propulsion : ${carPropulsionArr}" th:value="${car_propulsion}"
                                 th:text="${car_propulsion}"></option>
                     </select>
+
+                    <label for="totalQty_input">∑<span><sub>заг</sub></span></label>
+                    <input id="totalQty_input" name="totalQty" type="text"
+                           th:placeholder="${car.totalQty}"  pattern="\d+">
+
+
+
                     <input type="submit" value="Оновити" class="button">
                 </div>
             </form>
@@ -106,8 +113,8 @@
                     <label for="drop-off_date">Кінець</label>
                     <input id="drop-off_date" name="dateEnd" type="date" th:min="${currentNextDate}"
                            th:value="${order.dateEnd}" required>
-                    <label for="driver_checkbox">Водій</label>
-                    <input id="driver_checkbox" type="checkbox"
+                    <label for="aux_checkbox">GPS</label>
+                    <input id="aux_checkbox" type="checkbox"
                            th:checked="${order.auxNeeded}" name="auxNeeded"/>
                     <input type="submit" value="Оновити" class="button">
                     <div class="errorDatesAssignEdit" th:if="${errorDatesAssign}">Помилка встановлення дати</div>

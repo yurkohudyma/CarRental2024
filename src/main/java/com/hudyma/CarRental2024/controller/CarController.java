@@ -34,7 +34,8 @@ public class CarController {
     @GetMapping
     public String getAll(Model model) {
         model.addAllAttributes(Map.of(
-                "carList", carRepository.findByAvailableNot(0),
+                //"carList", carRepository.findByAvailableNot(0),
+                "carList", carRepository.findAll(),
                 "carClassArr", CarClass.values(),
                 "carColorArr", CarColor.values(),
                 "carPropulsionArr", CarPropulsion.values(),
