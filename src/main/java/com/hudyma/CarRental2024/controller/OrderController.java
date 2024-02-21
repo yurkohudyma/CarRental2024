@@ -129,11 +129,7 @@ public class OrderController {
     public String addOrder(Order order,
                            @ModelAttribute("user_id") Long userId,
                            @ModelAttribute("car_id") Long carId, Model model) {
-        Car car = carRepository.findById(carId).orElseThrow();
-        if (car.getAvailable() == 0) {
-            log.error("... car {} is not available", carId);
-            throw new CarNotAvailableException("car is not available");
-        }
+        checkCarAvailability(carId);
         if (orderService.setOrder(order, carId, userId)) {
             if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
             log.info("...add Order: persisting order of {}", order.getUser().getName());
@@ -147,26 +143,33 @@ public class OrderController {
         }
     }
 
+    public void checkCarAvailability(Long carId) {
+        Car car = carRepository.findById(carId).orElseThrow();
+        if (car.getAvailable() == 0) {
+            log.error("... car {} is not available", carId);
+            throw new CarNotAvailableException("car " + carId +" is not available");
+        } //todo this method is redundant second-stage check and intended for finding bugs
+        // todo if code allows user to book unavailable car
+    }
+
     @PostMapping("/user-acc/{id}")
-    //todo IMPLEMENT
     public String addOrderUserAccount(Order order, Model model,
                                       @PathVariable ("id") Long userId,
                                       @ModelAttribute("car_id") Long carId,
                                       @ModelAttribute("payment") Integer paymentId) {
-        Car car = carRepository.findById(carId).orElseThrow();
+
         order.setId(null); //todo orderId is somehow assigned to 1, if not nulled - overrites existing order
         log.info("...adding New User Account Order {}: ", order);
-        if (car.getAvailable() == 0) {
-            log.error("... car {} is not available", carId);
-            throw new CarNotAvailableException("car is not available");
-        }
+        checkCarAvailability(carId);
         if (orderService.setOrder(order, carId, userId)) {
             if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
             log.info("...add Order: persisting order of {}",
                     order.getUser().getName());
             order.setRegisterDate(LocalDateTime.now());
             log.info("...user has chosen {} % payment", paymentId);
-            orderService.calculateOrderPayment (order, paymentId);
+            if (!orderService.calculateOrderPayment (order, paymentId)){
+                return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/lowBalanceError";
+            }
             orderRepository.save(order);
         } else {
             assignAttribIfNewOrderFailsUserAccOrder(model, userId);
@@ -176,10 +179,10 @@ public class OrderController {
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
 
-    private void assignAttribIfNewOrderFailsUserAccOrder(Model model, Long id) {
+    private void assignAttribIfNewOrderFailsUserAccOrder(Model model, Long userId) {
         model.addAllAttributes(Map.of(
                 ERROR_DATES_ASSIGN, true,
-                USER_ORDERS_LIST,orderService.getOrdersByUserId(id),
+                USER_ORDERS_LIST,orderService.getOrdersByUserId(userId),
                 CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
                 CURRENT_DATE, LocalDate.now(),
                 CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));

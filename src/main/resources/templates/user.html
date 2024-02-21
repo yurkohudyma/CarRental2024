@@ -18,6 +18,9 @@
 <div class="wrapper">
     <header>
         <h1 class="title">Панель користувача</h1>
+        <div class="errorLowBalance" th:if="${lowBalanceError}">
+            <span>Недостатньо коштів на рахунку. Поповніть баланс</span>
+        </div>
         <div class="top-up_panel">
             <form action="#" th:modelAttribute="balance" th:action="@{'/users/' + ${user.id}+'/top-up'}"
                   th:method="patch">
@@ -35,7 +38,7 @@
         </form>
     </div>
 
-    <!--USERS READOUT SECTION-->
+    <!--USER READOUT SECTION-->
     <div class="user_data_block_USER_ACCOUNT">
         <div class="users_header">Ваші дані</div>
         <div class="user">
@@ -114,6 +117,8 @@
             <th>Кінець</th>
             <th>Тривалість</th>
             <th>Сума</th>
+            <th>Сплачено</th>
+            <th>Депозит</th>
             <th>GPS</th>
             <th>Статус</th>
             <th colspan="3">Дія</th>
@@ -126,6 +131,8 @@
             <td class="order_unit" th:text="${order.dateEnd}"></td>
             <td class="order_unit" th:text="${order.duration}+' діб'"></td>
             <td class="order_unit" th:text="'€'+${order.amount}"></td>
+            <td class="order_unit" th:text="'€'+${order.rentalPayment}"></td>
+            <td class="order_unit" th:text="'€'+${order.deposit}"></td>
             <td class="order_unit" th:text="${order.auxNeeded}"></td>
             <td class="order_unit" th:text="${order.status}"></td>
             <td class="buttons_order_unit">

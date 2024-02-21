@@ -1,16 +1,14 @@
 package com.hudyma.CarRental2024.controller;
 
+import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import com.hudyma.CarRental2024.exception.UserNotFoundException;
-import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import com.hudyma.CarRental2024.service.CarService;
 import com.hudyma.CarRental2024.service.OrderService;
-import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import com.hudyma.CarRental2024.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +31,7 @@ public class UserController {
     public static final String USER_LIST = "userList", USER_ORDERS_LIST = "userOrdersList", SOLE_USER_CARD = "soleUserCard";
     private static final String REDIRECT_USERS = "redirect:/users", CAR_LIST = "carList";
     public static final String CURRENT_DATE = "currentDate", CURRENT_NEXT_DATE = "currentNextDate", ORDER = "order";
+    private static final String LOW_BALANCE_ERROR = "lowBalanceError";
     private final UserRepository userRepository;
     private final OrderService orderService;
     private final UserService userService;
@@ -75,6 +73,15 @@ public class UserController {
                 .findById(id).orElseThrow(UserNotFoundException::new));
         assignModelAttributes(model, id);
         model.addAttribute(ERROR_DATES_ASSIGN, true);
+        return "user";
+    }
+
+    @GetMapping("/account/{id}/lowBalanceError")
+    public String getUserLowBalanceError(@PathVariable Long id, Model model) {
+        model.addAttribute("user", userRepository
+                .findById(id).orElseThrow(UserNotFoundException::new));
+        assignModelAttributes(model, id);
+        model.addAttribute(LOW_BALANCE_ERROR, true);
         return "user";
     }
 

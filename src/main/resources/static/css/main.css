@@ -422,6 +422,11 @@ textarea {
 	display: inline;
 }
 
+.errorLowBalance {
+	margin-top: 12px;
+	color: red;
+}
+
 .errorDatesAssignUserAccount {
 	color: red;
 	margin: 10px;
