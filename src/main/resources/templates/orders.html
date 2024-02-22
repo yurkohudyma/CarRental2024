@@ -51,7 +51,7 @@
     </div>
 
     <!--ORDER ENTRY FORM SECTION-->
-    <div class="order_entry_form_block">
+    <!--<div class="order_entry_form_block">
         <form action="#" th:unless="${blockOrderEntryFormDisplay}"
               th:action="@{/orders}" th:method="post">
             <div class="order_entry_form_level">
@@ -88,7 +88,7 @@
                 </div>
             </div>
         </form>
-    </div>
+    </div>-->
 
     <!--ORDERS READOUT SECTION-->
     <div class="order_header">Замовлення</div>
@@ -104,13 +104,16 @@
             <th><a href="/orders/sortByDateEnd" title="За кінцем">Кінець</a></th>
             <th><a href="/orders/sortByDuration" title="За тривалістю">Тривалість</a></th>
             <th><a href="/orders/sortByAmount" title="За сумою">Сума</a></th>
+            <th><a href="/orders/sortByPayment" title="За платежем">Сплачено</a></th>
+            <th><a href="/orders/sortByDeposit" title="За депозитом">Депозит</a></th>
             <th>GPS</th>
-            <th>GPS</th>
+            <th>Статус</th>
             <th colspan="2">Дія</th>
         </tr>
         </thead>
         <tbody>
-        <tr class="order" th:each="order : ${orderList}">
+        <tr th:class="${currentDate lt order.dateBegin} ? order_active : order_expired"
+            th:each="order : ${orderList}">
             <td class="order_unit" th:text="${order.id}"></td>
             <td class="order_unit">
                 <a href="users.html" th:href="@{'/users/'+${order.user.id}}"
@@ -127,6 +130,8 @@
             <td class="order_unit" th:text="${order.dateEnd}"></td>
             <td class="order_unit" th:text="${order.duration}+' діб'"></td>
             <td class="order_unit" th:text="'€'+${order.amount}"></td>
+            <td class="order_unit" th:text="'€'+${order.rentalPayment}"></td>
+            <td class="order_unit" th:text="'€'+${order.deposit}"></td>
             <td class="order_unit" th:text="${order.auxNeeded}"></td>
             <td class="order_unit" th:text="${order.status}"></td>
 

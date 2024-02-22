@@ -36,6 +36,10 @@
         <form action="/" method="get">
             <input type="submit" value="Головна" class="button">
         </form>
+        <form action="#" th:unless = "${userQty lt id}"
+              th:action = "@{'/users/account/' + ${id}}" method="get">
+            <input type="submit" value="Наступний" class="button">
+        </form>
     </div>
 
     <!--USER READOUT SECTION-->
@@ -94,7 +98,7 @@
                     <label for="full_pay">100% (€ ..)</label>
                 </div>
             </div>
-            <input type="submit" value="Рахувати суму" class="button_user_account">
+            <input type="submit" value="Розрахунок" class="button_user_account">
             <input type="submit" value="Оформити" class="button_user_account">
         </form>
     </div>
@@ -133,7 +137,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="order" th:each="order : ${userOrdersList}">
+
+        <tr th:class="${currentDate lt order.dateBegin} ? order_active : order_expired"
+            th:each="order : ${userOrdersList}">
             <td class="order_unit" th:text="${order.car.model}"></td>
             <td class="order_unit" th:text="${order.dateBegin}"></td>
             <td class="order_unit" th:text="${order.dateEnd}"></td>
@@ -143,27 +149,33 @@
             <td class="order_unit" th:text="'€'+${order.deposit}"></td>
             <td class="order_unit" th:text="${order.auxNeeded}"></td>
             <td class="order_unit" th:text="${order.status}"></td>
-            <td class="buttons_order_unit">
+            <td class="buttons_order_unit" th:if = "${currentDate lt order.dateBegin}">
                 <form action="#" th:action="@{'/orders/'+${order.id} + '/user-acc/' + ${order.user.id}}"
                       th:method="delete">
                     <button type="submit" class="delete_ico_orderlist">
-                        <img th:src="@{/img/delete-button.png}" th:title="Видалити"/>
+                        <img th:src="@{/img/delete-button.png}" th:title="Скасувати"/>
                     </button>
                 </form>
             </td>
-            <td class="buttons_order_unit">
+            <td class="buttons_order_unit" th:if = "${currentDate lt order.dateBegin}">
                 <a href="edit.html" th:href="@{'/edit/'+${order.id}+'/order'}">
                     <img th:src="@{/img/edit-button.png}" th:title="Редагувати"/>
                 </a>
             </td>
             <td class="buttons_order_unit">
-                <a href="pay.html" th:href="@{'/pay/'+${order.id}}">
+                <a href="pay.html" th:href="@{'/pay/'+${order.id}}" th:if = "${currentDate lt order.dateBegin}">
                     <img th:src="@{/img/green_euro_icon.png}" th:title="Оплатити"/>
                 </a>
             </td>
         </tr>
         </tbody>
     </table>
+
+    <h5 class="user_hints_block">Редагувати і скасовувати замовлення можна лише <strong>до</strong> моменту його початку.
+        В такому разі користувачу протягом <strong>1</strong> дня повертається сума сплаченої оренди та депозит. В разі,
+        якщо користувач не з'явився для отримання замовлення <strong>(no-show)</strong>, сума сплаченої оренди та
+        депозиту <strong>не повертається</strong>.
+    </h5>
 
 
 </div>

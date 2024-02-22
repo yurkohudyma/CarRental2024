@@ -58,11 +58,15 @@ public class UserController {
         return "users";
     }
 
-    @GetMapping("/account/{id}")
-    public String getUser(@PathVariable Long id, Model model) {
+    @GetMapping("/account/{userId}")
+    public String getUser(@PathVariable Long userId, Model model) {
         model.addAttribute("user", userRepository
-                .findById(id).orElseThrow(UserNotFoundException::new));
-        assignModelAttributes(model, id);
+                .findById(userId).orElseThrow(
+                        UserNotFoundException::new));
+        assignModelAttributes(model, userId);
+        model.addAttribute("userQty",
+                userRepository.findAll().size());
+        model.addAttribute("id", userId + 1);
         return "user";
     }
 
@@ -84,9 +88,9 @@ public class UserController {
         return "user";
     }
 
-    private void assignModelAttributes(Model model, Long id) {
+    private void assignModelAttributes(Model model, Long userId) {
         model.addAllAttributes(Map.of(
-                USER_ORDERS_LIST,orderService.getOrdersByUserId(id),
+                USER_ORDERS_LIST,orderService.getOrdersByUserId(userId),
                 CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
                 CURRENT_DATE, LocalDate.now(),
                 CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));

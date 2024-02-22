@@ -36,8 +36,7 @@ public class OrderController {
     public static final String ERROR_DATES_ASSIGN = "errorDatesAssign", USER_LIST = "userList", CAR_LIST = "carList";
     public static final String CURRENT_DATE = "currentDate", CURRENT_NEXT_DATE = "currentNextDate", ORDER = "order";
     public static final String ACTION = "action", REDIRECT_USER_ACCOUNT_ORDERS = "redirect:/users/account/";
-    private static final String USER_BLOCKED_ERROR = "blockedUserError";
-    public static final String CAR_NOT_AVAIL = "carNotAvailError";
+    private static final String USER_BLOCKED_ERROR = "blockedUserError", CAR_NOT_AVAIL = "carNotAvailError";
     private final OrderRepository orderRepository;
     private final CarRepository carRepository;
     private final UserRepository userRepository;
@@ -50,6 +49,12 @@ public class OrderController {
         List<Order> orderList = orderService.getAllOrders();
         prepareDataForSortingDisplay(model, orderList);
         return ORDERS;
+    }
+
+    private void prepareDataForSortingDisplay(Model model, List<Order> orderList) {
+        model.addAttribute(ORDER_LIST, orderList);
+        assignAttributesWhenSortingFields(model);
+        assignAttributesForStats(model, orderList);
     }
 
     private void assignAttributesWhenSortingFields(Model model) {
@@ -124,10 +129,18 @@ public class OrderController {
         return ORDERS;
     }
 
-    private void prepareDataForSortingDisplay(Model model, List<Order> orderList) {
-        model.addAttribute(ORDER_LIST, orderList);
-        assignAttributesWhenSortingFields(model);
-        assignAttributesForStats(model, orderList);
+    @GetMapping("/sortByPayment")
+    public String getAllSortByPayment(Model model) {
+        List<Order> orderList = orderService.getAllOrdersSortedByFieldAsc("payment");
+        prepareDataForSortingDisplay(model, orderList);
+        return ORDERS;
+    }
+
+    @GetMapping("/sortByDeposit")
+    public String getAllSortByDeposit(Model model) {
+        List<Order> orderList = orderService.getAllOrdersSortedByFieldAsc("deposit");
+        prepareDataForSortingDisplay(model, orderList);
+        return ORDERS;
     }
 
     @PostMapping
@@ -199,13 +212,11 @@ public class OrderController {
         // todo if code allows user to book unavailable car
     }
 
-
     @PostMapping("/user-acc/{id}")
     public String addOrderUserAccount(Order order, Model model,
                                       @PathVariable("id") Long userId,
                                       @ModelAttribute("car_id") Long carId,
                                       @ModelAttribute("payment") Integer paymentId) {
-
         order.setId(null); //todo orderId is somehow assigned to 1, if not nulled - overrites existing order
         log.info("...adding New User Account Order {}: ", order);
         checkCarAvailability(carId);
