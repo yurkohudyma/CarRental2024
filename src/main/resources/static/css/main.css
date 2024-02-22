@@ -427,7 +427,9 @@ textarea {
 	color: red;
 }
 
-.errorDatesAssignUserAccount {
+.errorDatesAssignUserAccount, 
+.errorBlockedUser,
+.errorCarNotAvailable {
 	color: red;
 	margin: 10px;
 	margin-top: 10px;
@@ -467,4 +469,5 @@ textarea {
 .user_hints_block {
 	width: 650px;
     text-align: justify;
+	font-weight: normal;
 }

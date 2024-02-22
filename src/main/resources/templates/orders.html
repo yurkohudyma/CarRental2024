@@ -80,6 +80,12 @@
                 <div class="errorDatesAssign" th:if="${errorDatesAssign}">
                     <span>Помилка встановлення дати</span>
                 </div>
+                <div class="errorBlockedUser" th:if="${blockedUserError}">
+                    <span>Користувача заблоковано: замовлення скасовано</span>
+                </div>
+                <div class="errorCarNotAvailable" th:if="${carNotAvailError}">
+                    <span>Вибачте, автомобіль недоступний</span>
+                </div>
             </div>
         </form>
     </div>

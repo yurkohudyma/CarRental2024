@@ -29,9 +29,8 @@ public class UserController {
 
     public static final String BLOCKING_USER = "...Blocking user = ", USER = "...User ", NOT_FOUND = "not found";
     public static final String USER_LIST = "userList", USER_ORDERS_LIST = "userOrdersList", SOLE_USER_CARD = "soleUserCard";
-    private static final String REDIRECT_USERS = "redirect:/users", CAR_LIST = "carList";
+    private static final String REDIRECT_USERS = "redirect:/users", CAR_LIST = "carList", LOW_BALANCE_ERROR = "lowBalanceError";
     public static final String CURRENT_DATE = "currentDate", CURRENT_NEXT_DATE = "currentNextDate", ORDER = "order";
-    private static final String LOW_BALANCE_ERROR = "lowBalanceError";
     private final UserRepository userRepository;
     private final OrderService orderService;
     private final UserService userService;

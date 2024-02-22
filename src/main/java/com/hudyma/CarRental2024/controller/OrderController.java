@@ -1,8 +1,11 @@
 package com.hudyma.CarRental2024.controller;
 
+import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import com.hudyma.CarRental2024.exception.CarNotAvailableException;
+import com.hudyma.CarRental2024.exception.UserRestrictedOperationException;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
+import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
@@ -33,6 +36,8 @@ public class OrderController {
     public static final String ERROR_DATES_ASSIGN = "errorDatesAssign", USER_LIST = "userList", CAR_LIST = "carList";
     public static final String CURRENT_DATE = "currentDate", CURRENT_NEXT_DATE = "currentNextDate", ORDER = "order";
     public static final String ACTION = "action", REDIRECT_USER_ACCOUNT_ORDERS = "redirect:/users/account/";
+    private static final String USER_BLOCKED_ERROR = "blockedUserError";
+    public static final String CAR_NOT_AVAIL = "carNotAvailError";
     private final OrderRepository orderRepository;
     private final CarRepository carRepository;
     private final UserRepository userRepository;
@@ -129,8 +134,17 @@ public class OrderController {
     public String addOrder(Order order,
                            @ModelAttribute("user_id") Long userId,
                            @ModelAttribute("car_id") Long carId, Model model) {
-        checkCarAvailability(carId);
-        if (orderService.setOrder(order, carId, userId)) {
+        if (!checkCarAvailability(carId)) {
+            assignAttribIfNewOrderFails(model);
+            model.addAttribute(CAR_NOT_AVAIL, true);
+            log.error("... addOrder: car {} not avail", carId);
+            return ORDERS;
+        } else if (checkUserAccessRestriction(userId)) {
+            assignAttribIfNewOrderFails(model);
+            model.addAttribute(USER_BLOCKED_ERROR, true);
+            log.error("... addOrder: user {} is BLOCKED", userId);
+            return ORDERS;
+        } else if (orderService.setOrder(order, carId, userId)) {
             if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
             log.info("...add Order: persisting order of {}", order.getUser().getName());
             order.setRegisterDate(LocalDateTime.now());
@@ -138,36 +152,71 @@ public class OrderController {
             return REDIRECT_ORDERS;
         } else {
             assignAttribIfNewOrderFails(model);
+            model.addAttribute(ERROR_DATES_ASSIGN, true);
             log.error("... addOrder: dates assignation error");
             return ORDERS;
         }
     }
 
-    public void checkCarAvailability(Long carId) {
+    private void assignAttribIfNewOrderFailsUserAccOrder(Model model, Long userId) {
+        model.addAllAttributes(Map.of(
+                USER_ORDERS_LIST, orderService.getOrdersByUserId(userId),
+                CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc()));
+        assignCommonModelAttribWhenOrderFails(model);
+    }
+
+    private void assignAttribIfNewOrderFails(Model model) {
+        model.addAllAttributes(Map.of(
+                ORDER_LIST, orderRepository.findAll(),
+                USER_LIST, userRepository.findAll(),
+                CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc()));
+        assignCommonModelAttribWhenOrderFails(model);
+    }
+
+    private void assignCommonModelAttribWhenOrderFails(Model model) {
+        model.addAttribute(CURRENT_DATE, LocalDate.now());
+        model.addAttribute(CURRENT_NEXT_DATE,
+                LocalDate.now().plusDays(1));
+    }
+
+    private boolean checkUserAccessRestriction(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        if (user.getAccessLevel() == UserAccessLevel.BLOCKED) {
+            log.error("...user {} is BLOCKED", userId);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkCarAvailability(Long carId) {
         Car car = carRepository.findById(carId).orElseThrow();
         if (car.getAvailable() == 0) {
             log.error("... car {} is not available", carId);
-            throw new CarNotAvailableException("car " + carId +" is not available");
-        } //todo this method is redundant second-stage check and intended for finding bugs
+            throw new CarNotAvailableException("car " + carId + " is not available");
+        }
+        return true;
+        //todo this method is redundant second-stage check and intended for finding bugs
         // todo if code allows user to book unavailable car
     }
 
+
     @PostMapping("/user-acc/{id}")
     public String addOrderUserAccount(Order order, Model model,
-                                      @PathVariable ("id") Long userId,
+                                      @PathVariable("id") Long userId,
                                       @ModelAttribute("car_id") Long carId,
                                       @ModelAttribute("payment") Integer paymentId) {
 
         order.setId(null); //todo orderId is somehow assigned to 1, if not nulled - overrites existing order
         log.info("...adding New User Account Order {}: ", order);
         checkCarAvailability(carId);
+        checkUserAccessRestriction(userId);
         if (orderService.setOrder(order, carId, userId)) {
             if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
             log.info("...add Order: persisting order of {}",
                     order.getUser().getName());
             order.setRegisterDate(LocalDateTime.now());
             log.info("...user has chosen {} % payment", paymentId);
-            if (!orderService.calculateOrderPayment (order, paymentId)){
+            if (!orderService.calculateOrderPayment(order, paymentId)) {
                 return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/lowBalanceError";
             }
             orderRepository.save(order);
@@ -179,24 +228,6 @@ public class OrderController {
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
 
-    private void assignAttribIfNewOrderFailsUserAccOrder(Model model, Long userId) {
-        model.addAllAttributes(Map.of(
-                ERROR_DATES_ASSIGN, true,
-                USER_ORDERS_LIST,orderService.getOrdersByUserId(userId),
-                CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
-                CURRENT_DATE, LocalDate.now(),
-                CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
-    }
-
-    private void assignAttribIfNewOrderFails(Model model) {
-        model.addAllAttributes(Map.of(
-                ERROR_DATES_ASSIGN, true,
-                ORDER_LIST, orderRepository.findAll(),
-                USER_LIST, userRepository.findAll(),
-                CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
-                CURRENT_DATE, LocalDate.now(),
-                CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
-    }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
