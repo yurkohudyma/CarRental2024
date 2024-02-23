@@ -27,7 +27,7 @@ import static com.hudyma.CarRental2024.controller.OrderController.ERROR_DATES_AS
 @Controller
 public class UserController {
 
-    public static final String BLOCKING_USER = "...Blocking user = ", USER = "...User ", NOT_FOUND = "not found";
+    public static final String BLOCKING_USER = "...Blocking user = ", USER = "user", NOT_FOUND = "not found";
     public static final String USER_LIST = "userList", USER_ORDERS_LIST = "userOrdersList", SOLE_USER_CARD = "soleUserCard";
     private static final String REDIRECT_USERS = "redirect:/users", CAR_LIST = "carList", LOW_BALANCE_ERROR = "lowBalanceError";
     public static final String CURRENT_DATE = "currentDate", CURRENT_NEXT_DATE = "currentNextDate", ORDER = "order";
@@ -60,37 +60,50 @@ public class UserController {
 
     @GetMapping("/account/{userId}")
     public String getUser(@PathVariable Long userId, Model model) {
-        model.addAttribute("user", userRepository
+        model.addAttribute(USER, userRepository
                 .findById(userId).orElseThrow(
                         UserNotFoundException::new));
         assignModelAttributes(model, userId);
         model.addAttribute("userQty",
                 userRepository.findAll().size());
         model.addAttribute("id", userId + 1);
-        return "user";
+        return USER;
     }
 
     @GetMapping("/account/{id}/dateError")
     public String getUserDateError(@PathVariable Long id, Model model) {
-        model.addAttribute("user", userRepository
+        model.addAttribute(USER, userRepository
                 .findById(id).orElseThrow(UserNotFoundException::new));
         assignModelAttributes(model, id);
         model.addAttribute(ERROR_DATES_ASSIGN, true);
-        return "user";
+        return USER;
+    }
+
+    @GetMapping("/account/{id}/checkout")
+    public String getUserOrderCheckout(@PathVariable("id") Long userId, Model model) {
+        model.addAttribute(USER, userRepository
+                .findById(userId).orElseThrow(
+                        UserNotFoundException::new));
+        assignModelAttributes(model, userId);
+        model.addAttribute("checkout", true);
+        model.addAttribute("auxPayment", 1);
+        model.addAttribute("deductible", 2);
+        model.addAttribute("deposit", 3);
+        return USER;
     }
 
     @GetMapping("/account/{id}/lowBalanceError")
     public String getUserLowBalanceError(@PathVariable Long id, Model model) {
-        model.addAttribute("user", userRepository
+        model.addAttribute(USER, userRepository
                 .findById(id).orElseThrow(UserNotFoundException::new));
         assignModelAttributes(model, id);
         model.addAttribute(LOW_BALANCE_ERROR, true);
-        return "user";
+        return USER;
     }
 
     private void assignModelAttributes(Model model, Long userId) {
         model.addAllAttributes(Map.of(
-                USER_ORDERS_LIST,orderService.getOrdersByUserId(userId),
+                USER_ORDERS_LIST, orderService.getOrdersByUserId(userId),
                 CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
                 CURRENT_DATE, LocalDate.now(),
                 CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
@@ -108,8 +121,7 @@ public class UserController {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
             log.info("...deleting user {} with all orders", id);
-        } else log.error(
-                USER + id + " " + NOT_FOUND);
+        } else log.error(USER + " "+id + " " + NOT_FOUND);
         return REDIRECT_USERS;
     }
 
@@ -130,7 +142,7 @@ public class UserController {
             user.setAccessLevel(UserAccessLevel.BLOCKED);
             user.setUpdateDate(LocalDateTime.now());
             userRepository.save(user);
-        } else log.error(USER + id + " " + NOT_FOUND);
+        } else log.error(USER + " "+id + " " + NOT_FOUND);
         return REDIRECT_USERS;
     }
 
@@ -142,7 +154,7 @@ public class UserController {
             user.setAccessLevel(UserAccessLevel.USER);
             user.setUpdateDate(LocalDateTime.now());
             userRepository.save(user);
-        } else log.error(USER + id + " " + NOT_FOUND);
+        } else log.error(USER + " "+id + " " + NOT_FOUND);
         return REDIRECT_USERS;
     }
 
@@ -154,7 +166,7 @@ public class UserController {
             user.setAccessLevel(UserAccessLevel.MANAGER);
             user.setUpdateDate(LocalDateTime.now());
             userRepository.save(user);
-        } else log.error(USER + id + " " + NOT_FOUND);
+        } else log.error(USER + " "+id + " " + NOT_FOUND);
         return REDIRECT_USERS;
     }
 
@@ -167,7 +179,7 @@ public class UserController {
             user = userService.ifNullableMergeOldValues(user, prvUser);
             user.setUpdateDate(LocalDateTime.now());
             userRepository.save(user);
-        } else log.error(USER + id + " " + NOT_FOUND);
+        } else log.error(USER + " "+id + " " + NOT_FOUND);
         return REDIRECT_USERS + "/" + id;
     }
 

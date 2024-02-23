@@ -34,7 +34,6 @@ public class CarController {
     @GetMapping
     public String getAll(Model model) {
         model.addAllAttributes(Map.of(
-                //"carList", carRepository.findByAvailableNot(0),
                 "carList", carRepository.findAll(),
                 "carClassArr", CarClass.values(),
                 "carColorArr", CarColor.values(),
@@ -67,6 +66,7 @@ public class CarController {
     public String addCar(Car car) {
         log.info("...adding a car = " + car);
         car.setRegisterDate(LocalDateTime.now());
+        car.setAvailable(car.getTotalQty());
         carRepository.save(car);
         return REDIRECT_CARS;
     }

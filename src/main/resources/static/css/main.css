@@ -246,6 +246,18 @@ textarea {
 	margin: 5px;
 }
 
+.car_not_available {
+	color: grey;
+	padding: 15px;
+    border: 1px solid;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+	display: inline-table;
+	text-align: center;
+	border-color: lightskyblue;
+	margin: 5px;
+}
+
 .top-up_panel {
 	/* padding: 8px;
     border: 1px solid;
@@ -329,6 +341,17 @@ textarea {
 	display: table-caption;
 }
 
+.user_order_checkout_block {
+	background-color: white;
+    border-radius: 4px;
+    z-index: 98;		
+	border: 1px solid;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+	border-color: lightskyblue;
+	padding: 10px;
+}
+
 .car_solecard_action_buttons_block, .user_solecard_action_buttons_block {
 	display: inline-flex;
 	margin-top: 10px;
@@ -342,8 +365,7 @@ textarea {
 	padding: 5px;
 }
 
-.order_active {
-	
+.order {
 }
 
 .order_expired {

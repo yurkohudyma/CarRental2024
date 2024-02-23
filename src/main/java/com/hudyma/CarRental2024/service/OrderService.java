@@ -15,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -22,22 +23,20 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 
-
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class OrderService {
 
-    private static final Double CAR_DEPOSIT = 1000d;
+    private static final Double CAR_DEPOSIT = 1000d, AUX_PAYMENT = 10d;
     private final CarRepository carRepository;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
 
     @Transactional
-    public boolean calculateOrderPayment(Order order, Integer paymentId) {
-        Double orderAmount = calculateOrderAmount(order, order.getCar().getId());
-        User user = userRepository.findById(order.getUser().getId()).orElseThrow();
-        Long carId = order.getCar().getId();
+    public boolean calculateOrderPayment(Order order, Long carId, Long userId, Integer paymentId) {
+        Double orderAmount = calculateOrderAmount(order, carId);
+        User user = userRepository.findById(userId).orElseThrow();
         Double userBalance = user.getBalance();
         log.info("...calculated order amount {}", orderAmount);
         Double deductible;
@@ -66,7 +65,7 @@ public class OrderService {
                 user.setBalance(doubleRound(userBalance - orderAmount - CAR_DEPOSIT / 2));
                 log.info("....order deposit SET {}", CAR_DEPOSIT / 2);
                 order.setStatus(OrderStatus.PAID);
-                order.setDeposit(CAR_DEPOSIT/2);
+                order.setDeposit(CAR_DEPOSIT / 2);
                 updateCarAvailabilityNumber(OrderStatus.PAID, carId);
                 log.info("....car available num decremented");
                 return true;
@@ -75,6 +74,36 @@ public class OrderService {
         }
         orderRepository.save(order);
         return true;
+    }
+
+    public boolean estimateOrderPayment(Order order, Integer paymentId,
+                                        boolean auxNeeded, Model model, Long carId) {
+        Double orderAmount = calculateOrderAmount(order, carId);
+        if (orderAmount == 0d) {
+            log.error("...set order: computed amount is 0");
+            return false;
+        }
+        log.info("...orderService:: estimated order amount is {}", orderAmount);
+        Double paymentDeductible = doubleRound(paymentId == 30 ? orderAmount * 0.3 : orderAmount);
+        Double deposit = paymentId == 30 ? CAR_DEPOSIT : CAR_DEPOSIT/2d;
+        log.info("...orderService:: estimated deductible is {}", paymentDeductible);
+        Double auxPayment = auxNeeded ? estimateAuxPayment(order) : 0d;
+        log.info("...orderService:: estimated auxPayment is {}", auxPayment);
+        model.addAttribute("auxPayment", auxPayment);
+        model.addAttribute("deductible", paymentDeductible);
+        model.addAttribute("deposit", deposit);
+        return true;
+    }
+
+    private Double estimateAuxPayment(Order order) {
+        long days = ChronoUnit.DAYS.between(
+                order.getDateBegin(),
+                order.getDateEnd());
+        if (days <= 0) {
+            log.info("...DATES OF RENTAL DIFFER BY " + days + " days");
+            return 0d;
+        }
+        return doubleRound(AUX_PAYMENT * days);
     }
 
     private Double doubleRound(Double deductible) {
@@ -106,7 +135,7 @@ public class OrderService {
         Car car = carRepository.findById(carId).orElseThrow();
         if (car.getAvailable() == 0) {
             log.error("... car {} is not available", carId);
-            throw new CarNotAvailableException("car " + carId +" is not available");
+            throw new CarNotAvailableException("car " + carId + " is not available");
         }
     }
 

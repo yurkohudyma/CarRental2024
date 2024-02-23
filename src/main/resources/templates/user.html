@@ -36,8 +36,8 @@
         <form action="/" method="get">
             <input type="submit" value="Головна" class="button">
         </form>
-        <form action="#" th:unless = "${userQty lt id}"
-              th:action = "@{'/users/account/' + ${id}}" method="get">
+        <form action="#" th:unless="${userQty lt id}"
+              th:action="@{'/users/account/' + ${id}}" method="get">
             <input type="submit" value="Наступний" class="button">
         </form>
     </div>
@@ -69,10 +69,10 @@
         розблокована протягом <strong>3</strong> днів після повернення авто до прокатної служби.
     </h5>
     <div class="order_entry_form_block_user_account">
-        <form action="#" th:action="@{'/orders/user-acc/'+${user.id}}" th:method="post">
+        <form action="#" th:action="@{'/orders/'+${user.id}}" th:method="post">
             <div class="order_entry_form_level_user_account">
                 <label for="order_model">Марка</label>
-                <select class="select_button_user_account" id="order_model" name="car_id">
+                <select class="select_button_user_account" id="order_model" th:name="car_id">
                     <option th:each="car : ${carList}" th:value="${car.id}"
                             th:text="${car.model}"></option>
                 </select>
@@ -86,22 +86,29 @@
             <div class="order_entry_form_level_user_account">
                 <div class="aux_checkbox_user_account_block">
                     <input id="aux_checkbox_user_account_block" type="checkbox"
-                           checked value="true" th:checked="${auxNeeded}" name="auxNeeded"/>
-                    <label for="aux_checkbox_user_account_block">GPS (€ ..)</label>
+                           checked th:value="true" th:checked="${auxNeeded}" th:name="auxNeeded"/>
+                    <label for="aux_checkbox_user_account_block">GPS (€ 10/доба)</label>
                 </div>
-                <div class="payment_block">
+                <div class="payment_block"><span>Cплатити: </span>
                     <input id="prepayment" type="radio" th:name="payment" value="30" checked/>
-                    <label for="prepayment"><span>Cплатити 30% (€ ..)</span></label>
+                    <label for="prepayment"><span>30% оренди</span></label>
                 </div>
                 <div class="payment_block">
                     <input id="full_pay" type="radio" th:name="payment" value="100"/>
-                    <label for="full_pay">100% (€ ..)</label>
+                    <label for="full_pay">100% оренди</label>
                 </div>
             </div>
-            <input type="submit" value="Розрахунок" class="button_user_account">
+            <input type="submit" th:unless="${checkout}" th:formaction="@{'/orders/checkout/'+${user.id}}"
+                   value="Розрахунок" class="button_user_account">
             <input type="submit" value="Оформити" class="button_user_account">
+            <div class="user_order_checkout_block" th:if="${checkout}">
+                <span th:text="@{'Оренда GPS: €'+${auxPayment}}"></span>
+                <span th:text="@{'Орендна плата: €'+${deductible}}"></span>
+                <span th:text="@{'Депозит: €'+${deposit}}"></span>
+            </div>
         </form>
     </div>
+
 
     <div class="errorDatesAssignUserAccount" th:if="${errorDatesAssign}">
         <span>Помилка встановлення дати</span>
@@ -112,8 +119,6 @@
     <div class="errorCarNotAvailable" th:if="${carNotAvailError}">
         <span>Вибачте, автомобіль недоступний</span>
     </div>
-
-
 
 
     <!--USER ORDERS READOUT SECTION-->
@@ -138,7 +143,7 @@
         </thead>
         <tbody>
 
-        <tr th:class="${currentDate lt order.dateBegin} ? order_active : order_expired"
+        <tr th:class="${currentDate lt order.dateBegin} ? order : order_expired"
             th:each="order : ${userOrdersList}">
             <td class="order_unit" th:text="${order.car.model}"></td>
             <td class="order_unit" th:text="${order.dateBegin}"></td>
@@ -149,7 +154,7 @@
             <td class="order_unit" th:text="'€'+${order.deposit}"></td>
             <td class="order_unit" th:text="${order.auxNeeded}"></td>
             <td class="order_unit" th:text="${order.status}"></td>
-            <td class="buttons_order_unit" th:if = "${currentDate lt order.dateBegin}">
+            <td class="buttons_order_unit" th:if="${currentDate lt order.dateBegin}">
                 <form action="#" th:action="@{'/orders/'+${order.id} + '/user-acc/' + ${order.user.id}}"
                       th:method="delete">
                     <button type="submit" class="delete_ico_orderlist">
@@ -157,13 +162,13 @@
                     </button>
                 </form>
             </td>
-            <td class="buttons_order_unit" th:if = "${currentDate lt order.dateBegin}">
+            <td class="buttons_order_unit" th:if="${currentDate lt order.dateBegin}">
                 <a href="edit.html" th:href="@{'/edit/'+${order.id}+'/order'}">
                     <img th:src="@{/img/edit-button.png}" th:title="Редагувати"/>
                 </a>
             </td>
-            <td class="buttons_order_unit">
-                <a href="pay.html" th:href="@{'/pay/'+${order.id}}" th:if = "${currentDate lt order.dateBegin}">
+            <td class="buttons_order_unit" th:unless="${order.status.name() == 'PAID'}">
+                <a href="pay.html" th:href="@{'/pay/'+${order.id}}" th:if="${currentDate lt order.dateBegin}">
                     <img th:src="@{/img/green_euro_icon.png}" th:title="Оплатити"/>
                 </a>
             </td>
@@ -171,7 +176,8 @@
         </tbody>
     </table>
 
-    <h5 class="user_hints_block">Редагувати і скасовувати замовлення можна лише <strong>до</strong> моменту його початку.
+    <h5 class="user_hints_block">Редагувати і скасовувати замовлення можна лише <strong>до</strong> моменту його
+        початку.
         В такому разі користувачу протягом <strong>1</strong> дня повертається сума сплаченої оренди та депозит. В разі,
         якщо користувач не з'явився для отримання замовлення <strong>(no-show)</strong>, сума сплаченої оренди та
         депозиту <strong>не повертається</strong>.

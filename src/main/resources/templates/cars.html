@@ -80,7 +80,7 @@
 
     <!--CARS READOUT SECTION-->
     <div class="cars_header">Автомобілі</div>
-    <div class="car" th:each="car : ${carList}">
+    <div th:class="${car.available == 0} ? car_not_available : car" th:each="car : ${carList}">
         <div class="car_unit" th:text="'№ '+${car.id}"></div>
         <div class="car_model" th:text="${car.model}"></div>
         <div class="car_unit" th:text="${car.description}"></div>
