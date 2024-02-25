@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8" content="application/json">
     <meta name="viewport"
@@ -72,39 +72,52 @@
         <form action="#" th:action="@{'/orders/'+${user.id}}" th:method="post">
             <div class="order_entry_form_level_user_account">
                 <label for="order_model">Марка</label>
-                <select class="select_button_user_account" id="order_model" th:name="car_id">
+                <!--th:field = "${carModel}"-->
+                <select th:unless="${checkout}" class="select_button_user_account" id="order_model"
+                        th:name="car_id">
                     <option th:each="car : ${carList}" th:value="${car.id}"
                             th:text="${car.model}"></option>
                 </select>
+                <span class="car_model_checkout" th:if="${checkout}" th:text="${carModel}"></span>
                 <label for="pickup_date_user_account">Початок</label>
-                <input id="pickup_date_user_account" name="dateBegin" type="date" th:value="${currentDate}"
-                       placeholder="ДД-ММ-РРРР" th:min="${currentDate}" required>
+                <input id="pickup_date_user_account" name="dateBegin" type="date"
+                       th:value="${checkout} ? ${orderDateBegin} : ${currentDate}"
+                       placeholder="ДД-ММ-РРРР" th:min="${currentDate}" required th:disabled="${checkout}">
                 <label for="drop-off_date_user_account">Кінець</label>
-                <input id="drop-off_date_user_account" name="dateEnd" type="date" th:min="${currentNextDate}"
-                       placeholder="ДД-ММ-РРРР" required>
+                <input id="drop-off_date_user_account" name="dateEnd" type="date"
+                       th:value="${checkout} ? ${orderDateEnd}"
+                       th:min="${currentNextDate}"
+                       placeholder="ДД-ММ-РРРР" required th:disabled="${checkout}">
             </div>
             <div class="order_entry_form_level_user_account">
                 <div class="aux_checkbox_user_account_block">
                     <input id="aux_checkbox_user_account_block" type="checkbox"
-                           checked th:value="true" th:checked="${auxNeeded}" th:name="auxNeeded"/>
+                           th:value="true" th:checked="${auxNeeded}"
+                           th:name="auxNeeded" th:disabled="${checkout}"/>
                     <label for="aux_checkbox_user_account_block">GPS (€ 10/доба)</label>
                 </div>
                 <div class="payment_block"><span>Cплатити: </span>
-                    <input id="prepayment" type="radio" th:name="payment" value="30" checked/>
+                    <input id="prepayment" type="radio" th:name="payment" value="30"
+                           th:checked="${paymentId == 30}" th:disabled="${checkout}"/>
                     <label for="prepayment"><span>30% оренди</span></label>
                 </div>
                 <div class="payment_block">
-                    <input id="full_pay" type="radio" th:name="payment" value="100"/>
+                    <input id="full_pay" type="radio" th:name="payment" value="100"
+                           th:checked="${paymentId == 100}" th:disabled="${checkout}"/>
                     <label for="full_pay">100% оренди</label>
                 </div>
             </div>
             <input type="submit" th:unless="${checkout}" th:formaction="@{'/orders/checkout/'+${user.id}}"
                    value="Розрахунок" class="button_user_account">
             <input type="submit" value="Оформити" class="button_user_account">
+            <input type="submit" th:if="${checkout}" th:formaction="@{'/users/account/'+${user.id}}"
+                   th:formmethod="get" value="Скинути" class="orange_button">
             <div class="user_order_checkout_block" th:if="${checkout}">
-                <span th:text="@{'Оренда GPS: €'+${auxPayment}}"></span>
-                <span th:text="@{'Орендна плата: €'+${deductible}}"></span>
-                <span th:text="@{'Депозит: €'+${deposit}}"></span>
+                <div class="checkout_unit">
+                    <span class = "payment_unit">Оренда GPS: €<strong th:text="${auxPayment}"></strong></span>
+                    <span class = "">Орендна плата: €<strong th:text="${deductible}"></strong></span>
+                    <span class = "">Депозит: €<strong th:text="${deposit}"></strong></span>
+                </div>
             </div>
         </form>
     </div>

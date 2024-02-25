@@ -83,12 +83,9 @@
                         <option th:each="car_propulsion : ${carPropulsionArr}" th:value="${car_propulsion}"
                                 th:text="${car_propulsion}"></option>
                     </select>
-
                     <label for="totalQty_input">∑<span><sub>заг</sub></span></label>
                     <input id="totalQty_input" name="totalQty" type="text"
                            th:placeholder="${car.totalQty}"  pattern="\d+">
-
-
 
                     <input type="submit" value="Оновити" class="button">
                 </div>

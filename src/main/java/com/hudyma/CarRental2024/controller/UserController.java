@@ -2,11 +2,13 @@ package com.hudyma.CarRental2024.controller;
 
 import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import com.hudyma.CarRental2024.exception.UserNotFoundException;
+import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import com.hudyma.CarRental2024.service.CarService;
 import com.hudyma.CarRental2024.service.OrderService;
 import com.hudyma.CarRental2024.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -80,15 +83,9 @@ public class UserController {
     }
 
     @GetMapping("/account/{id}/checkout")
-    public String getUserOrderCheckout(@PathVariable("id") Long userId, Model model) {
-        model.addAttribute(USER, userRepository
-                .findById(userId).orElseThrow(
-                        UserNotFoundException::new));
-        assignModelAttributes(model, userId);
-        model.addAttribute("checkout", true);
-        model.addAttribute("auxPayment", 1);
-        model.addAttribute("deductible", 2);
-        model.addAttribute("deposit", 3);
+    public String getUserOrderCheckout(@PathVariable("id") Long userId, Model model,
+                                       HttpServletRequest req) {
+        assignModelAttributesCheckout(model, userId, req);
         return USER;
     }
 
@@ -109,6 +106,35 @@ public class UserController {
                 CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
     }
 
+    private void assignModelAttributesCheckout(Model model, Long userId,
+                                               HttpServletRequest req) {
+        Double auxPayment = (Double) req.getSession().getAttribute("auxPayment");
+        Double deposit = (Double) req.getSession().getAttribute("deposit");
+        Double deductible = (Double) req.getSession().getAttribute("deductible");
+        LocalDate dateBegin = (LocalDate) req.getSession().getAttribute("orderDateBegin");
+        LocalDate dateEnd = (LocalDate) req.getSession().getAttribute("orderDateEnd");
+        Boolean auxNeeded = (Boolean) req.getSession().getAttribute("auxNeeded");
+        String carModel = (String) req.getSession().getAttribute("carModel");
+        Integer paymentId = (Integer) req.getSession().getAttribute("paymentId");
+        model.addAllAttributes(Map.of(
+                USER, userRepository.findById(userId).orElseThrow(
+                        UserNotFoundException::new),
+                USER_ORDERS_LIST, orderService.getOrdersByUserId(userId),
+                CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
+                CURRENT_DATE, LocalDate.now(),
+                CURRENT_NEXT_DATE, LocalDate.now().plusDays(1),
+                "checkout", true,
+                "auxPayment", auxPayment,
+                "deductible", deductible,
+                "deposit", deposit));
+        model.mergeAttributes(Map.of(
+                "auxNeeded", auxNeeded,
+                "orderDateBegin", dateBegin,
+                "orderDateEnd", dateEnd,
+                "carModel", carModel,
+                "paymentId", paymentId));
+    }
+
     @PostMapping
     public String addUser(User user) {
         userRepository.save(user);
@@ -121,7 +147,7 @@ public class UserController {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
             log.info("...deleting user {} with all orders", id);
-        } else log.error(USER + " "+id + " " + NOT_FOUND);
+        } else log.error(USER + " " + id + " " + NOT_FOUND);
         return REDIRECT_USERS;
     }
 
@@ -142,7 +168,7 @@ public class UserController {
             user.setAccessLevel(UserAccessLevel.BLOCKED);
             user.setUpdateDate(LocalDateTime.now());
             userRepository.save(user);
-        } else log.error(USER + " "+id + " " + NOT_FOUND);
+        } else log.error(USER + " " + id + " " + NOT_FOUND);
         return REDIRECT_USERS;
     }
 
@@ -154,7 +180,7 @@ public class UserController {
             user.setAccessLevel(UserAccessLevel.USER);
             user.setUpdateDate(LocalDateTime.now());
             userRepository.save(user);
-        } else log.error(USER + " "+id + " " + NOT_FOUND);
+        } else log.error(USER + " " + id + " " + NOT_FOUND);
         return REDIRECT_USERS;
     }
 
@@ -166,7 +192,7 @@ public class UserController {
             user.setAccessLevel(UserAccessLevel.MANAGER);
             user.setUpdateDate(LocalDateTime.now());
             userRepository.save(user);
-        } else log.error(USER + " "+id + " " + NOT_FOUND);
+        } else log.error(USER + " " + id + " " + NOT_FOUND);
         return REDIRECT_USERS;
     }
 
@@ -179,7 +205,7 @@ public class UserController {
             user = userService.ifNullableMergeOldValues(user, prvUser);
             user.setUpdateDate(LocalDateTime.now());
             userRepository.save(user);
-        } else log.error(USER + " "+id + " " + NOT_FOUND);
+        } else log.error(USER + " " + id + " " + NOT_FOUND);
         return REDIRECT_USERS + "/" + id;
     }
 

@@ -1,21 +1,19 @@
 package com.hudyma.CarRental2024.service;
 
 import com.hudyma.CarRental2024.constants.OrderStatus;
-import com.hudyma.CarRental2024.controller.OrderController;
 import com.hudyma.CarRental2024.exception.CarNotAvailableException;
-import com.hudyma.CarRental2024.exception.LowBalanceException;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -77,7 +75,7 @@ public class OrderService {
     }
 
     public boolean estimateOrderPayment(Order order, Integer paymentId,
-                                        boolean auxNeeded, Model model, Long carId) {
+                                        boolean auxNeeded, Long carId, HttpServletRequest req) {
         Double orderAmount = calculateOrderAmount(order, carId);
         if (orderAmount == 0d) {
             log.error("...set order: computed amount is 0");
@@ -86,12 +84,20 @@ public class OrderService {
         log.info("...orderService:: estimated order amount is {}", orderAmount);
         Double paymentDeductible = doubleRound(paymentId == 30 ? orderAmount * 0.3 : orderAmount);
         Double deposit = paymentId == 30 ? CAR_DEPOSIT : CAR_DEPOSIT/2d;
+        log.info("...user estimates {} % payment", paymentId);
         log.info("...orderService:: estimated deductible is {}", paymentDeductible);
         Double auxPayment = auxNeeded ? estimateAuxPayment(order) : 0d;
         log.info("...orderService:: estimated auxPayment is {}", auxPayment);
-        model.addAttribute("auxPayment", auxPayment);
-        model.addAttribute("deductible", paymentDeductible);
-        model.addAttribute("deposit", deposit);
+        Car car = carRepository.findById(carId).orElseThrow();
+        log.info("...setting car {} for checkout", car.getModel());
+        req.getSession().setAttribute("auxPayment", auxPayment);
+        req.getSession().setAttribute("deposit", deposit);
+        req.getSession().setAttribute("deductible", paymentDeductible);
+        req.getSession().setAttribute("orderDateBegin", order.getDateBegin());
+        req.getSession().setAttribute("orderDateEnd", order.getDateEnd());
+        req.getSession().setAttribute("auxNeeded", order.getAuxNeeded());
+        req.getSession().setAttribute("carModel", car.getModel());
+        req.getSession().setAttribute("paymentId", paymentId);
         return true;
     }
 

@@ -47,7 +47,7 @@ public class EditController {
         Car car = carRepository.findById(id).orElseThrow();
         model.addAllAttributes(Map.of("car", car,
                                                 ACTION, "car",
-                                                "carColorArr", CarColor.values(),
+                                                //"carColorArr", CarColor.values(),
                                                 "carClassArr", CarClass.values(),
                                                 "carPropulsionArr", CarPropulsion.values()));
         return EDIT;

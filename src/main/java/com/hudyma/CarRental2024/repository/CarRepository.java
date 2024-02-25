@@ -19,7 +19,7 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 
     List<Car> findByAvailableNot (int limit, Sort sort);
 
-    List<Car> findByAvailableNot (int limit);
+    //List<Car> findByAvailableNot (int limit);
 
     @Query("update Car c set c.available = c.available - 1 where c.id = :id")
     @Transactional

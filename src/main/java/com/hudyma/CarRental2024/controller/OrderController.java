@@ -12,6 +12,7 @@ import com.hudyma.CarRental2024.repository.UserRepository;
 import com.hudyma.CarRental2024.service.CarService;
 import com.hudyma.CarRental2024.service.OrderService;
 import com.hudyma.CarRental2024.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -140,13 +141,14 @@ public class OrderController {
     public String getOrderCheckout(Order order, Model model,
                                    @PathVariable("id") Long userId,
                                    @ModelAttribute("car_id") Long carId,
-                                   @ModelAttribute("payment") Integer paymentId
+                                   @ModelAttribute("payment") Integer paymentId,
+                                   HttpServletRequest req
                                    //@ModelAttribute("auxNeeded") Boolean auxNeeded) {
     ) {
         Boolean auxNeeded = order.getAuxNeeded();
         if (auxNeeded == null) auxNeeded = false;
         log.info("...getOrderCheckout:: orderService : auxNeeded is {}", auxNeeded);
-        if (orderService.estimateOrderPayment(order, paymentId, auxNeeded, model, carId)) {
+        if (orderService.estimateOrderPayment(order, paymentId, auxNeeded, carId, req)) {
             assignModelAttributesCheckout(model, userId);
             log.info("...order checkout for user {}", userId);
             return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/checkout";
@@ -155,6 +157,14 @@ public class OrderController {
         model.addAttribute(ERROR_DATES_ASSIGN, true);
         log.error("... addOrder: dates assignation error");
         return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/dateError";
+    }
+
+    @PostMapping ("/saveCheckoutOrder/{id}")
+    public String saveOrderCheckout (@PathVariable("id") Long userId){
+
+
+
+        return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
 
     private void assignModelAttributesCheckout(Model model, Long userId) {
@@ -228,7 +238,6 @@ public class OrderController {
         } else log.info("..... Order " + orderId + " does not EXIST");
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
-
 
     @DeleteMapping
     public String deleteAll() {

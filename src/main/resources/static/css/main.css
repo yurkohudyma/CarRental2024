@@ -342,14 +342,7 @@ textarea {
 }
 
 .user_order_checkout_block {
-	background-color: white;
-    border-radius: 4px;
-    z-index: 98;		
-	border: 1px solid;
-    border-radius: 10px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
-	border-color: lightskyblue;
-	padding: 10px;
+	display: contents;    
 }
 
 .car_solecard_action_buttons_block, .user_solecard_action_buttons_block {
@@ -482,6 +475,21 @@ textarea {
 .aux_checkbox_user_account_block {
 	margin-top: 8px;
 }
+
+.car_model_checkout {
+	margin-left: 5px;
+	margin-right: 5px;
+	font-weight: bold;
+}
+
+.payment_unit {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.checkout_unit{
+}
+
 .payment_block{
 	margin-left: 20px;
     margin-top: 8px;
