@@ -1,11 +1,8 @@
 package com.hudyma.CarRental2024.controller;
 
-import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import com.hudyma.CarRental2024.exception.CarNotAvailableException;
-import com.hudyma.CarRental2024.exception.UserNotFoundException;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
-import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
@@ -33,7 +30,9 @@ import static com.hudyma.CarRental2024.controller.UserController.USER_ORDERS_LIS
 @Controller
 public class OrderController {
 
-    private static final String REDIRECT_ORDERS = "redirect:/orders", ORDERS = "orders", ORDER_LIST = "orderList";
+    private static final String REDIRECT_ORDERS = "redirect:/orders";
+    private static final String ORDERS = "orders";
+    static final String ORDER_LIST = "orderList";
     public static final String ERROR_DATES_ASSIGN = "errorDatesAssign", USER_LIST = "userList", CAR_LIST = "carList";
     public static final String CURRENT_DATE = "currentDate", CURRENT_NEXT_DATE = "currentNextDate", ORDER = "order";
     public static final String ACTION = "action", REDIRECT_USER_ACCOUNT_ORDERS = "redirect:/users/account/";
@@ -109,9 +108,8 @@ public class OrderController {
                                       @ModelAttribute("car_id") Long carId,
                                       @ModelAttribute("payment") Integer paymentId) {
         order.setId(null); //todo orderId is somehow assigned to 1, if not nulled - overrites existing order
-        log.info("...adding New User Account {}: ", order);
-        checkUserAccessRestriction(userId);
-        if (checkUserAccessRestriction(userId)) {
+        log.info("...proceeding order of user {}: ", userId);
+        if (userService.checkUserAccessRestriction(userId)) {
             assignAttribIfNewOrderFails(model);
             model.addAttribute(USER_BLOCKED_ERROR, true);
             log.error("... addOrder: user {} is BLOCKED", userId);
@@ -162,7 +160,7 @@ public class OrderController {
     @PostMapping ("/saveCheckoutOrder/{id}")
     public String saveOrderCheckout (@PathVariable("id") Long userId){
 
-
+        //todo implement
 
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
@@ -195,15 +193,6 @@ public class OrderController {
         model.addAttribute(CURRENT_DATE, LocalDate.now());
         model.addAttribute(CURRENT_NEXT_DATE,
                 LocalDate.now().plusDays(1));
-    }
-
-    private boolean checkUserAccessRestriction(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
-        if (user.getAccessLevel() == UserAccessLevel.BLOCKED) {
-            log.error("...user {} is BLOCKED", userId);
-            return true;
-        }
-        return false;
     }
 
     public boolean checkCarAvailability(Long carId) {

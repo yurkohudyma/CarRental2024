@@ -4,6 +4,7 @@ import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import com.hudyma.CarRental2024.exception.UserNotFoundException;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.User;
+import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import com.hudyma.CarRental2024.service.CarService;
 import com.hudyma.CarRental2024.service.OrderService;
@@ -22,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static com.hudyma.CarRental2024.controller.OrderController.ERROR_DATES_ASSIGN;
+import static com.hudyma.CarRental2024.controller.OrderController.*;
 
 @Log4j2
 @RequestMapping("/users")
@@ -32,9 +33,11 @@ public class UserController {
 
     public static final String BLOCKING_USER = "...Blocking user = ", USER = "user", NOT_FOUND = "not found";
     public static final String USER_LIST = "userList", USER_ORDERS_LIST = "userOrdersList", SOLE_USER_CARD = "soleUserCard";
-    private static final String REDIRECT_USERS = "redirect:/users", CAR_LIST = "carList", LOW_BALANCE_ERROR = "lowBalanceError";
+    public static final String REDIRECT_USERS = "redirect:/users", CAR_LIST = "carList", LOW_BALANCE_ERROR = "lowBalanceError";
     public static final String CURRENT_DATE = "currentDate", CURRENT_NEXT_DATE = "currentNextDate", ORDER = "order";
+    public static final String USER_BLOCKED_ERROR = "blockedUserError";
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
     private final OrderService orderService;
     private final UserService userService;
     private final CarService carService;
@@ -90,16 +93,39 @@ public class UserController {
     }
 
     @GetMapping("/account/{id}/lowBalanceError")
-    public String getUserLowBalanceError(@PathVariable Long id, Model model) {
-        model.addAttribute(USER, userRepository
-                .findById(id).orElseThrow(UserNotFoundException::new));
-        assignModelAttributes(model, id);
+    public String getUserLowBalanceError(@PathVariable ("id") Long userId, Model model) {
+        assignModelAttributes(model, userId);
         model.addAttribute(LOW_BALANCE_ERROR, true);
+        return USER;
+    }
+
+    @GetMapping("/account/{id}/blockedUser")
+    public String getUserBlockedUserError(@PathVariable("id") Long userId, Model model) {
+        assignModelAttribWhenUserBlocked(model, userId);
+        model.addAttribute("userQty",
+                userRepository.findAll().size());
+        model.addAttribute("id", userId + 1);
         return USER;
     }
 
     private void assignModelAttributes(Model model, Long userId) {
         model.addAllAttributes(Map.of(
+                USER, userRepository
+                        .findById(userId)
+                        .orElseThrow(UserNotFoundException::new),
+                USER_ORDERS_LIST, orderService.getOrdersByUserId(userId),
+                CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
+                CURRENT_DATE, LocalDate.now(),
+                CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
+    }
+
+    private void assignModelAttribWhenUserBlocked(Model model, Long userId) {
+        model.addAllAttributes(Map.of(
+                USER, userRepository
+                        .findById(userId)
+                        .orElseThrow(UserNotFoundException::new),
+                USER_LIST, userRepository.findAll(),
+                USER_BLOCKED_ERROR, true,
                 USER_ORDERS_LIST, orderService.getOrdersByUserId(userId),
                 CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
                 CURRENT_DATE, LocalDate.now(),
@@ -114,6 +140,7 @@ public class UserController {
         LocalDate dateBegin = (LocalDate) req.getSession().getAttribute("orderDateBegin");
         LocalDate dateEnd = (LocalDate) req.getSession().getAttribute("orderDateEnd");
         Boolean auxNeeded = (Boolean) req.getSession().getAttribute("auxNeeded");
+        log.info("...retrieved param from Session = {}", auxNeeded);
         String carModel = (String) req.getSession().getAttribute("carModel");
         Integer paymentId = (Integer) req.getSession().getAttribute("paymentId");
         model.addAllAttributes(Map.of(
@@ -211,16 +238,21 @@ public class UserController {
 
     @PatchMapping("/{id}/top-up")
     public String topUpUserBalance(
-            @PathVariable Long id,
-            @ModelAttribute("balance") Double balance) {
-        User user = userRepository
-                .findById(id)
+            @PathVariable("id") Long userId,
+            @ModelAttribute("balance") Double balance, Model model) {
+        User user = userRepository.findById(userId)
                 .orElseThrow();
+        if (userService.checkUserAccessRestriction(userId)) {
+            log.error("... topUpUserBalance failed, user {} is BLOCKED", userId);
+            return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/blockedUser";
+        }
         Double prevBalance = user.getBalance();
         user.setBalance(Math.round((balance + prevBalance) * 100d) / 100d);
         user.setUpdateDate(LocalDateTime.now());
-        log.info("...topping up user {} balance", id);
+        log.info("...topping up user {} balance", userId);
         userRepository.save(user);
-        return REDIRECT_USERS + "/account/" + id;
+        return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
+
+
 }

@@ -1,5 +1,7 @@
 package com.hudyma.CarRental2024.service;
 
+import com.hudyma.CarRental2024.constants.UserAccessLevel;
+import com.hudyma.CarRental2024.controller.OrderController;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -44,5 +46,14 @@ public class UserService {
             log.error(IS_MISSING_FOR_USER, "passportData", user.getId());
         }
         return user;
+    }
+
+    public boolean checkUserAccessRestriction(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        if (user.getAccessLevel() == UserAccessLevel.BLOCKED) {
+            log.error("...user {} is BLOCKED", userId);
+            return true;
+        }
+        return false;
     }
 }

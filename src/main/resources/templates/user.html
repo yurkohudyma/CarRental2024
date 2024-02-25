@@ -18,9 +18,20 @@
 <div class="wrapper">
     <header>
         <h1 class="title">Панель користувача</h1>
+
         <div class="errorLowBalance" th:if="${lowBalanceError}">
             <span>Недостатньо коштів на рахунку. Поповніть баланс</span>
         </div>
+        <div class="errorDatesAssignUserAccount" th:if="${errorDatesAssign}">
+            <span>Помилка встановлення дати</span>
+        </div>
+        <div class="errorBlockedUser" th:if="${blockedUserError}">
+            <span>Користувача заблоковано: команду скасовано</span>
+        </div>
+        <div class="errorCarNotAvailable" th:if="${carNotAvailError}">
+            <span>Вибачте, автомобіль недоступний</span>
+        </div>
+
         <div class="top-up_panel">
             <form action="#" th:modelAttribute="balance" th:action="@{'/users/' + ${user.id}+'/top-up'}"
                   th:method="patch">
@@ -92,13 +103,13 @@
             <div class="order_entry_form_level_user_account">
                 <div class="aux_checkbox_user_account_block">
                     <input id="aux_checkbox_user_account_block" type="checkbox"
-                           th:value="true" th:checked="${auxNeeded}"
+                           value="true" th:checked="${auxNeeded}"
                            th:name="auxNeeded" th:disabled="${checkout}"/>
                     <label for="aux_checkbox_user_account_block">GPS (€ 10/доба)</label>
                 </div>
                 <div class="payment_block"><span>Cплатити: </span>
                     <input id="prepayment" type="radio" th:name="payment" value="30"
-                           th:checked="${paymentId == 30}" th:disabled="${checkout}"/>
+                           th:checked="${paymentId == 30}" th:disabled="${checkout}" required/>
                     <label for="prepayment"><span>30% оренди</span></label>
                 </div>
                 <div class="payment_block">
@@ -123,15 +134,7 @@
     </div>
 
 
-    <div class="errorDatesAssignUserAccount" th:if="${errorDatesAssign}">
-        <span>Помилка встановлення дати</span>
-    </div>
-    <div class="errorBlockedUser" th:if="${blockedUserError}">
-        <span>Користувача заблоковано: замовлення скасовано</span>
-    </div>
-    <div class="errorCarNotAvailable" th:if="${carNotAvailError}">
-        <span>Вибачте, автомобіль недоступний</span>
-    </div>
+
 
 
     <!--USER ORDERS READOUT SECTION-->

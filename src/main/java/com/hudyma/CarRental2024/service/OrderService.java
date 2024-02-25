@@ -37,11 +37,10 @@ public class OrderService {
         User user = userRepository.findById(userId).orElseThrow();
         Double userBalance = user.getBalance();
         log.info("...calculated order amount {}", orderAmount);
-        Double deductible;
         switch (paymentId) {
             case 30 -> {
-                deductible = orderAmount * paymentId / 100;
-                Double overallPaymentDeducted = orderAmount + CAR_DEPOSIT + deductible;
+                Double deductible = orderAmount * paymentId / 100;
+                Double overallPaymentDeducted = CAR_DEPOSIT + deductible;
                 if (!checkBalance(userBalance, overallPaymentDeducted)) return false;
                 order.setRentalPayment(doubleRound(deductible));
                 log.info("....order payment registered = {}", deductible);
@@ -95,7 +94,7 @@ public class OrderService {
         req.getSession().setAttribute("deductible", paymentDeductible);
         req.getSession().setAttribute("orderDateBegin", order.getDateBegin());
         req.getSession().setAttribute("orderDateEnd", order.getDateEnd());
-        req.getSession().setAttribute("auxNeeded", order.getAuxNeeded());
+        req.getSession().setAttribute("auxNeeded", auxNeeded);
         req.getSession().setAttribute("carModel", car.getModel());
         req.getSession().setAttribute("paymentId", paymentId);
         return true;
