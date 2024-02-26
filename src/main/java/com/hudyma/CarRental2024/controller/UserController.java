@@ -140,6 +140,8 @@ public class UserController {
         LocalDate dateBegin = (LocalDate) req.getSession().getAttribute("orderDateBegin");
         LocalDate dateEnd = (LocalDate) req.getSession().getAttribute("orderDateEnd");
         Boolean auxNeeded = (Boolean) req.getSession().getAttribute("auxNeeded");
+        Long duration = (Long) req.getSession().getAttribute("duration");
+        Double price = (Double) req.getSession().getAttribute("price");
         log.info("...retrieved param from Session = {}", auxNeeded);
         if (auxNeeded == null) {
             auxNeeded = false;
@@ -155,15 +157,17 @@ public class UserController {
                 CURRENT_DATE, LocalDate.now(),
                 CURRENT_NEXT_DATE, LocalDate.now().plusDays(1),
                 "checkout", true,
-                "auxPayment", auxPayment,
-                "deductible", deductible,
-                "deposit", deposit));
+                "auxPayment", orderService.formatDecimalNum(auxPayment),
+                "deductible", orderService.formatDecimalNum(deductible),
+                "deposit", orderService.formatDecimalNum(deposit)));
         model.addAllAttributes(Map.of(
                 "auxNeeded", auxNeeded,
                 "orderDateBegin", dateBegin,
                 "orderDateEnd", dateEnd,
                 "carModel", carModel,
-                "paymentId", paymentId));
+                "paymentId", paymentId,
+                "duration", duration,
+                "price", price));
 
     }
 

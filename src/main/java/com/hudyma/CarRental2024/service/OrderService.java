@@ -90,7 +90,10 @@ public class OrderService {
         log.info("...orderService:: auxNeeded is {}", auxNeeded);
         log.info("...orderService:: estimated auxPayment is {}", auxPayment);
         Car car = carRepository.findById(carId).orElseThrow();
+        Double price = car.getPrice();
         log.info("...setting car {} for checkout", car.getModel());
+        Long duration = calculateDuration(order);
+        log.info("...duration == {}" + " days", duration);
         Map.of (        "auxPayment", auxPayment,
                         "deposit", deposit,
                         "deductible", paymentDeductible,
@@ -98,19 +101,16 @@ public class OrderService {
                         "orderDateEnd", order.getDateEnd(),
                         "auxNeeded", auxNeeded,
                         "carModel", car.getModel(),
-                        "paymentId", paymentId)
+                        "paymentId", paymentId,
+                        "duration", duration,
+                        "price", price)
                 .forEach((k,v) -> req.getSession().setAttribute(k,v));
         return true;
     }
 
     private Double estimateAuxPayment(Order order) {
-        long days = ChronoUnit.DAYS.between(
-                order.getDateBegin(),
-                order.getDateEnd());
-        if (days <= 0) {
-            log.info("...DATES OF RENTAL DIFFER BY " + days + " days");
-            return 0d;
-        }
+        Long days = calculateDuration(order);
+        if (days == null) return 0d;
         return doubleRound(AUX_PAYMENT * days);
     }
 
@@ -159,7 +159,7 @@ public class OrderService {
         return formatDecimalNum(res);
     }
 
-    private String formatDecimalNum(double res) {
+    public String formatDecimalNum(double res) {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setGroupingSeparator(' ');
         DecimalFormat dfDecimal = new DecimalFormat("###########0.00###");
@@ -218,18 +218,24 @@ public class OrderService {
     }
 
     private Double calculateOrderAmount(Order order, Long carId) {
-        long days = ChronoUnit.DAYS.between(
-                order.getDateBegin(),
-                order.getDateEnd());
-        if (days <= 0) {
-            log.info("...DATES OF RENTAL DIFFER BY " + days + " days");
-            return 0d;
-        }
+        Long days = calculateDuration(order);
+        if (days == null) return 0d;
         order.setDuration(days);
         Double price = carRepository.findById(carId)
                 .orElseThrow()
                 .getPrice();
         return doubleRound(days * price);
+    }
+
+    public Long calculateDuration(Order order) {
+        long days = ChronoUnit.DAYS.between(
+                order.getDateBegin(),
+                order.getDateEnd());
+        if (days <= 0) {
+            log.info("...DATES OF RENTAL DIFFER BY " + days + " days");
+            return null;
+        }
+        return days;
     }
 
     public void recalculateOrdersAmountUponCarEdit(Long carId) {

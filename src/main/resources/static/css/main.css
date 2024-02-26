@@ -337,11 +337,12 @@ textarea {
     box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 	border-color: lightskyblue;
 	padding: 10px;
-	display: table-caption;
+	display: inline-table;
+    width: min-content;
 }
 
 .user_order_checkout_block {
-	padding: 15px;
+	padding: 10px;
     border: 1px solid;
     border-radius: 10px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, .2);

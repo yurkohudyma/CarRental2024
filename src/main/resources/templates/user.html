@@ -128,7 +128,9 @@
 
     <!-- ORDER CHECKOUT POP-UP -->
     <div class="user_order_checkout_block" th:if="${checkout}">
-        <div class = "checkout_unit">Оренда GPS: €<strong th:text="${auxPayment}"></strong></div>
+        <div class = "checkout_unit">Тривалість: <strong th:text="${duration} + ' діб'"></strong></div>
+        <div class = "checkout_unit">Вартість за добу: €<strong th:text="${price}"></strong></div>
+        <div class = "checkout_unit">Прокат GPS: €<strong th:text="${auxPayment}"></strong></div>
         <div class = "checkout_unit">Орендна плата: €<strong th:text="${deductible}"></strong></div>
         <div class = "checkout_unit">Депозит: €<strong th:text="${deposit}"></strong></div>
     </div>
@@ -164,7 +166,7 @@
             <td class="order_unit" th:text="'€'+${order.amount}"></td>
             <td class="order_unit" th:text="'€'+${order.rentalPayment}"></td>
             <td class="order_unit" th:text="'€'+${order.deposit}"></td>
-            <td class="order_unit" th:text="${order.auxNeeded}"></td>
+            <td class="order_unit" th:text="${order.auxNeeded} ? '✔' "></td>
             <td class="order_unit" th:text="${order.status}"></td>
             <td class="buttons_order_unit" th:if="${currentDate lt order.dateBegin}">
                 <form action="#" th:action="@{'/orders/'+${order.id} + '/user-acc/' + ${order.user.id}}"
