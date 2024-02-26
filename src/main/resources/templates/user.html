@@ -120,22 +120,18 @@
             </div>
             <input type="submit" th:unless="${checkout}" th:formaction="@{'/orders/checkout/'+${user.id}}"
                    value="Розрахунок" class="button_user_account">
-            <input type="submit" value="Оформити" class="button_user_account">
+            <input type="submit" value="Оформити" class="button_user_account" th:disabled="${checkout}">
             <input type="submit" th:if="${checkout}" th:formaction="@{'/users/account/'+${user.id}}"
                    th:formmethod="get" value="Скинути" class="orange_button">
-            <div class="user_order_checkout_block" th:if="${checkout}">
-                <div class="checkout_unit">
-                    <span class = "payment_unit">Оренда GPS: €<strong th:text="${auxPayment}"></strong></span>
-                    <span class = "">Орендна плата: €<strong th:text="${deductible}"></strong></span>
-                    <span class = "">Депозит: €<strong th:text="${deposit}"></strong></span>
-                </div>
-            </div>
         </form>
     </div>
 
-
-
-
+    <!-- ORDER CHECKOUT POP-UP -->
+    <div class="user_order_checkout_block" th:if="${checkout}">
+        <div class = "checkout_unit">Оренда GPS: €<strong th:text="${auxPayment}"></strong></div>
+        <div class = "checkout_unit">Орендна плата: €<strong th:text="${deductible}"></strong></div>
+        <div class = "checkout_unit">Депозит: €<strong th:text="${deposit}"></strong></div>
+    </div>
 
     <!--USER ORDERS READOUT SECTION-->
     <div class="order_header">
@@ -159,7 +155,7 @@
         </thead>
         <tbody>
 
-        <tr th:class="${currentDate lt order.dateBegin} ? order : order_expired"
+        <tr th:class="${currentDate lt order.dateEnd} ? order : order_expired"
             th:each="order : ${userOrdersList}">
             <td class="order_unit" th:text="${order.car.model}"></td>
             <td class="order_unit" th:text="${order.dateBegin}"></td>

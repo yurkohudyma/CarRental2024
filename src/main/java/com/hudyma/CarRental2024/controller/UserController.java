@@ -141,6 +141,10 @@ public class UserController {
         LocalDate dateEnd = (LocalDate) req.getSession().getAttribute("orderDateEnd");
         Boolean auxNeeded = (Boolean) req.getSession().getAttribute("auxNeeded");
         log.info("...retrieved param from Session = {}", auxNeeded);
+        if (auxNeeded == null) {
+            auxNeeded = false;
+            log.info("...auxNeeded is null, setting to {}", auxNeeded);
+        }
         String carModel = (String) req.getSession().getAttribute("carModel");
         Integer paymentId = (Integer) req.getSession().getAttribute("paymentId");
         model.addAllAttributes(Map.of(
@@ -154,12 +158,13 @@ public class UserController {
                 "auxPayment", auxPayment,
                 "deductible", deductible,
                 "deposit", deposit));
-        model.mergeAttributes(Map.of(
+        model.addAllAttributes(Map.of(
                 "auxNeeded", auxNeeded,
                 "orderDateBegin", dateBegin,
                 "orderDateEnd", dateEnd,
                 "carModel", carModel,
                 "paymentId", paymentId));
+
     }
 
     @PostMapping

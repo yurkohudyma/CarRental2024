@@ -19,6 +19,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -86,17 +87,19 @@ public class OrderService {
         log.info("...user estimates {} % payment", paymentId);
         log.info("...orderService:: estimated deductible is {}", paymentDeductible);
         Double auxPayment = auxNeeded ? estimateAuxPayment(order) : 0d;
+        log.info("...orderService:: auxNeeded is {}", auxNeeded);
         log.info("...orderService:: estimated auxPayment is {}", auxPayment);
         Car car = carRepository.findById(carId).orElseThrow();
         log.info("...setting car {} for checkout", car.getModel());
-        req.getSession().setAttribute("auxPayment", auxPayment);
-        req.getSession().setAttribute("deposit", deposit);
-        req.getSession().setAttribute("deductible", paymentDeductible);
-        req.getSession().setAttribute("orderDateBegin", order.getDateBegin());
-        req.getSession().setAttribute("orderDateEnd", order.getDateEnd());
-        req.getSession().setAttribute("auxNeeded", auxNeeded);
-        req.getSession().setAttribute("carModel", car.getModel());
-        req.getSession().setAttribute("paymentId", paymentId);
+        Map.of (        "auxPayment", auxPayment,
+                        "deposit", deposit,
+                        "deductible", paymentDeductible,
+                        "orderDateBegin", order.getDateBegin(),
+                        "orderDateEnd", order.getDateEnd(),
+                        "auxNeeded", auxNeeded,
+                        "carModel", car.getModel(),
+                        "paymentId", paymentId)
+                .forEach((k,v) -> req.getSession().setAttribute(k,v));
         return true;
     }
 

@@ -64,7 +64,7 @@ form {
     border-radius: 6px;
     outline-color: #67a300;
 	margin-top: 5px;
-	width: 70px;
+	width: 52px;
 }
 
 #seatsQuantity_input, #totalQty_input {
@@ -331,8 +331,7 @@ textarea {
 
 .order_entry_form_block_user_account{	
     background-color: white;
-    border-radius: 4px;
-    z-index: 98;		
+    border-radius: 4px;    
 	border: 1px solid;
     border-radius: 10px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
@@ -342,7 +341,17 @@ textarea {
 }
 
 .user_order_checkout_block {
-	display: contents;    
+	padding: 15px;
+    border: 1px solid;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+	display: inline-table;
+	text-align: center;
+	border-color: lightskyblue;
+	margin: 5px;
+}
+
+.checkout_unit {
 }
 
 .car_solecard_action_buttons_block, .user_solecard_action_buttons_block {

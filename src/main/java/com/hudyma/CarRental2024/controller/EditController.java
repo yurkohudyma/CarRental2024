@@ -1,7 +1,6 @@
 package com.hudyma.CarRental2024.controller;
 
 import com.hudyma.CarRental2024.constants.CarClass;
-import com.hudyma.CarRental2024.constants.CarColor;
 import com.hudyma.CarRental2024.constants.CarPropulsion;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
-import java.util.BitSet;
 import java.util.Map;
 
 @Controller
