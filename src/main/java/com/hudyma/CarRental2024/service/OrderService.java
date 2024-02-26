@@ -33,15 +33,18 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     @Transactional
-    public boolean calculateOrderPayment(Order order, Long carId, Long userId, Integer paymentId) {
+    public boolean calculateOrderPayment(Order order, Long carId,
+                                         Long userId, Integer paymentId, boolean auxNeeded) {
         Double orderAmount = calculateOrderAmount(order, carId);
+        log.info("...calculated order amount {}", orderAmount);
         User user = userRepository.findById(userId).orElseThrow();
         Double userBalance = user.getBalance();
-        log.info("...calculated order amount {}", orderAmount);
+        Double auxPayment = auxNeeded ? estimateAuxPayment(order) : 0d;
+        log.info("...calculated aux payment = {}", auxPayment);
         switch (paymentId) {
             case 30 -> {
                 Double deductible = orderAmount * paymentId / 100;
-                Double overallPaymentDeducted = CAR_DEPOSIT + deductible;
+                Double overallPaymentDeducted = CAR_DEPOSIT + deductible + auxPayment;
                 if (!checkBalance(userBalance, overallPaymentDeducted)) return false;
                 order.setRentalPayment(doubleRound(deductible));
                 log.info("....order payment registered = {}", deductible);
@@ -52,11 +55,10 @@ public class OrderService {
                 order.setDeposit(CAR_DEPOSIT);
                 log.info("....order deposit SET {}", CAR_DEPOSIT);
                 updateCarAvailabilityNumber(OrderStatus.CONFIRMED, carId);
-                log.info("....car available num decremented");
-                return true;
+                log.info("....car {} available num decremented", carId);
             }
             case 100 -> {
-                Double overallPaymentDeducted = orderAmount + CAR_DEPOSIT / 2;
+                Double overallPaymentDeducted = orderAmount + CAR_DEPOSIT / 2 + auxPayment;
                 if (!checkBalance(userBalance, overallPaymentDeducted)) return false;
                 order.setRentalPayment(doubleRound(orderAmount));
                 log.info("....order payment registered = {}", orderAmount);
@@ -66,11 +68,11 @@ public class OrderService {
                 order.setDeposit(CAR_DEPOSIT / 2);
                 updateCarAvailabilityNumber(OrderStatus.PAID, carId);
                 log.info("....car available num decremented");
-                return true;
             }
             default -> log.info("...unknown paymentId parameter");
         }
-        orderRepository.save(order);
+        order.setAuxPayment(auxPayment);
+        log.info("....aux payment {} set", auxPayment);
         return true;
     }
 
@@ -114,7 +116,7 @@ public class OrderService {
         return doubleRound(AUX_PAYMENT * days);
     }
 
-    private Double doubleRound(Double deductible) {
+    public Double doubleRound(Double deductible) {
         return Math.round(deductible * 100d) / 100d;
     }
 
@@ -146,7 +148,6 @@ public class OrderService {
             throw new CarNotAvailableException("car " + carId + " is not available");
         }
     }
-
 
     public String getAllOrdersAmount() {
         Double result = orderRepository

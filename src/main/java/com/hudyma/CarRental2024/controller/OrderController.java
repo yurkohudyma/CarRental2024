@@ -3,6 +3,7 @@ package com.hudyma.CarRental2024.controller;
 import com.hudyma.CarRental2024.exception.CarNotAvailableException;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
+import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
@@ -103,12 +104,19 @@ public class OrderController {
     }*/
 
     @PostMapping("/{id}")
-    public String addOrderUserAccount(Order order, Model model,
+    public String addOrder(Order order, Model model,
                                       @PathVariable("id") Long userId,
                                       @ModelAttribute("car_id") Long carId,
                                       @ModelAttribute("payment") Integer paymentId) {
         order.setId(null); //todo orderId is somehow assigned to 1, if not nulled - overrites existing order
         log.info("...proceeding order of user {}: ", userId);
+        Boolean auxNeeded = order.getAuxNeeded();
+        log.info("...order auxNeeded is {}", auxNeeded);
+        if (auxNeeded == null) {
+            order.setAuxNeeded(false);
+            auxNeeded = false;
+            log.info("...auxNeeded set to {}", false);
+        }
         if (userService.checkUserAccessRestriction(userId)) {
             assignAttribIfNewOrderFails(model);
             model.addAttribute(USER_BLOCKED_ERROR, true);
@@ -118,15 +126,16 @@ public class OrderController {
             assignAttribIfNewOrderFails(model);
             model.addAttribute(CAR_NOT_AVAIL, true);
             log.error("... addOrder: car {} not avail", carId);
-        } else if (!orderService.calculateOrderPayment(order, carId, userId, paymentId)) {
+        } else if (!orderService.calculateOrderPayment(order, carId, userId, paymentId, auxNeeded)) {
             return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/lowBalanceError";
         } else if (orderService.setOrder(order, carId, userId)) {
-            if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
-            log.info("...add Order: persisting order of {}",
-                    order.getUser().getName());
+
+
             order.setRegisterDate(LocalDateTime.now());
             log.info("...user has chosen {} % payment", paymentId);
             orderRepository.save(order);
+            log.info("...add Order: persisting order of {}",
+                    order.getUser().getName());
         } else {
             assignAttribIfNewOrderFailsUserAccOrder(model, userId);
             log.error("... addOrder: dates assignation error");
@@ -208,24 +217,50 @@ public class OrderController {
 
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
-        Optional<Order> order = orderRepository.findById(id);
-        if (order.isPresent()) {
-            orderRepository.deleteById(id);
-        } else log.info("..... Order " + id + " does not EXIST");
-        return REDIRECT_ORDERS;
-    }
-
-    @DeleteMapping("/{orderId}/user-acc/{userId}")
-    public String userAccDelete(
-            @PathVariable(name = "orderId") Long orderId,
-            @PathVariable(name = "userId") Long userId) {
+    public String delete(@PathVariable("id") Long orderId) {
         Optional<Order> order = orderRepository.findById(orderId);
         if (order.isPresent()) {
             orderRepository.deleteById(orderId);
             log.info("... order {} successfully deleted", orderId);
+            incrementCarAvailability(order.get());
+            refundAllPaymentsToUser(order.get().getUser().getId(), order.get());
+        } else log.info("..... Order " + orderId + " does not EXIST");
+        return REDIRECT_ORDERS;
+    }
+
+    @DeleteMapping("/{userId}/cancel/{orderId}")
+    public String cancelOrder(
+            @PathVariable(name = "userId") Long userId,
+            @PathVariable(name = "orderId") Long orderId) {
+        Optional<Order> order = orderRepository.findById(orderId);
+        if (order.isPresent()) {
+            orderRepository.deleteById(orderId);
+            log.info("... order {} successfully deleted", orderId);
+            incrementCarAvailability(order.get());
+            refundAllPaymentsToUser(userId, order.get());
         } else log.info("..... Order " + orderId + " does not EXIST");
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
+    }
+
+    private void refundAllPaymentsToUser(Long userId, Order order) {
+        User user = userRepository.findById(userId).orElseThrow();
+        Double deposit = order.getDeposit();
+        Double rentalPayment = order.getRentalPayment();
+        Double auxPayment = order.getAuxPayment() == null ? 0d : order.getAuxPayment();
+        Double totalRefundPayment = orderService.doubleRound(
+                user.getBalance() + deposit + rentalPayment + auxPayment);
+        user.setBalance(totalRefundPayment);
+        log.info("... deposit {}, rental {} and aux refunded for user {}",
+                deposit,
+                rentalPayment,
+                auxPayment);
+        userRepository.save(user);
+    }
+
+    private void incrementCarAvailability(Order order) {
+        Long carId = order.getCar().getId();
+        carRepository.incrementCarAvailableWhenOrderComplete(carId);
+        log.info("... car {} availability incremented", carId);
     }
 
     @DeleteMapping

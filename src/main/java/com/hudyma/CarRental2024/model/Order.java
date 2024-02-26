@@ -52,6 +52,9 @@ public class Order {
 
     Double deposit;
 
+    @Column(name = "aux_payment")
+    Double auxPayment;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "car_id")
     private Car car;

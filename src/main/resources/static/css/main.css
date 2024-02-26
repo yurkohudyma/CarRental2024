@@ -246,6 +246,18 @@ textarea {
 	margin: 5px;
 }
 
+.user_blocked {
+	color: grey;
+	padding: 15px;
+    border: 1px solid;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+	display: inline-table;
+	text-align: center;
+	border-color: lightskyblue;
+	margin: 5px;
+}
+
 .car_not_available {
 	color: grey;
 	padding: 15px;
