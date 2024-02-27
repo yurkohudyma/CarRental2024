@@ -143,7 +143,7 @@
             <td class="order_unit" th:text="${order.duration}+' діб'"></td>
             <td class="order_unit" th:text="'€'+${order.amount}"></td>
             <td class="order_unit" th:text="${order.auxNeeded}"></td>
-            <td class="order_unit" th:text="${order.status}"></td>
+            <td class="order_unit" th:text="${order.status.str}"></td>
             <td class="buttons_order_unit">
                 <form action="#" th:action="@{'/orders/'+${order.id}}" th:method="delete">
                     <button type="submit" class="delete_ico_orderlist">

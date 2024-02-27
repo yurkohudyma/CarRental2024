@@ -69,7 +69,6 @@
             <th><a href="/orders/sortByPayment" title="За платежем">Сплачено</a></th>
             <th><a href="/orders/sortByDeposit" title="За депозитом">Депозит</a></th>
             <th>GPS</th>
-            <th>Оплата GPS</th>
             <th>Статус</th>
             <th colspan="2">Дія</th>
         </tr>
@@ -95,9 +94,8 @@
             <td class="order_unit" th:text="'€'+${order.amount}"></td>
             <td class="order_unit" th:text="'€'+${order.rentalPayment}"></td>
             <td class="order_unit" th:text="'€'+${order.deposit}"></td>
-            <td class="order_unit" th:text="${order.auxNeeded} ? '✔'"></td>
             <td class="order_unit" th:text="${order.auxPayment}"></td>
-            <td class="order_unit" th:text="${order.status}"></td>
+            <td class="order_unit" th:text="${order.status.str}"></td>
 
             <td class="buttons_order_unit">
                 <form action="#" th:action="@{'/orders/'+${order.id}}" th:method="delete">

@@ -117,7 +117,7 @@ public class OrderController {
             auxNeeded = false;
             log.info("...auxNeeded set to {}", false);
         }
-        if (userService.checkUserAccessRestriction(userId)) {
+        /*if (userService.checkUserAccessRestriction(userId)) {
             assignAttribIfNewOrderFails(model);
             model.addAttribute(USER_BLOCKED_ERROR, true);
             log.error("... addOrder: user {} is BLOCKED", userId);
@@ -126,11 +126,11 @@ public class OrderController {
             assignAttribIfNewOrderFails(model);
             model.addAttribute(CAR_NOT_AVAIL, true);
             log.error("... addOrder: car {} not avail", carId);
-        } else if (!orderService.calculateOrderPayment(order, carId, userId, paymentId, auxNeeded)) {
+        } else*/
+
+        if (!orderService.calculateOrderPayment(order, carId, userId, paymentId, auxNeeded)) {
             return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/lowBalanceError";
         } else if (orderService.setOrder(order, carId, userId)) {
-
-
             order.setRegisterDate(LocalDateTime.now());
             log.info("...user has chosen {} % payment", paymentId);
             orderRepository.save(order);

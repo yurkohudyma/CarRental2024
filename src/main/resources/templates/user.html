@@ -61,8 +61,8 @@
             <div class="user_unit" th:text="${user.email}"></div>
             <div class="user_unit" th:text="'Паспорт: ' + ${user.passportData}"></div>
             <div class="user_unit">Баланс: €<span class="user_solecard_values" th:text="${user.balance}"></span></div>
-            <div class="user_unit" th:if = "${user.accessLevel.toString() == 'BLOCKED'}"
-                 th:text="'Статус: ' + ${user.accessLevel}">
+            <div class="user_unit" th:if="${user.accessLevel.toString() == 'BLOCKED'}"
+                 th:text="'Статус: ' + ${user.accessLevel.str}">
             </div>
             <div class="user_solecard_action_buttons_block">
                 <a class="edit_ico_orderlist" href="edit.html" th:href="@{'/edit/'+${user.id}+'/user'}">
@@ -119,22 +119,24 @@
                     <label for="full_pay">100% оренди</label>
                 </div>
             </div>
-            <input type="submit" th:unless="${checkout}" th:formaction="@{'/orders/checkout/'+${user.id}}"
-                   value="Розрахунок" class="button_user_account">
-            <input type="submit" value="Оформити" class="button_user_account" th:disabled="${checkout}"
-                   th:unless="${user.accessLevel.toString()} == 'BLOCKED'">
-            <input type="submit" th:if="${checkout}" th:formaction="@{'/users/account/'+${user.id}}"
-                   th:formmethod="get" value="Скинути" class="orange_button">
+            <div class="order_entry_form_level_user_account">
+                <input type="submit" th:unless="${checkout}" th:formaction="@{'/orders/checkout/'+${user.id}}"
+                       value="Розрахунок" class="button_user_account">
+                <input type="submit" value="Оформити" class="button_user_account" th:disabled="${checkout}"
+                       th:unless="${user.accessLevel.toString()} == 'BLOCKED'">
+                <input type="submit" th:if="${checkout}" th:formaction="@{'/users/account/'+${user.id}}"
+                       th:formmethod="get" value="Скинути" class="orange_button">
+            </div>
         </form>
     </div>
 
     <!-- ORDER CHECKOUT POP-UP -->
     <div class="user_order_checkout_block" th:if="${checkout}">
-        <div class = "checkout_unit">Тривалість: <strong th:text="${duration} + ' діб'"></strong></div>
-        <div class = "checkout_unit">Вартість за добу: €<strong th:text="${price}"></strong></div>
-        <div class = "checkout_unit">Прокат GPS: €<strong th:text="${auxPayment}"></strong></div>
-        <div class = "checkout_unit">Орендна плата: €<strong th:text="${deductible}"></strong></div>
-        <div class = "checkout_unit">Депозит: €<strong th:text="${deposit}"></strong></div>
+        <div class="checkout_unit">Тривалість: <strong th:text="${duration} + ' діб'"></strong></div>
+        <div class="checkout_unit">Вартість за добу: €<strong th:text="${price}"></strong></div>
+        <div class="checkout_unit">Прокат GPS: €<strong th:text="${auxPayment}"></strong></div>
+        <div class="checkout_unit">Орендна плата: €<strong th:text="${deductible}"></strong></div>
+        <div class="checkout_unit">Депозит: €<strong th:text="${deposit}"></strong></div>
     </div>
 
     <!--USER ORDERS READOUT SECTION-->
@@ -171,7 +173,7 @@
             <td class="order_unit" th:text="'€'+${order.deposit}"></td>
             <td class="order_unit" th:text="${order.auxNeeded} ? '✔' "></td>
             <td class="order_unit" th:text="${order.auxPayment}"></td>
-            <td class="order_unit" th:text="${order.status}"></td>
+            <td class="order_unit" th:text="${order.status.str}"></td>
             <td class="buttons_order_unit" th:if="${currentDate lt order.dateBegin}">
                 <form action="#" th:action="@{'/orders/'+${order.user.id} + '/cancel/' + ${order.id}}"
                       th:method="delete">

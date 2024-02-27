@@ -45,7 +45,7 @@
         <div class="user_name" th:text="${user.name}"></div>
         <div class="user_unit" th:text="${user.email}"></div>
         <div class="user_unit" th:text="'Паспорт: ' + ${user.passportData}"></div>
-        <div class="user_unit" th:text="'Доступ: ' + ${user.accessLevel}"></div>
+        <div class="user_unit" th:text="'Доступ: ' + ${user.accessLevel.str}"></div>
         <div class="user_unit" th:text="'Баланс: €' + ${user.balance}"></div>
 
         <div class="user_solecard_action_buttons_block" th:unless="${user.accessLevel.toString() == 'ADMIN'}">
@@ -120,7 +120,7 @@
             <td class="order_unit" th:text="${order.duration}+' діб'"></td>
             <td class="order_unit" th:text="'€'+${order.amount}"></td>
             <td class="order_unit" th:text="${order.auxNeeded}"></td>
-            <td class="order_unit" th:text="${order.status}"></td>
+            <td class="order_unit" th:text="${order.status.str}"></td>
             <td class="buttons_order_unit">
                 <form action="#" th:action="@{'/orders/'+${order.id}}" th:method="delete">
                     <button type="submit" class="delete_ico_orderlist">
