@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder(toBuilder = true)
+@AllArgsConstructor/**/
+@Builder/*(toBuilder = true)*/
 @ToString(exclude = {"car","user"})
 @EqualsAndHashCode(of = "id")
 public class Order {
@@ -52,6 +52,9 @@ public class Order {
 
     @Column(name = "rental_payment")
     Double rentalPayment;
+
+    @Column(name = "payment_date")
+    LocalDateTime paymentDate;
 
     Double deposit;
 

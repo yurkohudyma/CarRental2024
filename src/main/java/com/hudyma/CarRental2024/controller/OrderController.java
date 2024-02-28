@@ -1,6 +1,7 @@
 package com.hudyma.CarRental2024.controller;
 
 import com.hudyma.CarRental2024.constants.OrderStatus;
+import com.hudyma.CarRental2024.exception.LowBalanceException;
 import com.hudyma.CarRental2024.exception.OrderPaymentFailureException;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
@@ -109,6 +110,7 @@ public class OrderController {
                                       @PathVariable("id") Long userId,
                                       @ModelAttribute("car_id") Long carId,
                                       @ModelAttribute("payment") Integer paymentId) {
+        log.info("...order comes with id = {}", order.getId());
         order.setId(null); //todo orderId is somehow assigned to 1, if not nulled - overrites existing order
         log.info("...proceeding order of user {}: ", userId);
         Boolean auxNeeded = order.getAuxNeeded();
@@ -134,6 +136,7 @@ public class OrderController {
         } else if (orderService.setOrder(order, carId, userId)) {
             order.setRegisterDate(LocalDateTime.now());
             log.info("...user has chosen {} % payment", paymentId);
+            order.setPaymentDate(LocalDateTime.now());
             orderRepository.save(order);
             log.info("...add Order: persisting order of {}",
                     order.getUser().getName());
@@ -167,10 +170,10 @@ public class OrderController {
         return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/dateError";
     }
 
-    @PostMapping ("/saveCheckoutOrder/{id}")
-    public String saveOrderCheckout (@PathVariable("id") Long userId,
-                                     HttpServletRequest req,
-                                     Order order){
+    @PostMapping ("/saveCheckoutOrder/{userId}")
+    public String saveOrderCheckout (Order order, @PathVariable Long userId,
+                                     HttpServletRequest req){
+        log.info("...order comes with id = {}", order.getId());
         order.setId(null); //todo orderId is taken somehow from user_id, therefore nulled
         Double auxPayment = (Double) req.getSession().getAttribute("auxPayment");
         Double deposit = (Double) req.getSession().getAttribute("deposit");
@@ -194,9 +197,9 @@ public class OrderController {
             throw new OrderPaymentFailureException();
         }
 
-        /*order.toBuilder()
-                .car(car)
+        /*order = Order.builder()
                 .user(user)
+                .car(car)
                 .dateBegin(dateBegin)
                 .dateEnd(dateEnd)
                 .deposit(deposit)
@@ -208,8 +211,9 @@ public class OrderController {
                 .amount(deductible)
                 .build();*/
 
-        order.setCar(car);
+        log.info("... car {} set to order of user {}", carId, userId);
         order.setUser(user);
+        order.setCar(car);
         order.setDateBegin(dateBegin);
         order.setDateEnd(dateEnd);
         order.setDeposit(deposit);
@@ -217,16 +221,24 @@ public class OrderController {
         order.setRegisterDate(LocalDateTime.now());
         order.setDuration(duration);
         order.setAuxNeeded(auxPayment > 0);
-        order.setRentalPayment(deductible);
-        order.setAuxPayment(auxPayment);
+        if (paymentId == 30) order.setRentalPayment(orderService.doubleRound(deductible /3));
+        else order.setRentalPayment(deductible);
         order.setAmount(deductible);
 
+        Double userBalance = user.getBalance();
+        Double totalSumDeductible = deposit + auxPayment + deductible;
+        if (!orderService.checkBalance(userBalance, totalSumDeductible)) {
+            return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/lowBalanceError";
+        }
+        order.setPaymentDate(LocalDateTime.now());
+        log.info("... payment date set to {}", order.getPaymentDate());
         orderRepository.save(order);
-        Double totalSumDeductible = user.getBalance() - deposit - auxPayment - deductible;
-        ///todo check balance before deducting, not implemented at checkout phase
-        user.setBalance(totalSumDeductible);
-        log.info("...{} has been deducted from user balance", totalSumDeductible);
         user.addOrder(order);
+        user.setBalance(orderService.doubleRound(userBalance - totalSumDeductible));
+        userRepository.save(user);
+        log.info("...{} has been deducted from user balance", totalSumDeductible);
+        orderService.updateCarAvailabilityNumber(order.getStatus(), carId);
+
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
 

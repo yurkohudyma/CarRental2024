@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -55,7 +57,6 @@ public class OrderService {
                 order.setDeposit(CAR_DEPOSIT);
                 log.info("....order deposit SET {}", CAR_DEPOSIT);
                 updateCarAvailabilityNumber(OrderStatus.CONFIRMED, carId);
-                log.info("....car {} available num decremented", carId);
             }
             case 100 -> {
                 Double overallPaymentDeducted = orderAmount + CAR_DEPOSIT / 2 + auxPayment;
@@ -67,7 +68,6 @@ public class OrderService {
                 order.setStatus(OrderStatus.PAID);
                 order.setDeposit(CAR_DEPOSIT / 2);
                 updateCarAvailabilityNumber(OrderStatus.PAID, carId);
-                log.info("....car available num decremented");
             }
             default -> {
                 log.error("...unknown paymentId parameter");
@@ -76,6 +76,7 @@ public class OrderService {
         }
         order.setAuxPayment(auxPayment);
         log.info("....aux payment {} set", auxPayment);
+        order.setPaymentDate(LocalDateTime.now());
         return true;
     }
 
@@ -149,7 +150,7 @@ public class OrderService {
         return Math.round(deductible * 100d) / 100d;
     }
 
-    private boolean checkBalance(Double userBalance, Double overallPaymentDeducted) {
+    public boolean checkBalance(Double userBalance, Double overallPaymentDeducted) {
         if (userBalance < overallPaymentDeducted) {
             log.error(".... low balance = {}, while deducted to pay = {}",
                     userBalance, overallPaymentDeducted);
@@ -161,10 +162,14 @@ public class OrderService {
     @Transactional
     public void updateCarAvailabilityNumber(OrderStatus status, Long carId) {
         switch (status) {
-            case COMPLETE -> carRepository.incrementCarAvailableWhenOrderComplete(carId);
+            case COMPLETE -> {
+                carRepository.incrementCarAvailableWhenOrderComplete(carId);
+                log.info("....car {} total incremented", carId);
+            }
             case CONFIRMED, PAID -> {
                 checkCarAvailability(carId); // double check before going into minus
                 carRepository.decrementCarAvailableWhenOrderConfirmed(carId);
+                log.info("....car {} available total decremented", carId);
             }
             default -> log.error("car {} availability num NOT changed)", carId);
         }
