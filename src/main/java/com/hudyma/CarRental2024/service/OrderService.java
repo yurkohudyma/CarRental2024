@@ -2,6 +2,7 @@ package com.hudyma.CarRental2024.service;
 
 import com.hudyma.CarRental2024.constants.OrderStatus;
 import com.hudyma.CarRental2024.exception.CarNotAvailableException;
+import com.hudyma.CarRental2024.exception.OrderPaymentFailureException;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.User;
@@ -32,8 +33,8 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     @Transactional
-    public boolean calculateOrderPayment(Order order, Long carId,
-                                         Long userId, Integer paymentId, boolean auxNeeded) {
+    public boolean processOrderPayment(Order order, Long carId,
+                                       Long userId, Integer paymentId, boolean auxNeeded) {
         Double orderAmount = calculateOrderAmount(order, carId);
         log.info("...calculated order amount {}", orderAmount);
         User user = userRepository.findById(userId).orElseThrow();
@@ -68,7 +69,10 @@ public class OrderService {
                 updateCarAvailabilityNumber(OrderStatus.PAID, carId);
                 log.info("....car available num decremented");
             }
-            default -> log.info("...unknown paymentId parameter");
+            default -> {
+                log.error("...unknown paymentId parameter");
+                throw new OrderPaymentFailureException();
+            }
         }
         order.setAuxPayment(auxPayment);
         log.info("....aux payment {} set", auxPayment);
@@ -101,11 +105,37 @@ public class OrderService {
                         "orderDateBegin", order.getDateBegin(),
                         "orderDateEnd", order.getDateEnd(),
                         "auxNeeded", auxNeeded,
-                        "carModel", car.getModel(),
+                        "carId", carId,
                         "paymentId", paymentId,
                         "duration", duration,
                         "price", price)
                 .forEach((k,v) -> req.getSession().setAttribute(k,v));
+        return true;
+
+        //"carModel", car.getModel(),
+    }
+
+    public boolean setOrder(Order order, Long carId, Long userId) {
+        Double setOrderAmount = calculateOrderAmount(order, carId);
+        if (setOrderAmount == 0d) {
+            log.error("...set order: computed amount is 0");
+            return false;
+        }
+        order.setAmount(setOrderAmount);
+        if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
+        if (order.getStatus() == null) order.setStatus(OrderStatus.REQUESTED);
+        Car car = carRepository.findById(carId).orElseThrow();
+        log.info("...setting car " + carId + " to order");
+        order.setCar(car);
+        User user = userRepository.findById(userId).orElseThrow();
+        order.setUser(user);
+        if (!user.getOrderList().contains(order)) {
+            user.addOrder(order);
+            log.info("...adding order to user {}", userId);
+        } else {
+            user.updateOrder(order);
+            log.info("order {} exists, updating one", order.getId());
+        }
         return true;
     }
 
@@ -191,30 +221,6 @@ public class OrderService {
 
     public List<Order> getOrdersByCarId(Long id) {
         return orderRepository.findAllByCarId(id);
-    }
-
-    public boolean setOrder(Order order, Long carId, Long userId) {
-        Double setOrderAmount = calculateOrderAmount(order, carId);
-        if (setOrderAmount == 0d) {
-            log.error("...set order: computed amount is 0");
-            return false;
-        }
-        order.setAmount(setOrderAmount);
-        if (order.getAuxNeeded() == null) order.setAuxNeeded(false);
-        if (order.getStatus() == null) order.setStatus(OrderStatus.REQUESTED);
-        Car car = carRepository.findById(carId).orElseThrow();
-        log.info("...setting car " + carId + " to order");
-        order.setCar(car);
-        User user = userRepository.findById(userId).orElseThrow();
-        order.setUser(user);
-        if (!user.getOrderList().contains(order)) {
-            user.addOrder(order);
-            log.info("...adding order to user {}", userId);
-        } else {
-            user.updateOrder(order);
-            log.info("order {} exists, updating one", order.getId());
-        }
-        return true;
     }
 
     private Double calculateOrderAmount(Order order, Long carId) {

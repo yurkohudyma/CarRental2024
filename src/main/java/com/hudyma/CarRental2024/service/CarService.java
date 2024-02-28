@@ -59,6 +59,10 @@ public class CarService {
         return carRepository.findAll().size();
     }
 
+    public String getModelByCarId (Long carId){
+        return carRepository.findModelById(carId);
+    }
+
     public Car ifNullableMergeOldValues(Car car, Car prvCar) {
         if (car.getModel().equals("")) {
             car.setModel(prvCar.getModel());

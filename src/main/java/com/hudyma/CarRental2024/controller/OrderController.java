@@ -1,6 +1,7 @@
 package com.hudyma.CarRental2024.controller;
 
-import com.hudyma.CarRental2024.exception.CarNotAvailableException;
+import com.hudyma.CarRental2024.constants.OrderStatus;
+import com.hudyma.CarRental2024.exception.OrderPaymentFailureException;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.User;
@@ -128,7 +129,7 @@ public class OrderController {
             log.error("... addOrder: car {} not avail", carId);
         } else*/
 
-        if (!orderService.calculateOrderPayment(order, carId, userId, paymentId, auxNeeded)) {
+        if (!orderService.processOrderPayment(order, carId, userId, paymentId, auxNeeded)) {
             return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/lowBalanceError";
         } else if (orderService.setOrder(order, carId, userId)) {
             order.setRegisterDate(LocalDateTime.now());
@@ -167,10 +168,65 @@ public class OrderController {
     }
 
     @PostMapping ("/saveCheckoutOrder/{id}")
-    public String saveOrderCheckout (@PathVariable("id") Long userId){
+    public String saveOrderCheckout (@PathVariable("id") Long userId,
+                                     HttpServletRequest req,
+                                     Order order){
+        order.setId(null); //todo orderId is taken somehow from user_id, therefore nulled
+        Double auxPayment = (Double) req.getSession().getAttribute("auxPayment");
+        Double deposit = (Double) req.getSession().getAttribute("deposit");
+        Double deductible = (Double) req.getSession().getAttribute("deductible");
+        Integer paymentId = (Integer) req.getSession().getAttribute("paymentId");
+        Long carId = (Long) req.getSession().getAttribute("carId");
+        LocalDate dateBegin = (LocalDate) req.getSession().getAttribute("orderDateBegin");
+        LocalDate dateEnd = (LocalDate) req.getSession().getAttribute("orderDateEnd");
+        //Boolean auxNeeded = (Boolean) req.getSession().getAttribute("auxNeeded");
+        Long duration = (Long) req.getSession().getAttribute("duration");
 
-        //todo implement
+        User user = userRepository.findById(userId).orElseThrow();
+        Car car = carRepository.findById(carId).orElseThrow();
+        if (paymentId == 30) {
+            order.setStatus(OrderStatus.CONFIRMED);
+        } else if (paymentId == 100){
+            order.setStatus(OrderStatus.PAID);
+        } else {
+            log.error("...unknown paymentId parameter");
+            order.setStatus(OrderStatus.DECLINED);
+            throw new OrderPaymentFailureException();
+        }
 
+        /*order.toBuilder()
+                .car(car)
+                .user(user)
+                .dateBegin(dateBegin)
+                .dateEnd(dateEnd)
+                .deposit(deposit)
+                .auxNeeded(auxPayment > 0)
+                .registerDate(LocalDateTime.now())
+                .duration(duration)
+                .auxPayment(auxPayment)
+                .rentalPayment(deductible)
+                .amount(deductible)
+                .build();*/
+
+        order.setCar(car);
+        order.setUser(user);
+        order.setDateBegin(dateBegin);
+        order.setDateEnd(dateEnd);
+        order.setDeposit(deposit);
+        order.setAuxPayment(auxPayment);
+        order.setRegisterDate(LocalDateTime.now());
+        order.setDuration(duration);
+        order.setAuxNeeded(auxPayment > 0);
+        order.setRentalPayment(deductible);
+        order.setAuxPayment(auxPayment);
+        order.setAmount(deductible);
+
+        orderRepository.save(order);
+        Double totalSumDeductible = user.getBalance() - deposit - auxPayment - deductible;
+        ///todo check balance before deducting, not implemented at checkout phase
+        user.setBalance(totalSumDeductible);
+        log.info("...{} has been deducted from user balance", totalSumDeductible);
+        user.addOrder(order);
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
 
@@ -204,16 +260,14 @@ public class OrderController {
                 LocalDate.now().plusDays(1));
     }
 
-    public boolean checkCarAvailability(Long carId) {
+    /*public boolean checkCarAvailability(Long carId) {
         Car car = carRepository.findById(carId).orElseThrow();
         if (car.getAvailable() == 0) {
             log.error("... car {} is not available", carId);
             throw new CarNotAvailableException("car " + carId + " is not available");
         }
         return true;
-        //todo this method is redundant second-stage check and intended for finding bugs
-        // todo if code allows user to book unavailable car
-    }
+    }*/
 
 
     @DeleteMapping("/{id}")
@@ -229,6 +283,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{userId}/cancel/{orderId}")
+    //todo prevent user from deleting orders, change status and refund payments
     public String cancelOrder(
             @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "orderId") Long orderId) {
@@ -307,6 +362,8 @@ public class OrderController {
                 CURRENT_DATE, LocalDate.now(),
                 CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
     }
+
+
 
 
     //sorting block

@@ -147,7 +147,9 @@ public class UserController {
             auxNeeded = false;
             log.info("...auxNeeded is null, setting to {}", auxNeeded);
         }
-        String carModel = (String) req.getSession().getAttribute("carModel");
+        //String carModel = (String) req.getSession().getAttribute("carModel");
+        Long carId = (Long) req.getSession().getAttribute("carId");
+        String carModel = carService.getModelByCarId(carId);
         Integer paymentId = (Integer) req.getSession().getAttribute("paymentId");
         model.addAllAttributes(Map.of(
                 USER, userRepository.findById(userId).orElseThrow(

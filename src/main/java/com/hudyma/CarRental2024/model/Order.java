@@ -14,12 +14,15 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder(toBuilder = true)
 @ToString(exclude = {"car","user"})
 @EqualsAndHashCode(of = "id")
 public class Order {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue (strategy =
+            GenerationType.IDENTITY)
     Long id;
 
     @Column(name = "amount")

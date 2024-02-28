@@ -82,7 +82,8 @@
         розблокована протягом <strong>3</strong> днів після повернення авто до прокатної служби.
     </h5>
     <div class="order_entry_form_block_user_account">
-        <form action="#" th:action="@{'/orders/'+${user.id}}" th:method="post">
+        <form action="#" th:action="${checkout} ? @{'/orders/saveCheckoutOrder/'+${user.id}} : @{'/orders/'+${user.id}}"
+              th:method="post">
             <div class="order_entry_form_level_user_account">
                 <label for="order_model">Марка</label>
                 <select th:unless="${checkout}" class="select_button_user_account" id="order_model"
@@ -122,10 +123,12 @@
             <div class="order_entry_form_level_user_account">
                 <input type="submit" th:unless="${checkout}" th:formaction="@{'/orders/checkout/'+${user.id}}"
                        value="Розрахунок" class="button_user_account">
-                <input type="submit" value="Оформити" class="button_user_account" th:disabled="${checkout}"
+                <input type="submit" value="Оформити" class="button_user_account"
                        th:unless="${user.accessLevel.toString()} == 'BLOCKED'">
                 <input type="submit" th:if="${checkout}" th:formaction="@{'/users/account/'+${user.id}}"
                        th:formmethod="get" value="Скинути" class="orange_button">
+
+                <!--th:disabled="${checkout}" -->
             </div>
         </form>
     </div>
@@ -154,7 +157,6 @@
             <th>Сума</th>
             <th>Сплачено</th>
             <th>Депозит</th>
-            <th>GPS</th>
             <th>Сума GPS</th>
             <th>Статус</th>
             <th colspan="3">Дія</th>
@@ -171,7 +173,6 @@
             <td class="order_unit" th:text="'€'+${order.amount}"></td>
             <td class="order_unit" th:text="'€'+${order.rentalPayment}"></td>
             <td class="order_unit" th:text="'€'+${order.deposit}"></td>
-            <td class="order_unit" th:text="${order.auxNeeded} ? '✔' "></td>
             <td class="order_unit" th:text="${order.auxPayment}"></td>
             <td class="order_unit" th:text="${order.status.str}"></td>
             <td class="buttons_order_unit" th:if="${currentDate lt order.dateBegin}">
