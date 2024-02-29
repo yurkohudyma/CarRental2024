@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -166,12 +165,12 @@ public class OrderService {
                 carRepository.incrementCarAvailableWhenOrderComplete(carId);
                 log.info("....car {} total incremented", carId);
             }
-            case CONFIRMED, PAID -> {
+            case PAID -> {
                 checkCarAvailability(carId); // double check before going into minus
-                carRepository.decrementCarAvailableWhenOrderConfirmed(carId);
+                carRepository.decrementCarAvailableWhenOrderPaid(carId);
                 log.info("....car {} available total decremented", carId);
             }
-            default -> log.error("car {} availability num NOT changed)", carId);
+            default -> log.error("{}, car = {} available NOT changed)", status, carId);
         }
     }
 

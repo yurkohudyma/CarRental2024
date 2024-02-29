@@ -1,7 +1,6 @@
 package com.hudyma.CarRental2024.service;
 
 import com.hudyma.CarRental2024.constants.UserAccessLevel;
-import com.hudyma.CarRental2024.controller.OrderController;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

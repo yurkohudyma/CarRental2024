@@ -75,7 +75,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:class="${currentDate lt order.dateBegin} ? order_active : order_expired"
+        <tr th:class="${currentDate lt order.dateBegin and order.status.name() != 'CANCELLED'} ? order_active : order_expired"
             th:each="order : ${orderList}">
             <td class="order_unit" th:text="${order.id}"></td>
             <td class="order_unit">
