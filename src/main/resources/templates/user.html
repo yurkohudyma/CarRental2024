@@ -77,9 +77,10 @@
     <div class="order_header_user_account">Нове замовлення:</div>
     <h5 class="user_hints_block">Для бронювання потрібно внести завдаток <strong>30%</strong> повної вартості оренди,
         після чого на рахунку буде заблокована сума страхового депозиту в розмірі <strong>€1000</strong>,
-        однак наявність авто гарантоване не буде. В разі внесення <strong>100%</strong> коштів вартості оренди,
-        сума депозиту складе, <strong>€500</strong> і даний автомобіль буде автоматично заброньований за користувачем.
-        Сума страхового депозиту буде розблокована протягом <strong>3</strong> днів після повернення авто до прокатної служби.
+        однак наявність авто гарантоване <strong>не буде</strong>. В разі внесення <strong>100%</strong> коштів вартості оренди,
+        сума депозиту складе <strong>€500</strong>, і даний автомобіль буде автоматично заброньований за користувачем.
+        Сума страхового депозиту буде розблокована протягом <strong>3</strong> днів після повернення авто до прокатної
+        служби.
     </h5>
     <div class="order_entry_form_block_user_account">
         <form action="#" th:action="${checkout} ? @{'/orders/saveCheckoutOrder/'+${user.id}} :
@@ -159,7 +160,7 @@
             <th>Депозит</th>
             <th>Сума GPS</th>
             <th>Статус</th>
-            <th colspan="3">Дія</th>
+            <th colspan="4">Дія</th>
         </tr>
         </thead>
         <tbody>
@@ -175,7 +176,8 @@
             <td class="order_unit" th:text="'€'+${order.deposit}"></td>
             <td class="order_unit" th:text="${order.auxPayment}"></td>
             <td class="order_unit" th:text="${order.status.str}"></td>
-            <td class="buttons_order_unit" th:if="${currentDate lt order.dateBegin and order.status.name() != 'CANCELLED'}">
+            <td class="buttons_order_unit"
+                th:if="${currentDate lt order.dateBegin and order.status.name() != 'CANCELLED'}">
                 <form action="#" th:action="@{'/orders/'+${order.user.id} + '/cancel/' + ${order.id}}"
                       th:method="delete">
                     <button type="submit" class="delete_ico_orderlist">
@@ -183,29 +185,42 @@
                     </button>
                 </form>
             </td>
-            <td class="buttons_order_unit" th:if="${currentDate lt order.dateBegin and order.status.name() != 'CANCELLED'}">
+            <td class="buttons_order_unit"
+                th:if="${currentDate lt order.dateBegin
+                and order.status.name() != 'CANCELLED'
+                and order.status.name() != 'PAID'}">
+
                 <a href="edit.html" th:href="@{'/edit/'+${order.id}+'/order'}">
                     <img th:src="@{/img/edit-button.png}" th:title="Редагувати"/>
                 </a>
             </td>
             <td class="buttons_order_unit" th:unless="${order.status.name() == 'PAID'
-                                                     or order.status.name() == 'CANCELLED'}">
-                <a href="pay.html" th:href="@{'/pay/'+${order.id}}" th:if="${currentDate lt order.dateBegin}">
-                    <img th:src="@{/img/green_euro_icon.png}" th:title="Оплатити"/>
-                </a>
+                                                     or order.status.name() == 'CANCELLED'
+                                                     or order.status.name() == 'RECEIVED'}">
+                <form action="#" th:action="@{'/orders/pay/'+${order.id}+'/user/'+${user.id}}" th:method="patch">
+                <button type="submit" class="pay_ico_orderlist">
+                    <img th:src="@{/img/green_euro_icon.png}" title="Доплатити різницю"/>
+                </button>
+                </form>
+            </td>
+
+            <td class="buttons_order_unit" th:if="${order.status.name() == 'PAID'}">
+                <form action="#" th:action="@{'/orders/pickup/'+${order.id}+'/user/'+${user.id}}" th:method="patch">
+                    <button type="submit" class="pay_ico_orderlist">
+                        <img th:src="@{/img/manager-button.png}" title="Отримати авто"/>
+                    </button>
+                </form>
             </td>
         </tr>
         </tbody>
     </table>
 
     <h5 class="user_hints_block">Редагувати і скасовувати замовлення можна лише <strong>до</strong> моменту його
-        початку. В такому разі користувачу протягом <strong>1</strong> дня повертається сума сплаченої оренди та депозит.
-        В разі, якщо користувач не з'явився для отримання замовлення <strong>(no-show)</strong>, сума сплаченої оренди та
-        депозиту <strong>не повертається</strong>. Дотермінове повернення автомобіля допускається, але вартість оренди в
+        початку. В такому разі користувачу протягом <strong>1</strong> дня повертається сума сплаченої оренди та
+        депозит. В разі, якщо користувач не з'явився для отримання замовлення <strong>(no-show)</strong>,
+        сума сплаченої оренди та депозиту <strong>не повертається</strong>. Дотермінове повернення автомобіля допускається, але вартість оренди в
         такому разі не перереховується і не компенсовується.
     </h5>
-
-
 </div>
 </body>
 </html>

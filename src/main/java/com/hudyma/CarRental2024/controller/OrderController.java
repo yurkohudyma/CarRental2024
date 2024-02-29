@@ -1,6 +1,7 @@
 package com.hudyma.CarRental2024.controller;
 
 import com.hudyma.CarRental2024.constants.OrderStatus;
+import com.hudyma.CarRental2024.exception.CarNotAvailableException;
 import com.hudyma.CarRental2024.exception.LowBalanceException;
 import com.hudyma.CarRental2024.exception.OrderPaymentFailureException;
 import com.hudyma.CarRental2024.model.Car;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.hudyma.CarRental2024.controller.UserController.USER_ORDERS_LIST;
@@ -270,7 +273,8 @@ public class OrderController {
             @PathVariable(name = "orderId") Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
         order.setStatus(OrderStatus.CANCELLED);
-        log.info("...order = {} status set to {}", order.getId(), order.getStatus().name());
+        log.info("...order = {} status set to {}",
+                order.getId(), order.getStatus().name());
         incrementCarAvailability(order);
         refundAllPaymentsToUser(userId, order, true);
         order.setUpdateDate(LocalDateTime.now());
@@ -279,14 +283,53 @@ public class OrderController {
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
 
-    @PatchMapping("/{id}")
-    public String editOrder(@PathVariable Long id,
+    @PatchMapping("/{orderId}")
+    public String editOrder(@PathVariable Long orderId,
                             Order updatedOrder,
                             @ModelAttribute(CAR_ID) Long carId, Model model) {
-        String edit = editOrderImpl(id, updatedOrder, carId, model);
+        String edit = editOrderImpl(orderId, updatedOrder, carId, model);
         if (edit != null) return edit;
         return REDIRECT_ORDERS;
     }
+
+    @Transactional
+    @PatchMapping("/pay/{orderId}/user/{userId}")
+    public String payOrder(@PathVariable Long orderId,
+                           @PathVariable Long userId) {
+        Order order = orderRepository.findById(orderId).orElseThrow();
+        if (order.getStatus() != OrderStatus.CONFIRMED ||
+                Objects.equals(order.getAmount(), order.getRentalPayment())) {
+            log.error("... order already paid in full or has set wrong orderStatus");
+        }
+        else {
+            User user = userRepository.findById(userId).orElseThrow();
+            Long carId = order.getCar().getId();
+            if (carId == null) throw new CarNotAvailableException("order "+orderId +" has no car assigned");
+            log.info("... car = {} retrieved from Order = {}", carId, orderId);
+            Double deductible = order.getAmount() * 0.75d;
+            user.setBalance(orderService.doubleRound(user.getBalance() - deductible));
+            order.setRentalPayment(order.getAmount());
+            log.info("...rest of amount in {} was deducted from user {} balance",
+                    deductible, userId);
+            order.setStatus(OrderStatus.PAID);
+            order.setUpdateDate(LocalDateTime.now());
+            orderService.updateCarAvailabilityNumber(OrderStatus.PAID, carId);
+            orderRepository.saveAndFlush(order);
+            userRepository.save(user);
+        }
+        return REDIRECT_USER_ACCOUNT_ORDERS + userId;
+    }
+
+    @Transactional
+    @PatchMapping("/pickup/{orderId}/user/{userId}")
+    public String pickupCar (@PathVariable Long orderId, @PathVariable Long userId) {
+        Order order = orderRepository.findById(orderId).orElseThrow();
+        order.setStatus(OrderStatus.RECEIVED);
+        orderRepository.save(order);
+        log.info("...order {} status set to {}", orderId, OrderStatus.RECEIVED.name());
+        return REDIRECT_USER_ACCOUNT_ORDERS + userId;
+    }
+
 
     private String editOrderImpl(Long id, Order updatedOrder, Long carId, Model model) {
         if (updatedOrder.getId().equals(id)) {

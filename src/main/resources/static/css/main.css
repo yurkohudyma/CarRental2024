@@ -159,6 +159,7 @@ textarea {
 .users_button_in_orderlist:hover,
 .caution_button_orderlist:hover,
 .delete_ico_orderlist:hover,
+.pay_ico_orderlist:hover,
 .edit_ico_orderlist:hover {
 	background-color: white;
 	color: #b90000;
@@ -432,7 +433,8 @@ textarea {
 .edit_ico_orderlist, 
 .block_ico_userlist, 
 .unblock_ico_userlist, 
-.manager_ico_userlist {
+.manager_ico_userlist,
+.pay_ico_orderlist {
 	background-color: white;
 	border-style: none;
     /* outline-color: transparent; */
