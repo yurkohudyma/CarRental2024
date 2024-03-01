@@ -93,9 +93,11 @@ public class UserController {
     }
 
     @GetMapping("/account/{id}/lowBalanceError")
-    public String getUserLowBalanceError(@PathVariable ("id") Long userId, Model model) {
+    public String getUserLowBalanceError(@PathVariable ("id") Long userId, Model model, HttpServletRequest req) {
         assignModelAttributes(model, userId);
+        Double insufficient = (Double) req.getSession().getAttribute("insufficient");
         model.addAttribute(LOW_BALANCE_ERROR, true);
+        model.addAttribute("insufficient", insufficient);
         return USER;
     }
 
@@ -151,6 +153,7 @@ public class UserController {
         Long carId = (Long) req.getSession().getAttribute("carId");
         String carModel = carService.getModelByCarId(carId);
         Integer paymentId = (Integer) req.getSession().getAttribute("paymentId");
+        Double totalCheckout = deposit + auxPayment + deductible;
         model.addAllAttributes(Map.of(
                 USER, userRepository.findById(userId).orElseThrow(
                         UserNotFoundException::new),
@@ -169,7 +172,8 @@ public class UserController {
                 "carModel", carModel,
                 "paymentId", paymentId,
                 "duration", duration,
-                "price", price));
+                "price", price,
+                "totalCheckout", totalCheckout));
 
     }
 

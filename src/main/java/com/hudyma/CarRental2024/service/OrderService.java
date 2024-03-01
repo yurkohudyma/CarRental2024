@@ -46,7 +46,7 @@ public class OrderService {
             case 30 -> {
                 Double deductible = orderAmount * paymentId / 100;
                 Double overallPaymentDeducted = CAR_DEPOSIT + deductible + auxPayment;
-                if (!checkBalance(userBalance, overallPaymentDeducted)) return false;
+                if (checkBalance(userBalance, overallPaymentDeducted)) return false;
                 order.setRentalPayment(doubleRound(deductible));
                 log.info("....order payment registered = {}", deductible);
                 Double withdrawalAmount = userBalance - deductible - CAR_DEPOSIT;
@@ -59,7 +59,7 @@ public class OrderService {
             }
             case 100 -> {
                 Double overallPaymentDeducted = orderAmount + CAR_DEPOSIT / 2 + auxPayment;
-                if (!checkBalance(userBalance, overallPaymentDeducted)) return false;
+                if (checkBalance(userBalance, overallPaymentDeducted)) return false;
                 order.setRentalPayment(doubleRound(orderAmount));
                 log.info("....order payment registered = {}", orderAmount);
                 user.setBalance(doubleRound(userBalance - orderAmount - CAR_DEPOSIT / 2));
@@ -149,7 +149,15 @@ public class OrderService {
         return Math.round(deductible * 100d) / 100d;
     }
 
-    public boolean checkBalance(Double userBalance, Double overallPaymentDeducted) {
+    public boolean checkBalance(Double userBalance, Double overallPaymentDeducted, HttpServletRequest req) {
+        if (checkBalance (userBalance, overallPaymentDeducted)) return false;
+        else {
+            req.getSession().setAttribute("insufficient", doubleRound(overallPaymentDeducted - userBalance));
+            return true;
+        }
+    }
+
+    private boolean checkBalance (Double userBalance, Double overallPaymentDeducted) {
         if (userBalance < overallPaymentDeducted) {
             log.error(".... low balance = {}, while deducted to pay = {}",
                     userBalance, overallPaymentDeducted);

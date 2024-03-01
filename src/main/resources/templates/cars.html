@@ -60,14 +60,9 @@
                 <label for="seatsQuantity_input" id="seatsQuantity">Місць</label>
                 <input id="seatsQuantity_input" name="seatsQuantity" type="text" placeholder="5"
                        required pattern="\d+">
-                <!--<label for="color_input">Колір</label>
-                <select class="select_button" id="color_input" name="color">
-                    <option th:each="car_color : ${carColorArr}" th:value="${car_color}"
-                            th:text="${car_color}"></option>
-                </select>-->
                 <label for="propulsion_input">Рушій</label>
                 <select class="select_button" id="propulsion_input" name="propulsion">
-                    <option class="propulsion_items" th:each="propulsion : ${carPropulsionArr}" th:value="${propulsion}"
+                    <option class="pullDownMenu_items" th:each="propulsion : ${carPropulsionArr}" th:value="${propulsion}"
                             th:text="${propulsion.str}"></option>
                 </select>
                 <label for="totalQty_input">∑<span><sub>заг</sub></span></label>
@@ -87,7 +82,6 @@
         <div class="car_unit" th:text="${car.carClass.str}"></div>
         <div class="car_unit" th:text="'€ '+${car.price}"></div>
         <div class="car_unit" th:text="'Місць: '+${car.seatsQuantity}"></div>
-        <!--<div class="car_unit" th:text="${car.color}"></div>-->
         <div class="car_unit" th:text="${car.propulsion.str}"></div>
         <div class="car_unit">∑<span><sub>пот</sub></span>
             <span th:text="': ' + ${car.available}"></span>

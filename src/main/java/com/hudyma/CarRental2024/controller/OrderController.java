@@ -1,9 +1,7 @@
 package com.hudyma.CarRental2024.controller;
 
-import com.hudyma.CarRental2024.constants.CarPropulsion;
 import com.hudyma.CarRental2024.constants.OrderStatus;
 import com.hudyma.CarRental2024.exception.CarNotAvailableException;
-import com.hudyma.CarRental2024.exception.LowBalanceException;
 import com.hudyma.CarRental2024.exception.OrderPaymentFailureException;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
@@ -119,7 +117,7 @@ public class OrderController {
         if (auxNeeded == null) auxNeeded = false;
         log.info("...getOrderCheckout:: orderService : auxNeeded is {}", auxNeeded);
         if (orderService.estimateOrderPayment(order, paymentId, auxNeeded, carId, req)) {
-            assignModelAttributesCheckout(model, userId);
+            //assignModelAttributesCheckout(model, userId);
             log.info("...order checkout for user {}", userId);
             return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/checkout";
         }
@@ -160,7 +158,7 @@ public class OrderController {
 
         Double userBalance = user.getBalance();
         Double totalSumDeductible = deposit + auxPayment + deductible;
-        if (!orderService.checkBalance(userBalance, totalSumDeductible)) {
+        if (orderService.checkBalance(userBalance, totalSumDeductible, req)) {
             return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/lowBalanceError";
         }
         order.setPaymentDate(LocalDateTime.now());
@@ -187,13 +185,13 @@ public class OrderController {
         order.setAuxNeeded(auxPayment > 0);
     }
 
-    private void assignModelAttributesCheckout(Model model, Long userId) {
+    /*private void assignModelAttributesCheckout(Model model, Long userId) {
         model.addAllAttributes(Map.of(
                 USER_ORDERS_LIST, orderService.getOrdersByUserId(userId),
                 CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
                 CURRENT_DATE, LocalDate.now(),
                 CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
-    }
+    }*/
 
     private void assignAttribIfNewOrderFailsUserAccOrder(Model model, Long userId) {
         model.addAllAttributes(Map.of(
@@ -216,7 +214,8 @@ public class OrderController {
                 LocalDate.now().plusDays(1));
     }
 
-    private void refundAllPaymentsToUser(Long userId, Order order, boolean resetPaymentFields) {
+    private void refundAllPaymentsToUser(Long userId, Order order,
+                                         boolean resetPaymentFields) {
         User user = userRepository.findById(userId).orElseThrow();
         Double deposit = order.getDeposit();
         Double rentalPayment = order.getRentalPayment();
@@ -233,8 +232,8 @@ public class OrderController {
             order.setRentalPayment(0d);
             order.setAuxPayment(0d);
             order.setDeposit(0d);
-            log.info("... all effected payments fields for order = {} user = {} have been reset",
-                    order.getId(), userId);
+            log.info("... all effected payments fields for order = " +
+                            "{} user = {} have been reset",order.getId(), userId);
         }
         userRepository.save(user);
     }

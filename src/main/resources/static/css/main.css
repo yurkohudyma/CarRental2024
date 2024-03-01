@@ -515,6 +515,10 @@ textarea {
 .checkout_unit{
 }
 
+.checkout_total {
+	border-top: solid 1px gray;
+}
+
 .payment_block{
 	margin-left: 20px;
     margin-top: 8px;
@@ -532,7 +536,7 @@ textarea {
 	font-weight: normal;
 }
 
-.propulsion_items {
+.pullDownMenu_items {
 	font: inherit;
 	font-weight: bold;
 }

@@ -72,11 +72,6 @@
                     <label for="seatsQuantity_input" id="seatsQuantity">Місць</label>
                     <input id="seatsQuantity_input" name="seatsQuantity" type="text"
                            th:placeholder="${car.seatsQuantity}"  pattern="\d+">
-                    <!--<label for="color_input">Колір</label>
-                    <select class="select_button" id="color_input" name="color" th:field="${car.color}">
-                        <option th:each="car_color : ${carColorArr}" th:value="${car_color}"
-                                th:text="${car_color}"></option>
-                    </select>-->
                     <label for="propulsion_input">Рушій</label>
                     <select class="select_button" id="propulsion_input" th:field="${car.propulsion}"
                             name="propulsion">
@@ -100,7 +95,7 @@
                 <div class="order_edit_form_level">
                     <label for="order_model"></label>
                     <select class="select_button" id="order_model" name="car_id" >
-                        <option th:each="car : ${carList}" th:value="${car.id}"
+                        <option class="pullDownMenu_items" th:each="car : ${carList}" th:value="${car.id}"
                                 th:text="${car.model}"></option>
                     </select>
 

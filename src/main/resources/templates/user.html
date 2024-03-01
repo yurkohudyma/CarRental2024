@@ -20,7 +20,7 @@
         <h1 class="title">Панель користувача</h1>
 
         <div class="errorLowBalance" th:if="${lowBalanceError}">
-            <span>Недостатньо коштів на рахунку. Поповніть баланс</span>
+            <div>Недостатньо коштів на рахунку. Поповніть баланс на €<strong th:text="${insufficient}"></strong></div>
         </div>
         <div class="errorDatesAssignUserAccount" th:if="${errorDatesAssign}">
             <span>Помилка встановлення дати</span>
@@ -89,7 +89,7 @@
                 <label for="order_model">Марка</label>
                 <select th:unless="${checkout}" class="select_button_user_account" id="order_model"
                         th:name="car_id">
-                    <option th:each="car : ${carList}" th:value="${car.id}"
+                    <option class="pullDownMenu_items" th:each="car : ${carList}" th:value="${car.id}"
                             th:text="${car.model}"></option>
                 </select>
                 <span class="car_model_checkout" th:if="${checkout}" th:text="${carModel}"></span>
@@ -141,6 +141,7 @@
         <div class="checkout_unit">Прокат GPS: €<strong th:text="${auxPayment}"></strong></div>
         <div class="checkout_unit">Орендна плата: €<strong th:text="${deductible}"></strong></div>
         <div class="checkout_unit">Депозит: €<strong th:text="${deposit}"></strong></div>
+        <div class="checkout_total">Разом: €<strong th:text="${totalCheckout}"></strong></div>
     </div>
 
     <!--USER ORDERS READOUT SECTION-->
