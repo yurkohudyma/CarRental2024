@@ -67,7 +67,7 @@
                     <label for="carclass_input">Клас</label>
                     <select class="select_button" id="carclass_input" name="carClass" th:field="${car.carClass}">
                         <option th:each="car_class : ${carClassArr}" th:value="${car_class}"
-                                th:text="${car_class}"></option>
+                                th:text="${car_class.str}"></option>
                     </select>
                     <label for="seatsQuantity_input" id="seatsQuantity">Місць</label>
                     <input id="seatsQuantity_input" name="seatsQuantity" type="text"
@@ -81,7 +81,7 @@
                     <select class="select_button" id="propulsion_input" th:field="${car.propulsion}"
                             name="propulsion">
                         <option th:each="car_propulsion : ${carPropulsionArr}" th:value="${car_propulsion}"
-                                th:text="${car_propulsion}"></option>
+                                th:text="${car_propulsion.str}"></option>
                     </select>
                     <label for="totalQty_input">∑<span><sub>заг</sub></span></label>
                     <input id="totalQty_input" name="totalQty" type="text"

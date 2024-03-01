@@ -1,5 +1,6 @@
 package com.hudyma.CarRental2024.controller;
 
+import com.hudyma.CarRental2024.constants.CarPropulsion;
 import com.hudyma.CarRental2024.constants.OrderStatus;
 import com.hudyma.CarRental2024.exception.CarNotAvailableException;
 import com.hudyma.CarRental2024.exception.LowBalanceException;
@@ -313,6 +314,7 @@ public class OrderController {
                     deductible, userId);
             order.setStatus(OrderStatus.PAID);
             order.setUpdateDate(LocalDateTime.now());
+            order.setPaymentDate(LocalDateTime.now());
             orderService.updateCarAvailabilityNumber(OrderStatus.PAID, carId);
             orderRepository.saveAndFlush(order);
             userRepository.save(user);
@@ -326,7 +328,25 @@ public class OrderController {
         Order order = orderRepository.findById(orderId).orElseThrow();
         order.setStatus(OrderStatus.RECEIVED);
         orderRepository.save(order);
-        log.info("...order {} status set to {}", orderId, OrderStatus.RECEIVED.name());
+        log.info("...order {} status set to {}", orderId, order.getStatus());
+        return REDIRECT_USER_ACCOUNT_ORDERS + userId;
+    }
+
+    @Transactional
+    @PatchMapping("/return/{orderId}/user/{userId}")
+    public String returnCar (@PathVariable Long orderId, @PathVariable Long userId) {
+        Order order = orderRepository.findById(orderId).orElseThrow();
+        order.setStatus(OrderStatus.COMPLETE);
+        User user = userRepository.findById(userId).orElseThrow();
+        Double deposit = order.getDeposit();
+        user.setBalance(orderService.doubleRound(user.getBalance() + deposit));
+        order.setDeposit(0d);
+        orderRepository.save(order);
+        log.info("...order {} status set to {}", orderId, order.getStatus());
+        userRepository.save(user);
+        log.info("...user {} has been refunded deposit {}", userId, deposit);
+
+
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
 

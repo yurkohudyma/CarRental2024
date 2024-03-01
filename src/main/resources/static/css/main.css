@@ -531,3 +531,8 @@ textarea {
     text-align: justify;
 	font-weight: normal;
 }
+
+.propulsion_items {
+	font: inherit;
+	font-weight: bold;
+}

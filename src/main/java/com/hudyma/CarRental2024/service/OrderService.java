@@ -83,17 +83,17 @@ public class OrderService {
                                         boolean auxNeeded, Long carId, HttpServletRequest req) {
         Double orderAmount = calculateOrderAmount(order, carId);
         if (orderAmount == 0d) {
-            log.error("...set order: computed amount is 0");
+            log.error("...estimateOrderPayment :: computed amount is 0");
             return false;
         }
-        log.info("...orderService:: estimated order amount is {}", orderAmount);
+        log.info("...estimated order amount is {}", orderAmount);
         Double paymentDeductible = doubleRound(paymentId == 30 ? orderAmount * 0.3 : orderAmount);
         Double deposit = paymentId == 30 ? CAR_DEPOSIT : CAR_DEPOSIT/2d;
         log.info("...user estimates {} % payment", paymentId);
-        log.info("...orderService:: estimated deductible is {}", paymentDeductible);
+        log.info("...estimated deductible is {}", paymentDeductible);
         Double auxPayment = auxNeeded ? estimateAuxPayment(order) : 0d;
-        log.info("...orderService:: auxNeeded is {}", auxNeeded);
-        log.info("...orderService:: estimated auxPayment is {}", auxPayment);
+        log.info("...auxNeeded is {}", auxNeeded);
+        log.info("...estimated auxPayment is {}", auxPayment);
         Car car = carRepository.findById(carId).orElseThrow();
         Double price = car.getPrice();
         log.info("...setting car {} for checkout", car.getModel());
@@ -170,7 +170,7 @@ public class OrderService {
                 carRepository.decrementCarAvailableWhenOrderPaid(carId);
                 log.info("....car {} available total decremented", carId);
             }
-            default -> log.error("{}, car = {} available NOT changed)", status, carId);
+            default -> log.error("{}, car = {} availability NOT changed", status, carId);
         }
     }
 
