@@ -68,6 +68,18 @@ public class User {
         orderList.add(updatedOrder);
     }
 
+    @JsonManagedReference(value = "users_transactions")
+    @OneToMany (mappedBy = "user",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER)
+    @Setter(AccessLevel.PRIVATE)
+    private List<Transaction> transactionsList = new ArrayList<>();
+
+    public void addTransaction (Transaction transaction){
+        transactionsList.add(transaction);
+        transaction.setUser(this);
+    }
+
 
 
 

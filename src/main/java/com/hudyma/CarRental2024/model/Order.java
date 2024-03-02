@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor/**/
-@Builder/*(toBuilder = true)*/
-@ToString(exclude = {"car","user"})
+@AllArgsConstructor
+@Builder
+@ToString(exclude = {"user"})
 @EqualsAndHashCode(of = "id")
 public class Order {
 

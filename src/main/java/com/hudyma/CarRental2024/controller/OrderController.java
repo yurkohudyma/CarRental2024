@@ -173,7 +173,10 @@ public class OrderController {
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
 
-    private static void orderBuilder(Order order, Double auxPayment, Double deposit, LocalDate dateBegin, LocalDate dateEnd, Long duration, User user, Car car) {
+    private static void orderBuilder(Order order, Double auxPayment,
+                                     Double deposit, LocalDate dateBegin,
+                                     LocalDate dateEnd, Long duration,
+                                     User user, Car car) {
         order.setUser(user);
         order.setCar(car);
         order.setDateBegin(dateBegin);
@@ -184,14 +187,6 @@ public class OrderController {
         order.setDuration(duration);
         order.setAuxNeeded(auxPayment > 0);
     }
-
-    /*private void assignModelAttributesCheckout(Model model, Long userId) {
-        model.addAllAttributes(Map.of(
-                USER_ORDERS_LIST, orderService.getOrdersByUserId(userId),
-                CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
-                CURRENT_DATE, LocalDate.now(),
-                CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
-    }*/
 
     private void assignAttribIfNewOrderFailsUserAccOrder(Model model, Long userId) {
         model.addAllAttributes(Map.of(

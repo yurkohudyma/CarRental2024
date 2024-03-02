@@ -3,8 +3,10 @@ package com.hudyma.CarRental2024.controller;
 import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import com.hudyma.CarRental2024.exception.UserNotFoundException;
 import com.hudyma.CarRental2024.model.Car;
+import com.hudyma.CarRental2024.model.Transaction;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.OrderRepository;
+import com.hudyma.CarRental2024.repository.TransactionRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import com.hudyma.CarRental2024.service.CarService;
 import com.hudyma.CarRental2024.service.OrderService;
@@ -36,8 +38,8 @@ public class UserController {
     public static final String REDIRECT_USERS = "redirect:/users", CAR_LIST = "carList", LOW_BALANCE_ERROR = "lowBalanceError";
     public static final String CURRENT_DATE = "currentDate", CURRENT_NEXT_DATE = "currentNextDate", ORDER = "order";
     public static final String USER_BLOCKED_ERROR = "blockedUserError";
+    private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
-    private final OrderRepository orderRepository;
     private final OrderService orderService;
     private final UserService userService;
     private final CarService carService;
@@ -254,7 +256,7 @@ public class UserController {
     @PatchMapping("/{id}/top-up")
     public String topUpUserBalance(
             @PathVariable("id") Long userId,
-            @ModelAttribute("balance") Double balance, Model model) {
+            @ModelAttribute("balance") Double balance, Transaction transaction) {
         User user = userRepository.findById(userId)
                 .orElseThrow();
         if (userService.checkUserAccessRestriction(userId)) {
@@ -265,6 +267,10 @@ public class UserController {
         user.setBalance(Math.round((balance + prevBalance) * 100d) / 100d);
         user.setUpdateDate(LocalDateTime.now());
         log.info("...topping up user {} balance", userId);
+        transaction.setUser(user);
+        transaction.setBody("top up :: " + balance + " on :: "+ user.getUpdateDate());
+        transactionRepository.save(transaction);
+        user.addTransaction(transaction);
         userRepository.save(user);
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
