@@ -44,7 +44,8 @@ public class User {
 
     @JsonManagedReference(value = "users_orders")
     @OneToMany (mappedBy = "user",
-            //todo ORDER.FK manually CHANGED DB to CASCADE, CascadeType.ALL does not work
+            //todo ORDER.FK manually CHANGED DB to CASCADE,
+            // CascadeType.ALL does not work
             cascade = CascadeType.ALL,
             //todo WHEN LAZY, restFUL fetches no data on user's retrieval
             fetch = FetchType.EAGER)
