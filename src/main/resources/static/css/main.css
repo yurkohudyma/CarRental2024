@@ -299,7 +299,7 @@ textarea {
     font-weight: 500;
 }
 
-.cars_header, .users_header{		
+.cars_header, .users_header, .tx_header{		
 	font-size: 1.3em;    
 	margin: 10px;	
 	margin-top: 30px;
@@ -527,7 +527,21 @@ textarea {
 .order_entry_form_section_USER_ACCOUNT {
 	display: inline-block;
 }
-.user_data_block_USER_ACCOUNT{	
+.user_data_block_USER_ACCOUNT, .transactions_window{	
+}
+
+.tx {
+	padding: 15px;
+    border: 1px solid;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);	
+	text-align: center;
+	border-color: lightskyblue;
+	margin: 5px;
+	display: inline-table;
+}
+
+.tx_unit {	
 }
 
 .user_hints_block {

@@ -72,15 +72,25 @@
         </div>
     </div>
 
+    <!--TRANSACTIONS WINDOW SECTION-->
+    <div class="transactions_window">
+        <div class="tx_header">Транзакції</div>
+        <div class="tx">
+            <div class="tx_unit" th:each="tx : ${tx_list}" th:text="${tx.body}"></div>
+        </div>
+    </div>
+
     <!--ORDER ENTRY FORM SECTION-->
     <h4 class="order_entry_form_section_USER_ACCOUNT"></h4>
     <div class="order_header_user_account">Нове замовлення:</div>
     <h5 class="user_hints_block">Для бронювання потрібно внести завдаток <strong>30%</strong> повної вартості оренди,
         після чого на рахунку буде заблокована сума страхового депозиту в розмірі <strong>€1000</strong>,
-        однак наявність авто гарантоване <strong>не буде</strong>. В разі внесення <strong>100%</strong> коштів вартості оренди,
+        однак наявність авто гарантоване <strong>не буде</strong>. В разі внесення <strong>100%</strong> коштів вартості
+        оренди,
         сума депозиту складе <strong>€500</strong>, і даний автомобіль буде автоматично заброньований за користувачем.
         Сума страхового депозиту буде розблокована протягом <strong>3</strong> днів після повернення авто до прокатної
-        служби. В разі затримки повернення авто до прокатної служби користувач буде зобов'язаний сплатити <strong>подвійну</strong>
+        служби. В разі затримки повернення авто до прокатної служби користувач буде зобов'язаний сплатити
+        <strong>подвійну</strong>
         вартість прокату за кожен день затримки, яка буде автоматично вирахувана із внесеного депозиту.
     </h5>
     <div class="order_entry_form_block_user_account">
@@ -203,9 +213,9 @@
                                                      or order.status.name() == 'RECEIVED'
                                                      or order.status.name() == 'COMPLETE'}">
                 <form action="#" th:action="@{'/orders/pay/'+${order.id}+'/user/'+${user.id}}" th:method="patch">
-                <button type="submit" class="pay_ico_orderlist">
-                    <img th:src="@{/img/green_euro_icon.png}" title="Доплатити різницю"/>
-                </button>
+                    <button type="submit" class="pay_ico_orderlist">
+                        <img th:src="@{/img/green_euro_icon.png}" title="Доплатити різницю"/>
+                    </button>
                 </form>
             </td>
 
@@ -224,7 +234,6 @@
                     </button>
                 </form>
             </td>
-
 
 
         </tr>

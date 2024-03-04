@@ -101,8 +101,9 @@
                 <img class="edit_ico_orderlist" th:src="@{/img/edit-button.png}" th:title="Редагувати"/>
             </a>
         </div>
-
     </div>
+
+
     <!--CONTEXT ACTIONS BUTTONS-->
     <div class="buttons_block" th:if="${!carList.isEmpty()} and ${showAddCarForm}">
         <form action="#" th:action="@{/cars}" th:method="delete">

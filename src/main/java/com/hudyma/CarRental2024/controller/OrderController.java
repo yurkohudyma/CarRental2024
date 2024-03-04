@@ -8,6 +8,7 @@ import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.OrderRepository;
+import com.hudyma.CarRental2024.repository.TransactionRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import com.hudyma.CarRental2024.service.CarService;
 import com.hudyma.CarRental2024.service.OrderService;
@@ -43,6 +44,7 @@ public class OrderController {
     private final OrderRepository orderRepository;
     private final CarRepository carRepository;
     private final UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
     private final OrderService orderService;
     private final CarService carService;
     private final UserService userService;
@@ -66,6 +68,7 @@ public class OrderController {
                 CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
                 CURRENT_DATE, LocalDate.now(),
                 CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
+
     }
 
     private void assignAttributesForStats(Model model, List<Order> orderList) {

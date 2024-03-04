@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -120,7 +123,8 @@ public class UserController {
                 USER_ORDERS_LIST, orderService.getOrdersByUserId(userId),
                 CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
                 CURRENT_DATE, LocalDate.now(),
-                CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
+                CURRENT_NEXT_DATE, LocalDate.now().plusDays(1),
+                "tx_list", transactionRepository.findAllByUserId(userId)));
     }
 
     private void assignModelAttribWhenUserBlocked(Model model, Long userId) {
@@ -253,9 +257,9 @@ public class UserController {
         return REDIRECT_USERS + "/" + id;
     }
 
-    @PatchMapping("/{id}/top-up")
+    @PatchMapping("/{userId}/top-up")
     public String topUpUserBalance(
-            @PathVariable("id") Long userId,
+            @PathVariable Long userId,
             @ModelAttribute("balance") Double balance, Transaction transaction) {
         User user = userRepository.findById(userId)
                 .orElseThrow();
@@ -267,10 +271,15 @@ public class UserController {
         user.setBalance(Math.round((balance + prevBalance) * 100d) / 100d);
         user.setUpdateDate(LocalDateTime.now());
         log.info("...topping up user {} balance", userId);
+
         transaction.setUser(user);
-        transaction.setBody("top up :: " + balance + " on :: "+ user.getUpdateDate());
+        LocalDate updateDate = user.getUpdateDate().toLocalDate();
+        LocalTime localTime = user.getUpdateDate().toLocalTime();
+        String updateTime = localTime.getHour() + ":"+ localTime.getMinute() + ":"+localTime.getSecond();
+        transaction.setBody("[+] ::: €" + balance + " ::: "+ updateDate + " ::: "+updateTime);
         transactionRepository.save(transaction);
         user.addTransaction(transaction);
+
         userRepository.save(user);
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
