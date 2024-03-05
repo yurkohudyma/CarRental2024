@@ -5,6 +5,7 @@ import com.hudyma.CarRental2024.exception.CarNotAvailableException;
 import com.hudyma.CarRental2024.exception.OrderPaymentFailureException;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
+import com.hudyma.CarRental2024.model.Transaction;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.OrderRepository;
@@ -22,6 +23,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+import static com.hudyma.CarRental2024.controller.OrderController.ORDER;
+
 
 @Service
 @RequiredArgsConstructor
@@ -32,11 +35,14 @@ public class OrderService {
     private final CarRepository carRepository;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
+    private final TransactionService transactionService;
 
     @Transactional
     public boolean processOrderPayment(Order order, Long carId,
-                                       Long userId, Integer paymentId, boolean auxNeeded) {
+                                       Long userId, Integer paymentId,
+                                       boolean auxNeeded) {
         Double orderAmount = calculateOrderAmount(order, carId);
+        Transaction transaction = new Transaction();
         log.info("...calculated order amount {}", orderAmount);
         User user = userRepository.findById(userId).orElseThrow();
         Double userBalance = user.getBalance();
@@ -46,33 +52,39 @@ public class OrderService {
             case 30 -> {
                 Double deductible = orderAmount * paymentId / 100;
                 Double overallPaymentDeducted = CAR_DEPOSIT + deductible + auxPayment;
-                if (checkBalance(userBalance, overallPaymentDeducted)) return false;
+                if (checkLowBalance(userBalance, overallPaymentDeducted)) return false;
                 order.setRentalPayment(doubleRound(deductible));
                 log.info("....order payment registered = {}", deductible);
-                Double withdrawalAmount = userBalance - deductible - CAR_DEPOSIT;
-                user.setBalance(doubleRound(withdrawalAmount));
+                Double withdrawalAmount = doubleRound(userBalance - deductible - CAR_DEPOSIT);
+                user.setBalance(withdrawalAmount);
+                transactionService.addTransaction(transaction, ORDER,
+                        user, withdrawalAmount);
                 log.info("....user balance set = {}", withdrawalAmount);
                 order.setStatus(OrderStatus.CONFIRMED);
                 order.setDeposit(CAR_DEPOSIT);
                 log.info("....order deposit SET {}", CAR_DEPOSIT);
-                updateCarAvailabilityNumber(OrderStatus.CONFIRMED, carId);
+                updateCarAvailability(OrderStatus.CONFIRMED, carId);
             }
             case 100 -> {
                 Double overallPaymentDeducted = orderAmount + CAR_DEPOSIT / 2 + auxPayment;
-                if (checkBalance(userBalance, overallPaymentDeducted)) return false;
+                if (checkLowBalance(userBalance, overallPaymentDeducted)) return false;
                 order.setRentalPayment(doubleRound(orderAmount));
                 log.info("....order payment registered = {}", orderAmount);
-                user.setBalance(doubleRound(userBalance - orderAmount - CAR_DEPOSIT / 2));
+                Double withdrawalAmount = doubleRound(orderAmount + CAR_DEPOSIT / 2);
+                user.setBalance(userBalance - withdrawalAmount);
                 log.info("....order deposit SET {}", CAR_DEPOSIT / 2);
+                transactionService.addTransaction(transaction, ORDER,
+                        user, withdrawalAmount);
                 order.setStatus(OrderStatus.PAID);
                 order.setDeposit(CAR_DEPOSIT / 2);
-                updateCarAvailabilityNumber(OrderStatus.PAID, carId);
+                updateCarAvailability(OrderStatus.PAID, carId);
             }
             default -> {
                 log.error("...unknown paymentId parameter");
                 throw new OrderPaymentFailureException();
             }
         }
+        user.addTransaction(transaction);
         order.setAuxPayment(auxPayment);
         log.info("....aux payment {} set", auxPayment);
         order.setPaymentDate(LocalDateTime.now());
@@ -88,7 +100,7 @@ public class OrderService {
         }
         log.info("...estimated order amount is {}", orderAmount);
         Double paymentDeductible = doubleRound(paymentId == 30 ? orderAmount * 0.3 : orderAmount);
-        Double deposit = paymentId == 30 ? CAR_DEPOSIT : CAR_DEPOSIT/2d;
+        Double deposit = paymentId == 30 ? CAR_DEPOSIT : CAR_DEPOSIT / 2d;
         log.info("...user estimates {} % payment", paymentId);
         log.info("...estimated deductible is {}", paymentDeductible);
         Double auxPayment = auxNeeded ? estimateAuxPayment(order) : 0d;
@@ -99,7 +111,7 @@ public class OrderService {
         log.info("...setting car {} for checkout", car.getModel());
         Long duration = calculateDuration(order);
         log.info("...duration == {}" + " days", duration);
-        Map.of (        "auxPayment", auxPayment,
+        Map.of("auxPayment", auxPayment,
                         "deposit", deposit,
                         "deductible", paymentDeductible,
                         "orderDateBegin", order.getDateBegin(),
@@ -109,7 +121,7 @@ public class OrderService {
                         "paymentId", paymentId,
                         "duration", duration,
                         "price", price)
-                .forEach((k,v) -> req.getSession().setAttribute(k,v));
+                .forEach((k, v) -> req.getSession().setAttribute(k, v));
         return true;
 
         //"carModel", car.getModel(),
@@ -149,33 +161,34 @@ public class OrderService {
         return Math.round(deductible * 100d) / 100d;
     }
 
-    public boolean checkBalance(Double userBalance, Double overallPaymentDeducted, HttpServletRequest req) {
-        if (checkBalance (userBalance, overallPaymentDeducted)) return false;
-        else {
-            req.getSession().setAttribute("insufficient", doubleRound(overallPaymentDeducted - userBalance));
+    public boolean checkLowBalance(Double userBalance, Double overallPaymentDeducted, HttpServletRequest req) {
+        if (checkLowBalance(userBalance, overallPaymentDeducted)) {
+            req.getSession().setAttribute("insufficient",
+                    doubleRound(overallPaymentDeducted - userBalance));
             return true;
         }
+        return false;
     }
 
-    private boolean checkBalance (Double userBalance, Double overallPaymentDeducted) {
+    private boolean checkLowBalance(Double userBalance, Double overallPaymentDeducted) {
         if (userBalance < overallPaymentDeducted) {
             log.error(".... low balance = {}, while deducted to pay = {}",
                     userBalance, overallPaymentDeducted);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Transactional
-    public void updateCarAvailabilityNumber(OrderStatus status, Long carId) {
+    public void updateCarAvailability(OrderStatus status, Long carId) {
         switch (status) {
             case COMPLETE -> {
-                carRepository.incrementCarAvailableWhenOrderComplete(carId);
+                carRepository.incrementCarAvailable(carId);
                 log.info("....car {} total incremented", carId);
             }
             case PAID -> {
                 checkCarAvailability(carId); // double check before going into minus
-                carRepository.decrementCarAvailableWhenOrderPaid(carId);
+                carRepository.decrementCarAvailable(carId);
                 log.info("....car {} available total decremented", carId);
             }
             default -> log.error("{}, car = {} availability NOT changed", status, carId);

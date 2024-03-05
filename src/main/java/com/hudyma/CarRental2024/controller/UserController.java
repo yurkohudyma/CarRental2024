@@ -10,6 +10,7 @@ import com.hudyma.CarRental2024.repository.TransactionRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import com.hudyma.CarRental2024.service.CarService;
 import com.hudyma.CarRental2024.service.OrderService;
+import com.hudyma.CarRental2024.service.TransactionService;
 import com.hudyma.CarRental2024.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,7 @@ public class UserController {
     private final OrderService orderService;
     private final UserService userService;
     private final CarService carService;
+    private final TransactionService transactionService;
 
     @GetMapping
     public String getAll(Model model) {
@@ -179,7 +181,8 @@ public class UserController {
                 "paymentId", paymentId,
                 "duration", duration,
                 "price", price,
-                "totalCheckout", totalCheckout));
+                "totalCheckout", totalCheckout,
+                "tx_list", transactionRepository.findAllByUserId(userId)));
 
     }
 
@@ -272,12 +275,7 @@ public class UserController {
         user.setUpdateDate(LocalDateTime.now());
         log.info("...topping up user {} balance", userId);
 
-        transaction.setUser(user);
-        LocalDate updateDate = user.getUpdateDate().toLocalDate();
-        LocalTime localTime = user.getUpdateDate().toLocalTime();
-        String updateTime = localTime.getHour() + ":"+ localTime.getMinute() + ":"+localTime.getSecond();
-        transaction.setBody("[+] ::: €" + balance + " ::: "+ updateDate + " ::: "+updateTime);
-        transactionRepository.save(transaction);
+        transaction = transactionService.addTransaction(transaction, "top-up", user, balance);
         user.addTransaction(transaction);
 
         userRepository.save(user);

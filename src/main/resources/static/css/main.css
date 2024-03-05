@@ -313,6 +313,7 @@ textarea {
 
 .order_header_user_account{
 	font-size: 1.3em;    	
+	margin-top: 15px;
 }
 
 .car_unit, .user_unit  {    
@@ -528,14 +529,14 @@ textarea {
 	display: inline-block;
 }
 .user_data_block_USER_ACCOUNT, .transactions_window{	
+	display: inline-table;
 }
 
 .tx {
 	padding: 15px;
     border: 1px solid;
     border-radius: 10px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);	
-	text-align: center;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);		
 	border-color: lightskyblue;
 	margin: 5px;
 	display: inline-table;

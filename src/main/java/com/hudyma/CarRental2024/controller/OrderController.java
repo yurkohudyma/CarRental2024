@@ -5,13 +5,14 @@ import com.hudyma.CarRental2024.exception.CarNotAvailableException;
 import com.hudyma.CarRental2024.exception.OrderPaymentFailureException;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
+import com.hudyma.CarRental2024.model.Transaction;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.repository.OrderRepository;
-import com.hudyma.CarRental2024.repository.TransactionRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import com.hudyma.CarRental2024.service.CarService;
 import com.hudyma.CarRental2024.service.OrderService;
+import com.hudyma.CarRental2024.service.TransactionService;
 import com.hudyma.CarRental2024.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -38,16 +39,16 @@ public class OrderController {
 
     private static final String REDIRECT_ORDERS = "redirect:/orders", ORDERS = "orders", ORDER_LIST = "orderList";
     public static final String ERROR_DATES_ASSIGN = "errorDatesAssign", USER_LIST = "userList", CAR_LIST = "carList";
-    public static final String CURRENT_DATE = "currentDate", CURRENT_NEXT_DATE = "currentNextDate", ORDER = "order";
+    public static final String CURRENT_DATE = "currentDate", CURRENT_NEXT_DATE = "currentNextDate";
     public static final String ACTION = "action", REDIRECT_USER_ACCOUNT_ORDERS = "redirect:/users/account/";
-    public static final String CAR_ID = "car_id", PAYMENT = "payment";
+    public static final String CAR_ID = "car_id", PAYMENT = "payment", ORDER = "order";
     private final OrderRepository orderRepository;
     private final CarRepository carRepository;
     private final UserRepository userRepository;
-    private final TransactionRepository transactionRepository;
     private final OrderService orderService;
     private final CarService carService;
     private final UserService userService;
+    private final TransactionService transactionService;
 
     @GetMapping({"", "/sortById"})
     public String getAll(Model model) {
@@ -132,7 +133,7 @@ public class OrderController {
 
     @PostMapping("/saveCheckoutOrder/{userId}")
     public String saveOrderCheckout(Order order, @PathVariable Long userId,
-                                    HttpServletRequest req) {
+                                    HttpServletRequest req, Transaction transaction) {
         Double auxPayment = (Double) req.getSession().getAttribute("auxPayment");
         Double deposit = (Double) req.getSession().getAttribute("deposit");
         Double deductible = (Double) req.getSession().getAttribute("deductible");
@@ -161,17 +162,20 @@ public class OrderController {
 
         Double userBalance = user.getBalance();
         Double totalSumDeductible = deposit + auxPayment + deductible;
-        if (orderService.checkBalance(userBalance, totalSumDeductible, req)) {
+        if (orderService.checkLowBalance(userBalance, totalSumDeductible, req)) {
             return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/lowBalanceError";
         }
         order.setPaymentDate(LocalDateTime.now());
         log.info("... payment date set to {}", order.getPaymentDate());
         orderRepository.save(order);
         user.addOrder(order);
-        user.setBalance(orderService.doubleRound(userBalance - totalSumDeductible));
+        Double deductiblePayment = orderService.doubleRound(userBalance - totalSumDeductible);
+        user.setBalance(deductiblePayment);
+        transactionService.addTransaction(transaction, ORDER, user, totalSumDeductible);
+        user.addTransaction(transaction);
         userRepository.save(user);
         log.info("...{} has been deducted from user balance", totalSumDeductible);
-        orderService.updateCarAvailabilityNumber(order.getStatus(), carId);
+        orderService.updateCarAvailability(order.getStatus(), carId);
 
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
@@ -216,11 +220,14 @@ public class OrderController {
                                          boolean resetPaymentFields) {
         User user = userRepository.findById(userId).orElseThrow();
         Double deposit = order.getDeposit();
+        Transaction transaction = new Transaction();
         Double rentalPayment = order.getRentalPayment();
         Double auxPayment = order.getAuxPayment() == null ? 0d : order.getAuxPayment();
+        Double deductible = orderService.doubleRound(deposit + rentalPayment + auxPayment);
         Double totalRefundPayment = orderService.doubleRound(
-                user.getBalance() + deposit + rentalPayment + auxPayment);
+                user.getBalance() + deductible);
         user.setBalance(totalRefundPayment);
+        transactionService.addTransaction(transaction, "refund", user, deductible);
         log.info("... deposit {}, rental {} and aux {} refunded to user {}",
                 deposit,
                 rentalPayment,
@@ -238,7 +245,7 @@ public class OrderController {
 
     private void incrementCarAvailability(Order order) {
         Long carId = order.getCar().getId();
-        carRepository.incrementCarAvailableWhenOrderComplete(carId);
+        carRepository.incrementCarAvailable(carId);
         log.info("... car {} availability incremented", carId);
     }
 
@@ -295,6 +302,7 @@ public class OrderController {
     public String payOrder(@PathVariable Long orderId,
                            @PathVariable Long userId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
+        Transaction transaction = new Transaction();
         if (order.getStatus() != OrderStatus.CONFIRMED ||
                 Objects.equals(order.getAmount(), order.getRentalPayment())) {
             log.error("... order already paid in full or has set wrong orderStatus");
@@ -304,15 +312,17 @@ public class OrderController {
             Long carId = order.getCar().getId();
             if (carId == null) throw new CarNotAvailableException("order "+orderId +" has no car assigned");
             log.info("... car = {} retrieved from Order = {}", carId, orderId);
-            Double deductible = order.getAmount() * 0.75d;
+            Double deductible = orderService.doubleRound(order.getAmount() * 0.75d);
             user.setBalance(orderService.doubleRound(user.getBalance() - deductible));
             order.setRentalPayment(order.getAmount());
             log.info("...rest of amount in {} was deducted from user {} balance",
                     deductible, userId);
+            transactionService.addTransaction(transaction, "pay-full", user, deductible);
+            user.addTransaction(transaction);
             order.setStatus(OrderStatus.PAID);
             order.setUpdateDate(LocalDateTime.now());
             order.setPaymentDate(LocalDateTime.now());
-            orderService.updateCarAvailabilityNumber(OrderStatus.PAID, carId);
+            orderService.updateCarAvailability(OrderStatus.PAID, carId);
             orderRepository.saveAndFlush(order);
             userRepository.save(user);
         }
@@ -333,17 +343,19 @@ public class OrderController {
     @PatchMapping("/return/{orderId}/user/{userId}")
     public String returnCar (@PathVariable Long orderId, @PathVariable Long userId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
+        Transaction transaction = new Transaction();
         order.setStatus(OrderStatus.COMPLETE);
         User user = userRepository.findById(userId).orElseThrow();
         Double deposit = order.getDeposit();
         user.setBalance(orderService.doubleRound(user.getBalance() + deposit));
         order.setDeposit(0d);
+        transactionService.addTransaction(transaction, "refund-deposit", user, deposit);
+        user.addTransaction(transaction);
         orderRepository.save(order);
         log.info("...order {} status set to {}", orderId, order.getStatus());
         userRepository.save(user);
         log.info("...user {} has been refunded deposit {}", userId, deposit);
-
-
+        orderService.updateCarAvailability(OrderStatus.COMPLETE, order.getCar().getId());
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }
 

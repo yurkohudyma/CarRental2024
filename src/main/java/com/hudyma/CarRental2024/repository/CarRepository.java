@@ -25,12 +25,12 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     @Query("update Car c set c.available = c.available - 1 where c.id = :id")
     @Transactional
     @Modifying
-    void decrementCarAvailableWhenOrderPaid(Long id);
+    void decrementCarAvailable(Long id);
 
     @Query("update Car c set c.available = c.available + 1 where c.id = :id")
     @Transactional
     @Modifying
-    void incrementCarAvailableWhenOrderComplete (Long id);
+    void incrementCarAvailable(Long id);
 
     @Transactional(readOnly = true)
     Optional<Car> findById (Long id);

@@ -117,7 +117,7 @@
     </table>
 
     <!--CONTEXT ACTIONS BUTTONS-->
-    <div class="buttons_block" th:if="${!orderList.isEmpty()}">
+    <div class="buttons_block" th:unless="${orderList.isEmpty()}">
         <form action="#" th:action="@{/orders}" th:method="delete">
             <input type="submit" value="Видалити все" class="caution_button">
         </form>
