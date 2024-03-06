@@ -76,6 +76,7 @@ public class UserController {
         model.addAttribute(USER, userRepository
                 .findById(userId).orElseThrow(
                         UserNotFoundException::new));
+        orderService.validateUserOrders (userId);
         assignModelAttributes(model, userId);
         model.addAttribute("userQty",
                 userRepository.findAll().size());

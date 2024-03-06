@@ -55,10 +55,11 @@ public class OrderService {
                 if (checkLowBalance(userBalance, overallPaymentDeducted)) return false;
                 order.setRentalPayment(doubleRound(deductible));
                 log.info("....order payment registered = {}", deductible);
-                Double withdrawalAmount = doubleRound(userBalance - deductible - CAR_DEPOSIT);
-                user.setBalance(withdrawalAmount);
+                Double withdrawalAmount = doubleRound(deductible + CAR_DEPOSIT);
+                Double newBalanceAmount = doubleRound(userBalance - withdrawalAmount);
+                user.setBalance(newBalanceAmount);
                 transactionService.addTransaction(transaction, ORDER,
-                        user, withdrawalAmount);
+                        user, doubleRound(deductible + CAR_DEPOSIT));
                 log.info("....user balance set = {}", withdrawalAmount);
                 order.setStatus(OrderStatus.CONFIRMED);
                 order.setDeposit(CAR_DEPOSIT);
@@ -149,6 +150,17 @@ public class OrderService {
             log.info("order {} exists, updating one", order.getId());
         }
         return true;
+    }
+
+    public void validateUserOrders(Long userId) {
+        List<Order> expiredUserOrders = orderRepository.findAllExpiredOrders(userId);
+        if (!expiredUserOrders.isEmpty()) {
+            expiredUserOrders.forEach(order -> {
+                order.setStatus(OrderStatus.DECLINED);
+                orderRepository.save(order);
+            });
+            log.info("...expired orders found, deemed {}", OrderStatus.DECLINED);
+        }
     }
 
     private Double estimateAuxPayment(Order order) {

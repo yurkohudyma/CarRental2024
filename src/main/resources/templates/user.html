@@ -178,7 +178,8 @@
         </thead>
         <tbody>
 
-        <tr th:class="${currentDate lt order.dateEnd and order.status.name() != 'CANCELLED'} ? order : order_expired"
+        <tr th:class="${currentDate lt order.dateEnd and order.status.name() != 'CANCELLED'
+            and order.status.name() != 'DECLINED'} ? order : order_expired"
             th:each="order : ${userOrdersList}">
             <td class="order_unit" th:text="${order.car.model}"></td>
             <td class="order_unit" th:text="${order.dateBegin}"></td>
@@ -212,6 +213,7 @@
             <td class="buttons_order_unit" th:unless="${order.status.name() == 'PAID'
                                                      or order.status.name() == 'CANCELLED'
                                                      or order.status.name() == 'RECEIVED'
+                                                     or order.status.name() == 'DECLINED'
                                                      or order.status.name() == 'COMPLETE'}">
                 <form action="#" th:action="@{'/orders/pay/'+${order.id}+'/user/'+${user.id}}" th:method="patch">
                     <button type="submit" class="pay_ico_orderlist">

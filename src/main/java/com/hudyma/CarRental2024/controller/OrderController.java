@@ -305,13 +305,13 @@ public class OrderController {
         Transaction transaction = new Transaction();
         if (order.getStatus() != OrderStatus.CONFIRMED ||
                 Objects.equals(order.getAmount(), order.getRentalPayment())) {
-            log.error("... order already paid in full or has set wrong orderStatus");
+            log.error("... order already paid in full or has wrong orderStatus set");
         }
         else {
             User user = userRepository.findById(userId).orElseThrow();
             Long carId = order.getCar().getId();
             if (carId == null) throw new CarNotAvailableException("order "+orderId +" has no car assigned");
-            log.info("... car = {} retrieved from Order = {}", carId, orderId);
+            log.info("... car {} retrieved from Order {}", carId, orderId);
             Double deductible = orderService.doubleRound(order.getAmount() * 0.75d);
             user.setBalance(orderService.doubleRound(user.getBalance() - deductible));
             order.setRentalPayment(order.getAmount());

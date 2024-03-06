@@ -19,10 +19,10 @@ public class TransactionService {
 
     public Transaction addTransaction (Transaction transaction,
                                        String action, User user, Double balance){
-        LocalDate updateDate = user.getUpdateDate().toLocalDate();
-        LocalTime localTime = user.getUpdateDate().toLocalTime();
-        String updateTime = localTime.getHour() + ":"+ localTime.getMinute() + ":"+localTime.getSecond();
-        String txBodyCommonPart = " ::: €" + balance + " ::: " + updateDate + " ::: " + updateTime;
+        //LocalTime localTime = LocalTime.now();
+        //String updateTime = localTime.getHour() + ":"+ localTime.getMinute() + ":"+localTime.getSecond();
+        //String txBodyCommonPart = " ::: €" + balance + " ::: " + LocalDate.now() + " ::: " + updateTime;
+        String txBodyCommonPart = " ::: €" + balance + " ::: " + LocalDate.now() + " ::: " + LocalTime.now();
         transaction.setUser(user);
         switch (action){
             case "top-up" ->  transaction.setBody("[+] (поповнення балансу)" + txBodyCommonPart);
