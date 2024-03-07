@@ -1,7 +1,6 @@
 package com.hudyma.CarRental2024.service;
 
 import com.hudyma.CarRental2024.constants.OrderStatus;
-import com.hudyma.CarRental2024.exception.CarNotAvailableException;
 import com.hudyma.CarRental2024.exception.OrderPaymentFailureException;
 import com.hudyma.CarRental2024.model.Car;
 import com.hudyma.CarRental2024.model.Order;
@@ -40,7 +39,7 @@ public class OrderService {
     @Transactional
     public boolean processOrderPayment(Order order, Long carId,
                                        Long userId, Integer paymentId,
-                                       boolean auxNeeded) {
+                                       boolean auxNeeded, HttpServletRequest req) {
         Double orderAmount = calculateOrderAmount(order, carId);
         Transaction transaction = new Transaction();
         log.info("...calculated order amount {}", orderAmount);
@@ -52,7 +51,7 @@ public class OrderService {
             case 30 -> {
                 Double deductible = orderAmount * paymentId / 100;
                 Double overallPaymentDeducted = CAR_DEPOSIT + deductible + auxPayment;
-                if (checkLowBalance(userBalance, overallPaymentDeducted)) return false;
+                if (checkLowBalance(userBalance, overallPaymentDeducted, req)) return false;
                 order.setRentalPayment(doubleRound(deductible));
                 log.info("....order payment registered = {}", deductible);
                 Double withdrawalAmount = doubleRound(deductible + CAR_DEPOSIT);
@@ -68,11 +67,11 @@ public class OrderService {
             }
             case 100 -> {
                 Double overallPaymentDeducted = orderAmount + CAR_DEPOSIT / 2 + auxPayment;
-                if (checkLowBalance(userBalance, overallPaymentDeducted)) return false;
+                if (checkLowBalance(userBalance, overallPaymentDeducted, req)) return false;
                 order.setRentalPayment(doubleRound(orderAmount));
                 log.info("....order payment registered = {}", orderAmount);
                 Double withdrawalAmount = doubleRound(orderAmount + CAR_DEPOSIT / 2);
-                user.setBalance(userBalance - withdrawalAmount);
+                user.setBalance(doubleRound(userBalance - withdrawalAmount));
                 log.info("....order deposit SET {}", CAR_DEPOSIT / 2);
                 transactionService.addTransaction(transaction, ORDER,
                         user, withdrawalAmount);
@@ -173,7 +172,9 @@ public class OrderService {
         return Math.round(deductible * 100d) / 100d;
     }
 
-    public boolean checkLowBalance(Double userBalance, Double overallPaymentDeducted, HttpServletRequest req) {
+    public boolean checkLowBalance(Double userBalance,
+                                   Double overallPaymentDeducted,
+                                   HttpServletRequest req) {
         if (checkLowBalance(userBalance, overallPaymentDeducted)) {
             req.getSession().setAttribute("insufficient",
                     doubleRound(overallPaymentDeducted - userBalance));
@@ -192,27 +193,30 @@ public class OrderService {
     }
 
     @Transactional
-    public void updateCarAvailability(OrderStatus status, Long carId) {
+    public boolean updateCarAvailability(OrderStatus status, Long carId) {
         switch (status) {
             case COMPLETE -> {
                 carRepository.incrementCarAvailable(carId);
                 log.info("....car {} total incremented", carId);
             }
             case PAID -> {
-                checkCarAvailability(carId); // double check before going into minus
+                if (checkCarShortage(carId)) return false; // double check before going into minus
                 carRepository.decrementCarAvailable(carId);
                 log.info("....car {} available total decremented", carId);
             }
             default -> log.error("{}, car = {} availability NOT changed", status, carId);
         }
+        return true;
     }
 
-    private void checkCarAvailability(Long carId) {
+    public boolean checkCarShortage(Long carId) {
         Car car = carRepository.findById(carId).orElseThrow();
         if (car.getAvailable() == 0) {
             log.error("... car {} is not available", carId);
-            throw new CarNotAvailableException("car " + carId + " is not available");
+            return true;
+            //throw new CarNotAvailableException("car " + carId + " is not available");
         }
+        return false;
     }
 
     public String getAllOrdersAmount() {

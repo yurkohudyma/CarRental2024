@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -17,25 +18,24 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-    public Transaction addTransaction (Transaction transaction,
-                                       String action, User user, Double balance){
-        //LocalTime localTime = LocalTime.now();
-        //String updateTime = localTime.getHour() + ":"+ localTime.getMinute() + ":"+localTime.getSecond();
-        //String txBodyCommonPart = " ::: €" + balance + " ::: " + LocalDate.now() + " ::: " + updateTime;
-        String txBodyCommonPart = " ::: €" + balance + " ::: " + LocalDate.now() + " ::: " + LocalTime.now();
+    public Transaction addTransaction(Transaction transaction,
+                                      String action, User user, Double balance) {
+        String dateTimeStamp = " ::: " + LocalDate.now()
+                .format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " ::: " + LocalTime.now()
+                .format(DateTimeFormatter.ofPattern("HH:mm:ss"));
         transaction.setUser(user);
-        switch (action){
-            case "top-up" ->  transaction.setBody("[+] (поповнення балансу)" + txBodyCommonPart);
-            case "refund"-> transaction.setBody("[+] (повернення коштів)" + txBodyCommonPart);
-            case "refund-deposit" -> transaction.setBody("[+] (повернення депозиту)" + txBodyCommonPart);
-            case "order"  ->  transaction.setBody("[-] (оплата замовлення)" + txBodyCommonPart);
-            case "pay-full" -> transaction.setBody("[-] (доплата замовлення)" + txBodyCommonPart);
+        switch (action) {
+            case "top-up" -> transaction.setBody("[+ €" + balance + "] -> поповнення балансу" + dateTimeStamp);
+            case "refund" -> transaction.setBody("[+ €" + balance + "] -> повернення коштів" + dateTimeStamp);
+            case "refund-deposit" -> transaction.setBody("[+ €" + balance + "] ->  повернення депозиту" + dateTimeStamp);
+            case "order" -> transaction.setBody("[- €" + balance + "] -> оплата замовлення" + dateTimeStamp);
+            case "pay-full" -> transaction.setBody("[- €" + balance + "] -> доплата замовлення" + dateTimeStamp);
             default -> {
-                log.error ("...add Tx: unknown action parameter");
+                log.error("...add Tx: unknown action parameter");
                 throw new IllegalArgumentException();
             }
         }
-        log.info("...transaction: "+action+" complete");
+        log.info("...transaction: " + action + " complete");
         transactionRepository.save(transaction);
         return transaction;
     }

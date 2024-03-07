@@ -67,9 +67,7 @@ public class OrderController {
         model.addAllAttributes(Map.of(
                 USER_LIST, userService.getAllUsersSortedByFieldAsc(),
                 CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
-                CURRENT_DATE, LocalDate.now(),
-                CURRENT_NEXT_DATE, LocalDate.now().plusDays(1)));
-
+                CURRENT_DATE, LocalDate.now()));
     }
 
     private void assignAttributesForStats(Model model, List<Order> orderList) {
@@ -84,7 +82,8 @@ public class OrderController {
     public String addOrder(Order order, Model model,
                            @PathVariable Long userId,
                            @ModelAttribute(CAR_ID) Long carId,
-                           @ModelAttribute(PAYMENT) Integer paymentId) {
+                           @ModelAttribute(PAYMENT) Integer paymentId,
+                           HttpServletRequest req) {
         log.info("...proceeding order of user {}: ", userId);
         Boolean auxNeeded = order.getAuxNeeded();
         log.info("...order auxNeeded is {}", auxNeeded);
@@ -94,7 +93,7 @@ public class OrderController {
             log.info("...auxNeeded set to {}", false);
         }
 
-        if (!orderService.processOrderPayment(order, carId, userId, paymentId, auxNeeded)) {
+        if (!orderService.processOrderPayment(order, carId, userId, paymentId, auxNeeded, req)) {
             return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/lowBalanceError";
         } else if (orderService.setOrder(order, carId, userId)) {
             order.setRegisterDate(LocalDateTime.now());
@@ -237,8 +236,8 @@ public class OrderController {
             order.setRentalPayment(0d);
             order.setAuxPayment(0d);
             order.setDeposit(0d);
-            log.info("... all effected payments fields for order = " +
-                            "{} user = {} have been reset",order.getId(), userId);
+            log.info("... all effected payments fields for order " +
+                    "{} user {} have been reset", order.getId(), user.getName());
         }
         userRepository.save(user);
     }
@@ -259,16 +258,12 @@ public class OrderController {
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") Long orderId) {
-        Optional<Order> order = orderRepository.findById(orderId);
-        if (order.isPresent()) {
-            orderRepository.deleteById(orderId);
-            log.info("... order {} successfully deleted", orderId);
-            incrementCarAvailability(order.get());
-            refundAllPaymentsToUser(
-                    order.get().getUser().getId(),
-                    order.get(),
-                    false);
-        } else log.info("..... Order " + orderId + " does not EXIST");
+        Order order = orderRepository.findById(orderId).orElseThrow();
+        orderRepository.deleteById(orderId);
+        log.info("... order {} successfully deleted", orderId);
+        orderService.updateCarAvailability(order.getStatus(), order.getCar().getId());
+        refundAllPaymentsToUser(
+                order.getUser().getId(), order,false);
         return REDIRECT_ORDERS;
     }
 
@@ -306,12 +301,16 @@ public class OrderController {
         if (order.getStatus() != OrderStatus.CONFIRMED ||
                 Objects.equals(order.getAmount(), order.getRentalPayment())) {
             log.error("... order already paid in full or has wrong orderStatus set");
-        }
-        else {
+        } else {
             User user = userRepository.findById(userId).orElseThrow();
             Long carId = order.getCar().getId();
-            if (carId == null) throw new CarNotAvailableException("order "+orderId +" has no car assigned");
+            if (carId == null) throw new CarNotAvailableException("order " + orderId + " has no car assigned");
             log.info("... car {} retrieved from Order {}", carId, orderId);
+            if (orderService.checkCarShortage(carId)) {
+                order.setStatus(OrderStatus.CANCELLED);
+                refundAllPaymentsToUser(userId, order, true);
+                return REDIRECT_USER_ACCOUNT_ORDERS + userId + "/no-car";
+            }
             Double deductible = orderService.doubleRound(order.getAmount() * 0.75d);
             user.setBalance(orderService.doubleRound(user.getBalance() - deductible));
             order.setRentalPayment(order.getAmount());
@@ -331,7 +330,7 @@ public class OrderController {
 
     @Transactional
     @PatchMapping("/pickup/{orderId}/user/{userId}")
-    public String pickupCar (@PathVariable Long orderId, @PathVariable Long userId) {
+    public String pickupCar(@PathVariable Long orderId, @PathVariable Long userId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
         order.setStatus(OrderStatus.RECEIVED);
         orderRepository.save(order);
@@ -341,7 +340,7 @@ public class OrderController {
 
     @Transactional
     @PatchMapping("/return/{orderId}/user/{userId}")
-    public String returnCar (@PathVariable Long orderId, @PathVariable Long userId) {
+    public String returnCar(@PathVariable Long orderId, @PathVariable Long userId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
         Transaction transaction = new Transaction();
         order.setStatus(OrderStatus.COMPLETE);

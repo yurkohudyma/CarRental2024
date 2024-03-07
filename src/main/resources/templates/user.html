@@ -29,7 +29,8 @@
             <span>Користувача заблоковано: команду скасовано</span>
         </div>
         <div class="errorCarNotAvailable" th:if="${carNotAvailError}">
-            <span>Вибачте, автомобіль недоступний</span>
+            <p>Вибачте, автомобіль недоступний. Замовлення скасовано</p>
+            <p>Всі сплачені кошти повернуті на ваш рахунок.</p>
         </div>
 
         <div class="top-up_panel">
@@ -101,14 +102,16 @@
                 <label for="order_model">Марка</label>
                 <select th:unless="${checkout}" class="select_button_user_account" id="order_model"
                         th:name="car_id">
-                    <option class="pullDownMenu_items" th:each="car : ${carList}" th:value="${car.id}"
+                    <option class="pullDownMenu_items" th:unless="${carList.isEmpty()}" th:each="car : ${carList}" th:value="${car.id}"
                             th:text="${car.model}"></option>
+                    <option class="pullDownMenu_items" th:if="${carList.isEmpty()}" th:text = "--розібрали--"></option>
+
                 </select>
                 <span class="car_model_checkout" th:if="${checkout}" th:text="${carModel}"></span>
                 <label for="pickup_date_user_account">Початок</label>
                 <input id="pickup_date_user_account" name="dateBegin" type="date"
                        th:value="${checkout} ? ${orderDateBegin} : ${currentDate}"
-                       placeholder="ДД-ММ-РРРР" th:min="${currentDate}" required th:disabled="${checkout}">
+                       placeholder="ДД-ММ-РРРР" th:min="${min_order_date}" required th:disabled="${checkout}">
                 <label for="drop-off_date_user_account">Кінець</label>
                 <input id="drop-off_date_user_account" name="dateEnd" type="date"
                        th:value="${checkout} ? ${orderDateEnd}"
@@ -135,13 +138,11 @@
             </div>
             <div class="order_entry_form_level_user_account">
                 <input type="submit" th:unless="${checkout}" th:formaction="@{'/orders/checkout/'+${user.id}}"
-                       value="Розрахунок" class="button_user_account">
+                       value="Розрахунок" class="button_user_account" th:disabled="${carList.isEmpty()}">
                 <input type="submit" value="Оформити" class="button_user_account"
-                       th:unless="${user.accessLevel.toString()} == 'BLOCKED'">
+                       th:unless="${user.accessLevel.toString()} == 'BLOCKED'" th:disabled="${carList.isEmpty()}">
                 <input type="submit" th:if="${checkout}" th:formaction="@{'/users/account/'+${user.id}}"
                        th:formmethod="get" value="Скинути" class="orange_button">
-
-                <!--th:disabled="${checkout}" -->
             </div>
         </form>
     </div>

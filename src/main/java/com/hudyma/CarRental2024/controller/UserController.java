@@ -84,14 +84,24 @@ public class UserController {
         return USER;
     }
 
-    @GetMapping("/account/{id}/dateError")
-    public String getUserDateError(@PathVariable Long id, Model model) {
+    @GetMapping("/account/{userId}/dateError")
+    public String getUserDateError(@PathVariable Long userId, Model model) {
         model.addAttribute(USER, userRepository
-                .findById(id).orElseThrow(UserNotFoundException::new));
-        assignModelAttributes(model, id);
+                .findById(userId).orElseThrow(UserNotFoundException::new));
+        assignModelAttributes(model, userId);
         model.addAttribute(ERROR_DATES_ASSIGN, true);
         return USER;
     }
+
+    @GetMapping ("/account/{userId}/no-car")
+    public String getUserNoCar (@PathVariable Long userId, Model model){
+        model.addAttribute(USER, userRepository
+                .findById(userId).orElseThrow(UserNotFoundException::new));
+        assignModelAttributes(model, userId);
+        model.addAttribute("carNotAvailError", true);
+        return USER;
+    }
+
 
     @GetMapping("/account/{id}/checkout")
     public String getUserOrderCheckout(@PathVariable("id") Long userId, Model model,
@@ -126,7 +136,8 @@ public class UserController {
                 USER_ORDERS_LIST, orderService.getOrdersByUserId(userId),
                 CAR_LIST, carService.getAllAvailableCarsSortedByFieldAsc(),
                 CURRENT_DATE, LocalDate.now(),
-                CURRENT_NEXT_DATE, LocalDate.now().plusDays(1),
+                "min_order_date", LocalDate.now().plusDays(1),
+                CURRENT_NEXT_DATE, LocalDate.now().plusDays(2),
                 "tx_list", transactionRepository.findAllByUserId(userId)));
     }
 
