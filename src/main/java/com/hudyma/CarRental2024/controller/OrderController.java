@@ -27,7 +27,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.hudyma.CarRental2024.controller.UserController.USER_ORDERS_LIST;
 
@@ -60,7 +59,7 @@ public class OrderController {
     private void prepareDataForSortingDisplay(Model model, List<Order> orderList) {
         model.addAttribute(ORDER_LIST, orderList);
         assignAttributesWhenSortingFields(model);
-        assignAttributesForStats(model, orderList);
+        assignAttributesForStats(model, orderList.size());
     }
 
     private void assignAttributesWhenSortingFields(Model model) {
@@ -70,10 +69,11 @@ public class OrderController {
                 CURRENT_DATE, LocalDate.now()));
     }
 
-    private void assignAttributesForStats(Model model, List<Order> orderList) {
+    private void assignAttributesForStats(Model model, int orderQty) {
         model.addAllAttributes(
-                Map.of("ordersQuantity", orderList.size(),
-                        "ordersAmount", orderService.getAllOrdersAmount(),
+                Map.of(
+                        "ordersQuantity", orderQty,
+                        "ordersAmount", orderService.getAllOrdersRentalPayments(),
                         "carsQuantity", carService.getAllCarsQuantity(),
                         "usersQuantity", userService.getAllUsersQuantity()));
     }

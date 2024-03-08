@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Log4j2
 public class CarService {
-    public static final String IS_MISSING_FOR_USER = "{} is missing for User {}";
+    public static final String IS_MISSING_FOR_CAR = "{} is missing for {}";
     private final CarRepository carRepository;
 
 
@@ -64,22 +64,26 @@ public class CarService {
     }
 
     public Car ifNullableMergeOldValues(Car car, Car prvCar) {
+        String model = car.getModel();
         if (car.getModel().equals("")) {
             car.setModel(prvCar.getModel());
-            log.error(IS_MISSING_FOR_USER, "model", car.getId());
+            log.error(IS_MISSING_FOR_CAR, "model", model);
         }
         if (car.getDescription().equals("")) {
             car.setDescription(prvCar.getDescription());
-            log.error(IS_MISSING_FOR_USER, "description", car.getId());
+            log.error(IS_MISSING_FOR_CAR, "description", model);
         }
         if (car.getPrice() == null) {
             car.setPrice(prvCar.getPrice());
-            log.error(IS_MISSING_FOR_USER, "price", car.getId());
+            log.error(IS_MISSING_FOR_CAR, "price", model);
         }
-
         if (car.getSeatsQuantity() == null) {
             car.setSeatsQuantity(prvCar.getSeatsQuantity());
-            log.error(IS_MISSING_FOR_USER, "seatsQuantity", car.getId());
+            log.error(IS_MISSING_FOR_CAR, "seatsQuantity", model);
+        }
+        if (car.getTotalQty() == null) {
+            car.setTotalQty(prvCar.getTotalQty());
+            log.error(IS_MISSING_FOR_CAR, "totalQty", model);
         }
         return car;
     }

@@ -110,7 +110,7 @@
                 <span class="car_model_checkout" th:if="${checkout}" th:text="${carModel}"></span>
                 <label for="pickup_date_user_account">Початок</label>
                 <input id="pickup_date_user_account" name="dateBegin" type="date"
-                       th:value="${checkout} ? ${orderDateBegin} : ${currentDate}"
+                       th:value="${checkout} ? ${orderDateBegin} : ${min_order_date}"
                        placeholder="ДД-ММ-РРРР" th:min="${min_order_date}" required th:disabled="${checkout}">
                 <label for="drop-off_date_user_account">Кінець</label>
                 <input id="drop-off_date_user_account" name="dateEnd" type="date"
@@ -159,8 +159,7 @@
 
     <!--USER ORDERS READOUT SECTION-->
     <div class="order_header">
-        <p th:if="${!userOrdersList.isEmpty}">Ваші замовлення</p>
-        <p th:if="${userOrdersList.isEmpty}">Замовлень поки немає</p>
+        <span th:text= "${!userOrdersList.isEmpty} ? 'Ваші замовлення' : 'Замовлень поки немає'"></span>
     </div>
     <table class="order_table" th:unless="${userOrdersList.isEmpty}">
         <thead>

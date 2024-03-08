@@ -123,8 +123,6 @@ public class OrderService {
                         "price", price)
                 .forEach((k, v) -> req.getSession().setAttribute(k, v));
         return true;
-
-        //"carModel", car.getModel(),
     }
 
     public boolean setOrder(Order order, Long carId, Long userId) {
@@ -214,21 +212,33 @@ public class OrderService {
         if (car.getAvailable() == 0) {
             log.error("... car {} is not available", carId);
             return true;
-            //throw new CarNotAvailableException("car " + carId + " is not available");
         }
         return false;
     }
 
-    public String getAllOrdersAmount() {
+    /*public String getAllOrdersAmount() {
         Double result = orderRepository
                 .findAll()
                 .stream()
                 .map(Order::getAmount)
                 .reduce(Double::sum)
                 .orElse(0d);
-        double res = Math.round(result * 100d) / 100d;
+        double res = doubleRound(result);
+        return formatDecimalNum(res);
+    }*/
+
+    public String getAllOrdersRentalPayments() {
+        Double result = orderRepository
+                .findAll()
+                .stream()
+                .map(Order::getRentalPayment)
+                .reduce(Double::sum)
+                .orElse(0d);
+        double res = doubleRound(result);
         return formatDecimalNum(res);
     }
+
+
 
     public String formatDecimalNum(double res) {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();

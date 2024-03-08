@@ -19,8 +19,8 @@
     <header>
         <h1 class="title">Панель адміна</h1>
 
-        <div class="stats_block" th:unless="${errorDatesAssign}">
-
+        <!-- STATS BLOCK -->
+        <div class="stats_block" >
             <div class="stats_unit"><img class="stats_img" th:src="@{/img/order-icon.png}" th:title="Замовлень"/></div>
             <div class="stats_unit" th:text="${ordersQuantity}"></div>
             <div class="stats_unit"><img class="stats_img" th:src="@{/img/car-icon.png}" th:title="Авто"/></div>
@@ -31,9 +31,11 @@
             <div class="stats_unit"><img class="stats_img" th:src="@{/img/green_euro_icon.png}" title="Сума замовлень"/>
             </div>
             <div class="stats_unit" th:text="'€'+${ordersAmount}"></div>
-
         </div>
 
+        <!--th:unless="${errorDatesAssign}"-->
+
+        <!--version tab-->
         <h4 class="version_block" th:text="'v.' + ${@environment.getProperty('carrental.version')}"></h4>
     </header>
 
@@ -76,7 +78,7 @@
         </thead>
         <tbody>
         <tr th:class="${currentDate lt order.dateEnd and order.status.name() != 'CANCELLED'} ?
-            order_active : order_expired"  th:each="order : ${orderList}">
+            order_active : order_expired" th:each="order : ${orderList}">
             <td class="order_unit" th:text="${order.id}"></td>
             <td class="order_unit">
                 <a href="users.html" th:href="@{'/users/'+${order.user.id}}"

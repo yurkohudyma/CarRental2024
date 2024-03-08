@@ -3,6 +3,7 @@ package com.hudyma.CarRental2024.controller;
 import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import com.hudyma.CarRental2024.exception.UserNotFoundException;
 import com.hudyma.CarRental2024.model.Car;
+import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.Transaction;
 import com.hudyma.CarRental2024.model.User;
 import com.hudyma.CarRental2024.repository.OrderRepository;
@@ -41,7 +42,7 @@ public class UserController {
     public static final String USER_LIST = "userList", USER_ORDERS_LIST = "userOrdersList", SOLE_USER_CARD = "soleUserCard";
     public static final String REDIRECT_USERS = "redirect:/users", CAR_LIST = "carList", LOW_BALANCE_ERROR = "lowBalanceError";
     public static final String CURRENT_DATE = "currentDate", CURRENT_NEXT_DATE = "currentNextDate", ORDER = "order";
-    public static final String USER_BLOCKED_ERROR = "blockedUserError";
+    public static final String USER_BLOCKED_ERROR = "blockedUserError", ERROR_DATES_ASSIGN = "errorDatesAssign";
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final OrderService orderService;
@@ -54,8 +55,17 @@ public class UserController {
         model.addAttribute(USER_LIST, userRepository.findAll());
         model.addAttribute(SOLE_USER_CARD, false);
         model.addAttribute(USER_ORDERS_LIST, new ArrayList<>());
+        assignAttributesForStats(model);
         log.info("...Retrieving All users...");
         return "users";
+    }
+
+    private void assignAttributesForStats(Model model) {
+        model.addAllAttributes(
+                Map.of("ordersQuantity", orderService.getAllOrders().size(),
+                        "ordersAmount", orderService.getAllOrdersRentalPayments(),
+                        "carsQuantity", carService.getAllCarsQuantity(),
+                        "usersQuantity", userService.getAllUsersQuantity()));
     }
 
     @GetMapping("/{id}")

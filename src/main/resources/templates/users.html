@@ -18,6 +18,22 @@
 <div class="wrapper">
     <header>
         <h1 class="title">Панель адміна</h1>
+
+        <!-- STATS BLOCK -->
+        <div class="stats_block" >
+            <div class="stats_unit"><img class="stats_img" th:src="@{/img/order-icon.png}" th:title="Замовлень"/></div>
+            <div class="stats_unit" th:text="${ordersQuantity}"></div>
+            <div class="stats_unit"><img class="stats_img" th:src="@{/img/car-icon.png}" th:title="Авто"/></div>
+            <div class="stats_unit" th:text="${carsQuantity}"></div>
+            <div class="stats_unit"><img class="stats_img" th:src="@{/img/user-icon.png}" th:title="Користувачів"/>
+            </div>
+            <div class="stats_unit" th:text="${usersQuantity}"></div>
+            <div class="stats_unit"><img class="stats_img" th:src="@{/img/green_euro_icon.png}" title="Сума замовлень"/>
+            </div>
+            <div class="stats_unit" th:text="'€'+${ordersAmount}"></div>
+        </div>
+
+        <!--version tab-->
         <h4 class="version_block" th:text="'v.' + ${@environment.getProperty('carrental.version')}"></h4>
     </header>
 

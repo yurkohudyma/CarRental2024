@@ -8,6 +8,7 @@ import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.repository.CarRepository;
 import com.hudyma.CarRental2024.service.CarService;
 import com.hudyma.CarRental2024.service.OrderService;
+import com.hudyma.CarRental2024.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -28,8 +29,8 @@ public class CarController {
     public static final String CARS = "cars";
     private final CarRepository carRepository;
     private final OrderService orderService;
-
     private final CarService carService;
+    private final UserService userService;
 
     @GetMapping
     public String getAll(Model model) {
@@ -40,9 +41,18 @@ public class CarController {
                 "carPropulsionArr", CarPropulsion.values(),
                 "showAddCarForm", true,
                 "soleCarCard", false,
-                "carOrdersList",new ArrayList<>()));
+                "carOrdersList", new ArrayList<>()));
+        assignAttributesForStats(model);
         log.info("...Retrieving all available cars");
         return CARS;
+    }
+
+    private void assignAttributesForStats(Model model) {
+        model.addAllAttributes(
+                Map.of("ordersQuantity", orderService.getAllOrders().size(),
+                        "ordersAmount", orderService.getAllOrdersRentalPayments(),
+                        "carsQuantity", carService.getAllCarsQuantity(),
+                        "usersQuantity", userService.getAllUsersQuantity()));
     }
 
     @GetMapping("/{id}")
@@ -95,8 +105,7 @@ public class CarController {
                     .forEach(carRepository::delete);
             log.info("............Deleting All cars");
             return REDIRECT_CARS;
-        }
-        else {
+        } else {
             log.error("...Cars to be deleted are attached to existing Orders, " +
                     "first remove Orders");
             model.addAttribute("showErrorCarUsedInOrder", true);
@@ -106,16 +115,16 @@ public class CarController {
         }
     }
 
-    @PatchMapping("/{id}")
-    public String patchCar(@PathVariable("id") Long id, Car updateCar) {
-        if (updateCar.getId().equals(id)) {
-            log.info("............Trying to update car " + id);
-            Car prvCar = carRepository.findById(id).orElseThrow();
-            updateCar = carService.ifNullableMergeOldValues(updateCar, prvCar);
-            updateCar.setUpdateDate(LocalDateTime.now());
-            carRepository.save(updateCar);
-            orderService.recalculateOrdersAmountUponCarEdit(id);
-        } else log.info("...Car id = " + id + " does not EXIST");
-        return REDIRECT_CARS + "/" + id;
+    @PatchMapping("/{carId}")
+    public String patchCar(@PathVariable Long carId, Car updateCar) {
+        Car prvCar = carRepository.findById(carId).orElseThrow();
+        updateCar = carService.ifNullableMergeOldValues(updateCar, prvCar);
+        updateCar.setUpdateDate(LocalDateTime.now());
+        updateCar.setAvailable(prvCar.getTotalQty());
+        updateCar.setId(prvCar.getId());
+        carRepository.save(updateCar);
+        log.info("............Car {} has been updated", prvCar.getModel());
+        orderService.recalculateOrdersAmountUponCarEdit(carId);
+        return REDIRECT_CARS + "/" + carId;
     }
 }
