@@ -92,8 +92,7 @@
         оренди, сума депозиту складе <strong>€500</strong>, і даний автомобіль буде автоматично заброньований за користувачем.
         Сума страхового депозиту буде розблокована протягом <strong>3</strong> днів після повернення авто до прокатної
         служби. В разі затримки повернення авто до прокатної служби користувач буде зобов'язаний сплатити
-        <strong>подвійну</strong>
-        вартість прокату за кожен день затримки, яка буде автоматично вирахувана із внесеного депозиту.
+        <strong>подвійну</strong> вартість прокату за кожен день затримки, яка буде автоматично вирахувана із внесеного депозиту.
     </h5>
     <div class="order_entry_form_block_user_account">
         <form action="#" th:action="${checkout} ? @{'/orders/saveCheckoutOrder/'+${user.id}} :
@@ -182,8 +181,14 @@
             and order.status.name() != 'DECLINED'} ? order : order_expired"
             th:each="order : ${userOrdersList}">
             <td class="order_unit" th:text="${order.car.model}"></td>
-            <td class="order_unit" th:text="${order.dateBegin}"></td>
-            <td class="order_unit" th:text="${order.dateEnd}"></td>
+
+            <td class="${currentDate lt order.dateBegin and order.status.name() != 'CANCELLED'
+            and order.status.name() != 'DECLINED' ? order_unit : date_due"
+                th:text="${order.dateBegin}" title="День отримання авто, інакше скасування замовлення"></td>
+            <td class="${currentDate ge order.dateEnd and order.status.name() != 'CANCELLED'
+            and order.status.name() != 'DECLINED' ? date_delayed : order_unit"
+                th:text="${order.dateEnd}" title="Крайній день повернення авто без штрафу"></td>
+
             <td class="order_unit" th:text="${order.duration}+' діб'"></td>
             <td class="order_unit" th:text="'€'+${order.amount}"></td>
             <td class="order_unit" th:text="'€'+${order.rentalPayment}"></td>
@@ -210,11 +215,7 @@
                     <img th:src="@{/img/edit-button.png}" th:title="Редагувати"/>
                 </a>
             </td>
-            <td class="buttons_order_unit" th:unless="${order.status.name() == 'PAID'
-                                                     or order.status.name() == 'CANCELLED'
-                                                     or order.status.name() == 'RECEIVED'
-                                                     or order.status.name() == 'DECLINED'
-                                                     or order.status.name() == 'COMPLETE'}">
+            <td class="buttons_order_unit" th:if="${order.status.name() == 'CONFIRMED'}">
                 <form action="#" th:action="@{'/orders/pay/'+${order.id}+'/user/'+${user.id}}" th:method="patch">
                     <button type="submit" class="pay_ico_orderlist">
                         <img th:src="@{/img/green_euro_icon.png}" title="Доплатити різницю"/>
@@ -230,15 +231,14 @@
                 </form>
             </td>
 
-            <td class="buttons_order_unit" th:if="${order.status.name() == 'RECEIVED'}">
+            <td class="buttons_order_unit" th:if="${order.status.name() == 'RECEIVED'
+                                                   or order.status.name() == 'DELAYED'}">
                 <form action="#" th:action="@{'/orders/return/'+${order.id}+'/user/'+${user.id}}" th:method="patch">
                     <button type="submit" class="pay_ico_orderlist">
                         <img th:src="@{/img/return-car-button.png}" title="Повернути авто"/>
                     </button>
                 </form>
             </td>
-
-
         </tr>
         </tbody>
     </table>

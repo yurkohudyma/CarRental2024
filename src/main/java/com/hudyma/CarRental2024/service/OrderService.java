@@ -149,15 +149,26 @@ public class OrderService {
         return true;
     }
 
-    public void validateUserOrders(Long userId) {
-        List<Order> expiredUserOrders = orderRepository.findAllExpiredOrders(userId);
+    public void handleNonPaidExpiredOrders(Long userId) {
+        List<Order> expiredUserOrders = orderRepository.findAllNonPaidAndExpiredOrders(userId);
         if (!expiredUserOrders.isEmpty()) {
             expiredUserOrders.forEach(order -> {
                 order.setStatus(OrderStatus.DECLINED);
+                order.setUpdateDate(LocalDateTime.now());
                 orderRepository.save(order);
             });
             log.info("...expired orders found, deemed {}", OrderStatus.DECLINED);
         }
+    }
+
+    public void handleDelayedCarReturnOrders(Long userId) {
+        List<Order> delayedReturnList = orderRepository.findAllDelayedReturn(userId);
+        delayedReturnList.forEach(order -> {
+            order.setStatus(OrderStatus.DELAYED);
+            order.setUpdateDate(LocalDateTime.now());
+            orderRepository.save(order);
+        });
+        log.info("...delayed orders deemed {}", OrderStatus.DELAYED);
     }
 
     private Double estimateAuxPayment(Order order) {
@@ -289,10 +300,21 @@ public class OrderService {
                 order.getDateBegin(),
                 order.getDateEnd());
         if (days <= 0) {
-            log.info("...DATES OF RENTAL DIFFER BY " + days + " days");
-            return null;
+            log.error("...DATES OF RENTAL DIFFER BY " + days + " days");
+            return 0L;
         }
         return days;
+    }
+
+    public Long calculateDelayDuration(Order order) {
+        long days = ChronoUnit.DAYS.between(
+                order.getDateEnd(),
+                LocalDateTime.now());
+        if (days <= 0) {
+            log.error("...no delay encountered: number of days is {}", days);
+            return null;
+        }
+        else return days;
     }
 
     public void recalculateOrdersAmountUponCarEdit(Long carId) {

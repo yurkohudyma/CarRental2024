@@ -342,18 +342,28 @@ public class OrderController {
     @PatchMapping("/return/{orderId}/user/{userId}")
     public String returnCar(@PathVariable Long orderId, @PathVariable Long userId) {
         Order order = orderRepository.findById(orderId).orElseThrow();
-        Transaction transaction = new Transaction();
-        order.setStatus(OrderStatus.COMPLETE);
         User user = userRepository.findById(userId).orElseThrow();
-        Double deposit = order.getDeposit();
-        user.setBalance(orderService.doubleRound(user.getBalance() + deposit));
+        Double delayedPayment = 0d, deposit = order.getDeposit();
+        if (order.getStatus() == OrderStatus.DELAYED){
+            Long days = orderService.calculateDelayDuration (order);
+            delayedPayment = orderService.doubleRound(days * 2 * order.getCar().getPrice());
+            log.error("... delayed order found, {} has been deducted from user {}", delayedPayment, userId );
+            Transaction transaction = new Transaction();
+            transactionService.addTransaction(transaction, "delay-deduction", user, delayedPayment);
+            user.addTransaction(transaction);
+        }
+        order.setStatus(OrderStatus.COMPLETE);
+        Double depositAfterDeductingDelay = orderService.doubleRound(deposit - delayedPayment);
+        depositAfterDeductingDelay = depositAfterDeductingDelay < 0 ? 0d : depositAfterDeductingDelay;
+        user.setBalance(orderService.doubleRound(user.getBalance() + depositAfterDeductingDelay));
         order.setDeposit(0d);
-        transactionService.addTransaction(transaction, "refund-deposit", user, deposit);
+        Transaction transaction = new Transaction();
+        transactionService.addTransaction(transaction, "refund-deposit", user, depositAfterDeductingDelay);
         user.addTransaction(transaction);
         orderRepository.save(order);
         log.info("...order {} status set to {}", orderId, order.getStatus());
         userRepository.save(user);
-        log.info("...user {} has been refunded deposit {}", userId, deposit);
+        log.info("...user {} has been refunded deposit {}", userId, depositAfterDeductingDelay);
         orderService.updateCarAvailability(OrderStatus.COMPLETE, order.getCar().getId());
         return REDIRECT_USER_ACCOUNT_ORDERS + userId;
     }

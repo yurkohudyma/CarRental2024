@@ -20,9 +20,8 @@ public class TransactionService {
 
     public Transaction addTransaction(Transaction transaction,
                                       String action, User user, Double balance) {
-        String dateTimeStamp = " ::: " + LocalDate.now()
-                .format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " ::: " + LocalTime.now()
-                .format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+        String dateTimeStamp = " ::: " + formatWithPattern(LocalDate.now(), "dd.MM.yyyy")
+                + " ::: " + formatWithPattern(LocalTime.now(),"HH:mm:ss");
         transaction.setUser(user);
         switch (action) {
             case "top-up" -> transaction.setBody("[+ €" + balance + "] -> поповнення балансу" + dateTimeStamp);
@@ -30,6 +29,8 @@ public class TransactionService {
             case "refund-deposit" -> transaction.setBody("[+ €" + balance + "] ->  повернення депозиту" + dateTimeStamp);
             case "order" -> transaction.setBody("[- €" + balance + "] -> оплата замовлення" + dateTimeStamp);
             case "pay-full" -> transaction.setBody("[- €" + balance + "] -> доплата замовлення" + dateTimeStamp);
+            case "delay-deduction" -> transaction.setBody("[- €" + balance + "] -> вирахування протермінування"
+                    + dateTimeStamp);
             default -> {
                 log.error("...add Tx: unknown action parameter");
                 throw new IllegalArgumentException();
@@ -39,4 +40,13 @@ public class TransactionService {
         transactionRepository.save(transaction);
         return transaction;
     }
+
+    public String formatWithPattern(LocalDate now, String pattern) {
+        return now.format(DateTimeFormatter.ofPattern(pattern));
+    }
+    private String formatWithPattern(LocalTime now, String pattern) {
+        return now.format(DateTimeFormatter.ofPattern(pattern));
+    }
+
+
 }

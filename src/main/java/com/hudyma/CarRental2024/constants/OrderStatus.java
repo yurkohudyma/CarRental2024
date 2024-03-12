@@ -8,6 +8,7 @@ public enum OrderStatus {
     DECLINED ("Відхилено"),
     CANCELLED ("Скасовано"),
     RECEIVED ("Отримано"),
+    DELAYED ("Протерміновано"),
     COMPLETE ("Завершено");
 
     public final String str;

@@ -2,11 +2,8 @@ package com.hudyma.CarRental2024.controller;
 
 import com.hudyma.CarRental2024.constants.UserAccessLevel;
 import com.hudyma.CarRental2024.exception.UserNotFoundException;
-import com.hudyma.CarRental2024.model.Car;
-import com.hudyma.CarRental2024.model.Order;
 import com.hudyma.CarRental2024.model.Transaction;
 import com.hudyma.CarRental2024.model.User;
-import com.hudyma.CarRental2024.repository.OrderRepository;
 import com.hudyma.CarRental2024.repository.TransactionRepository;
 import com.hudyma.CarRental2024.repository.UserRepository;
 import com.hudyma.CarRental2024.service.CarService;
@@ -22,11 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
-import java.time.temporal.Temporal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -86,7 +79,8 @@ public class UserController {
         model.addAttribute(USER, userRepository
                 .findById(userId).orElseThrow(
                         UserNotFoundException::new));
-        orderService.validateUserOrders (userId);
+        orderService.handleNonPaidExpiredOrders(userId);
+        orderService.handleDelayedCarReturnOrders (userId);
         assignModelAttributes(model, userId);
         model.addAttribute("userQty",
                 userRepository.findAll().size());

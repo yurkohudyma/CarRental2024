@@ -16,9 +16,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findAllByUserId(Long id);
 
+    @Query(value = "select * from orders o where o.user_id = ?1 and o.status = 'RECEIVED' and o.date_end < now()",
+            nativeQuery = true)
+    List<Order> findAllDelayedReturn(Long userId);
+
     @Query(value = "select * from orders o where o.user_id = ?1 and o.status = 'CONFIRMED' and o.date_begin < now()",
             nativeQuery = true)
-    List<Order> findAllExpiredOrders(Long userId);
+    List<Order> findAllNonPaidAndExpiredOrders(Long userId);
 
     @Transactional(readOnly = true)
     Optional<Order> findById(Long id);

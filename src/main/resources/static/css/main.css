@@ -383,6 +383,18 @@ textarea {
 	padding: 5px;
 }
 
+.date_due {
+	text-align: center;
+	padding: 5px;
+	color: green;
+}
+
+.date_delayed {
+	text-align: center;
+	padding: 5px;
+	color: orange;
+}
+
 .order {
 }
 
